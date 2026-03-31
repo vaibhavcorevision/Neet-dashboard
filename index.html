@@ -455,6 +455,93 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
 .score-pct-num{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;min-width:42px;text-align:right}
 .score-del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;padding:4px;border-radius:6px;transition:all .2s;flex-shrink:0}
 .score-del-btn:hover{color:var(--coral);background:rgba(225,29,72,.1)}
+
+/* ── PINNED FOCUS TIMER (always-on bottom-left) ── */
+.pft{position:fixed;bottom:24px;left:24px;z-index:995;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.14);min-width:200px;transition:all .3s;user-select:none}
+.pft-bar{background:linear-gradient(135deg,var(--teal),var(--teal3));border-radius:16px 16px 0 0;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;cursor:move}
+.pft-title{color:#fff;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.pft-live-dot{width:6px;height:6px;border-radius:50%;background:#a7f3d0;animation:pulse .9s infinite}
+.pft-collapse{background:rgba(255,255,255,.2);border:none;color:#fff;width:18px;height:18px;border-radius:4px;cursor:pointer;font-size:10px;display:grid;place-items:center;line-height:1}
+.pft-body{padding:10px 14px}
+.pft-time-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.pft-clock{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--teal);line-height:1;letter-spacing:1px}
+.pft-pomo-tag{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.pft-stats-mini{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.pft-sm{background:var(--bg3);border-radius:7px;padding:6px;text-align:center}
+.pft-sm-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;line-height:1}
+.pft-sm-lbl{font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.pft-btns{display:flex;gap:5px}
+.pft-btn{flex:1;border:none;border-radius:7px;padding:7px 8px;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:4px}
+.pft-btn.start{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff}
+.pft-btn.pause{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);color:var(--amber)}
+.pft-btn.stop{background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.25);color:var(--coral)}
+.pft-btn.pomo{background:linear-gradient(135deg,var(--lavender),#4c1d95);color:#fff}
+.pft-mini{padding:0!important}
+.pft.collapsed .pft-body{display:none}
+.pft-sound-row{display:flex;align-items:center;gap:5px;margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
+.pft-sound-btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer;color:var(--text2);font-weight:600;transition:all .2s}
+.pft-sound-btn.on{background:rgba(13,148,136,.12);border-color:var(--teal3);color:var(--teal)}
+.pft-hydra-tag{font-size:9px;color:var(--sky);font-weight:600;margin-left:auto;white-space:nowrap}
+/* ── HABITS ── */
+.habit-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.habit-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:9px;border:1px solid var(--border);cursor:pointer;transition:all .2s;user-select:none}
+.habit-item:hover{background:var(--card2)}
+.habit-item.done-habit{border-color:rgba(22,163,74,.2);background:rgba(22,163,74,.05)}
+.habit-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);display:grid;place-items:center;font-size:11px;flex-shrink:0;transition:all .2s}
+.habit-item.done-habit .habit-check{background:var(--sage);border-color:var(--sage);color:#fff}
+.habit-name{font-size:12px;font-weight:600;color:var(--text);flex:1}
+.habit-streak{font-size:9px;color:var(--orange);font-weight:700}
+/* ── FLASHCARDS ── */
+.card-scene{width:100%;height:160px;perspective:1000px;cursor:pointer;margin:0 auto 16px}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.card-scene.flipped .card-inner{transform:rotateY(180deg)}
+.card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;border:1px solid var(--border)}
+.card-front{background:linear-gradient(135deg,var(--bg),var(--bg2));border-color:var(--border)}
+.card-back{background:linear-gradient(135deg,rgba(13,148,136,.06),rgba(22,163,74,.04));border-color:rgba(13,148,136,.2);transform:rotateY(180deg)}
+.card-q{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);line-height:1.5}
+.card-a{font-size:13px;font-weight:600;color:var(--teal3);line-height:1.6}
+.card-sub{font-size:10px;color:var(--text3);margin-top:6px;letter-spacing:.5px;text-transform:uppercase}
+.fc-action-row{display:flex;gap:8px;margin-top:8px}
+.fc-action{flex:1;border:none;border-radius:9px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.fc-know{background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.25);color:var(--sage)}
+.fc-review{background:rgba(225,29,72,.1);border:1px solid rgba(225,29,72,.2);color:var(--coral)}
+.fc-skip{background:var(--bg3);border:1px solid var(--border);color:var(--text2)}
+.fc-progress-bar{height:4px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:12px}
+.fc-progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--sage));border-radius:99px;transition:width .4s}
+.fc-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.fc-filter-btn{padding:6px 14px;border:1px solid var(--border);border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;background:var(--bg3);color:var(--text2);transition:all .2s}
+.fc-filter-btn.on{background:linear-gradient(135deg,var(--teal),var(--teal2));border-color:transparent;color:#fff}
+/* ── MISTAKE LOG ── */
+.mistake-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;transition:all .2s}
+.mistake-item:hover{background:var(--card2)}
+.mistake-item.resolved{border-color:rgba(22,163,74,.2);opacity:.65}
+.mistake-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.mistake-topic{font-size:12px;font-weight:700;color:var(--text)}
+.mistake-note{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.5}
+.mistake-meta{font-size:9px;color:var(--text3);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.mistake-resolve-btn{background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.2);border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--sage);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.mistake-resolve-btn:hover{background:rgba(22,163,74,.2)}
+.mistake-del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:5px;transition:all .2s;flex-shrink:0}
+.mistake-del-btn:hover{color:var(--coral);background:rgba(225,29,72,.08)}
+/* ── QUICK NOTES ── */
+.qnote-popup{position:absolute;z-index:200;background:var(--card);border:1px solid var(--teal);border-radius:12px;padding:12px;box-shadow:0 8px 28px rgba(0,0,0,.12);width:260px;display:none;animation:ctxIn .15s ease}
+.qnote-popup textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;padding:8px;outline:none;resize:none;height:72px;font-family:'DM Sans',sans-serif;line-height:1.5}
+.qnote-popup textarea:focus{border-color:var(--teal3)}
+/* ── SPACED REPETITION NUDGE ── */
+.sr-nudge-bar{background:rgba(13,148,136,.07);border:1px solid rgba(13,148,136,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px}
+.sr-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(13,148,136,.12);border:1px solid rgba(13,148,136,.2);border-radius:99px;font-size:10px;font-weight:700;color:var(--teal3);cursor:pointer;margin:3px;transition:all .2s}
+.sr-chip:hover{background:rgba(13,148,136,.2)}
+.sr-chip.urgent{background:rgba(225,29,72,.1);border-color:rgba(225,29,72,.2);color:var(--coral)}
+/* ── RANK ESTIMATOR ── */
+.rank-result{background:linear-gradient(135deg,rgba(13,148,136,.08),rgba(22,163,74,.05));border:1px solid rgba(13,148,136,.2);border-radius:12px;padding:18px;text-align:center;display:none}
+.rank-big{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;color:var(--teal);line-height:1}
+/* ── AMBIENT SOUND BTN (header) ── */
+.sound-hdr-btn{background:var(--card);border:1px solid var(--border);border-radius:40px;padding:6px 12px;font-size:11px;cursor:pointer;color:var(--text2);font-weight:600;transition:all .2s;display:flex;align-items:center;gap:5px}
+.sound-hdr-btn:hover,.sound-hdr-btn.on{border-color:var(--teal3);color:var(--teal);background:rgba(13,148,136,.08)}
+/* ── SUBJECT NOTE DOT ── */
+.note-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;margin-left:4px;vertical-align:middle}
+/* ── ACCURACY BADGE ── */
+.acc-badge{font-size:9px;padding:2px 7px;border-radius:99px;font-weight:700;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -479,6 +566,42 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
   🎯
   <span class="fw-toggle-badge" id="fw-badge" style="display:none"></span>
 </button>
+
+<!-- PINNED FOCUS TIMER (always-on, all screens) -->
+<div class="pft" id="pft">
+  <div class="pft-bar" id="pft-drag">
+    <div class="pft-title"><div class="pft-live-dot" id="pft-dot" style="opacity:.4"></div>Focus Timer</div>
+    <button class="pft-collapse" id="pft-col-btn" onclick="pftToggleCollapse()" title="Collapse">−</button>
+  </div>
+  <div class="pft-body" id="pft-body">
+    <div class="pft-time-row">
+      <div class="pft-clock" id="pft-clock">00:00:00</div>
+      <div>
+        <div class="pft-pomo-tag" id="pft-pomo-tag" style="background:rgba(109,40,217,.12);color:var(--lavender)">🍅 25:00</div>
+        <div style="font-size:8px;color:var(--text3);margin-top:3px" id="pft-pomo-mode">Pomo ready</div>
+      </div>
+    </div>
+    <div class="pft-stats-mini">
+      <div class="pft-sm"><div class="pft-sm-val" id="pft-today" style="color:var(--teal)">0m</div><div class="pft-sm-lbl">Today</div></div>
+      <div class="pft-sm"><div class="pft-sm-val" id="pft-goal-pct" style="color:var(--amber)">—</div><div class="pft-sm-lbl">Goal</div></div>
+      <div class="pft-sm"><div class="pft-sm-val" id="pft-streak" style="color:var(--orange)">0🔥</div><div class="pft-sm-lbl">Streak</div></div>
+    </div>
+    <div class="pft-btns">
+      <button class="pft-btn start" id="pft-focus-btn" onclick="focusToggle();pftSync()">▶ Focus</button>
+      <button class="pft-btn pomo" id="pft-pomo-btn" onclick="pomoToggle();pftSync()">🍅</button>
+      <button class="pft-btn stop" id="pft-stop-btn" onclick="focusStop()" style="display:none">⏹</button>
+    </div>
+    <div class="pft-sound-row">
+      <button class="pft-sound-btn" id="pft-sound-btn" onclick="toggleAmbient()">🔇 Sound</button>
+      <select id="pft-sound-sel" style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:9px;padding:3px 5px;outline:none;font-family:'DM Sans',sans-serif" onchange="changeAmbient()">
+        <option value="white">White Noise</option>
+        <option value="brown">Brown Noise</option>
+        <option value="rain">Rain</option>
+      </select>
+      <span class="pft-hydra-tag" id="pft-hydra">💧 Stay hydrated</span>
+    </div>
+  </div>
+</div>
 
 <!-- SVG gradients -->
 <svg width="0" height="0" style="position:absolute">
@@ -768,6 +891,7 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
       <button class="hdr-btn" onclick="openModal('group-overlay')">👥 <span id="group-code-lbl">Group</span></button>
       <button class="hdr-btn" onclick="openModal('journal-overlay')">📝 Journal</button>
       <button class="hdr-btn" id="dark-btn" onclick="toggleDark()">🌙 Dark</button>
+      <button class="sound-hdr-btn" id="sound-hdr-btn" onclick="toggleAmbient()" title="Ambient Sound">🔇 Sound</button>
       <button class="hdr-btn" onclick="openSetTarget()" style="background:linear-gradient(135deg,var(--teal),var(--teal2));border-color:transparent;color:#fff;font-weight:700">🎯 Set Target</button>
     </div>
   </div>
@@ -780,6 +904,11 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
   <button class="tab-btn active" id="tab-btn-q" onclick="switchTab('q')">📊 Q Practice &amp; Focus</button>
   <button class="tab-btn" id="tab-btn-ncert" onclick="switchTab('ncert')">📖 NCERT Chapter Tracker</button>
   <button class="tab-btn" id="tab-btn-rapid" onclick="switchTab('rapid')">⚡ Rapid Revision Tracker</button>
+  <button class="tab-btn" id="tab-btn-focus" onclick="switchTab('focus')">🎯 Focus Goal</button>
+  <button class="tab-btn" id="tab-btn-tests" onclick="switchTab('tests')">📋 Test Planner</button>
+  <button class="tab-btn" id="tab-btn-scores" onclick="switchTab('scores')">🏆 Score Tracker</button>
+  <button class="tab-btn" id="tab-btn-mistakes" onclick="switchTab('mistakes')" style="--active-color:var(--coral)">❌ Mistake Log</button>
+  <button class="tab-btn" id="tab-btn-flash" onclick="switchTab('flash')">🃏 Flashcards</button>
   <button class="tab-btn" id="tab-btn-focus" onclick="switchTab('focus')" style="background:linear-gradient(135deg,rgba(13,148,136,.15),rgba(13,148,136,.05));border-color:rgba(13,148,136,.3)">⏳ Daily Focus Goal</button>
   <button class="tab-btn" id="tab-btn-tests" onclick="switchTab('tests')" style="background:linear-gradient(135deg,rgba(109,40,217,.12),rgba(109,40,217,.04));border-color:rgba(109,40,217,.3)">📋 Test Planner</button>
   <button class="tab-btn" id="tab-btn-scores" onclick="switchTab('scores')" style="background:linear-gradient(135deg,rgba(225,29,72,.1),rgba(225,29,72,.03));border-color:rgba(225,29,72,.25)">🏆 Score Tracker</button>
@@ -961,6 +1090,11 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
       <span style="font-size:10px;color:var(--text3)" id="journal-save-hint"></span>
       <button onclick="openModal('journal-overlay')" style="background:transparent;border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:11px;color:var(--text2);cursor:pointer">📚 View History</button>
     </div>
+    <!-- DAILY HABITS -->
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">✅ Daily Habits <span style="font-size:10px;color:var(--text3)" id="habit-count-lbl"></span></div>
+      <div class="habit-list" id="habit-list"></div>
+    </div>
   </div>
 </div>
 
@@ -989,6 +1123,11 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
 
 <!-- TAB 2: NCERT CHAPTER TRACKER -->
 <div id="tab-ncert" class="tab-panel">
+  <!-- Spaced Repetition Nudge -->
+  <div class="sr-nudge-bar" id="ncert-sr-bar" style="display:none">
+    <div style="font-size:11px;font-weight:700;color:var(--teal2);margin-bottom:8px">🔁 Spaced Repetition — Revise Today (7+ days since last read)</div>
+    <div id="ncert-sr-chips"></div>
+  </div>
   <div class="notif-bar" style="border-color:rgba(22,163,74,.3);background:rgba(22,163,74,.07);color:#15803d">📖 Jis din chapter padho, <strong>+ Read</strong> dabao — date aur count save ho jaayega. Ek hi chapter alag alag dates ko multiple times pad sakte ho!</div>
 
   <!-- Stats row -->
@@ -1055,6 +1194,11 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
 <!-- TAB 3: RAPID REVISION TRACKER -->
 <div id="tab-rapid" class="tab-panel">
   <div class="notif-bar" style="border-color:rgba(109,40,217,.3);background:rgba(109,40,217,.07);color:var(--lavender)">⚡ Rapid Revision — NEET se pehle quick sweep. Har chapter ek baar rapidly revise karo, date note ho jaayegi!</div>
+  <!-- Spaced Repetition Nudge -->
+  <div class="sr-nudge-bar" id="rapid-sr-bar" style="display:none;border-color:rgba(109,40,217,.2);background:rgba(109,40,217,.05)">
+    <div style="font-size:11px;font-weight:700;color:var(--lavender);margin-bottom:8px">🔁 Rapid Revision Overdue — Revisit These Chapters</div>
+    <div id="rapid-sr-chips"></div>
+  </div>
 
   <!-- Stats row -->
   <div class="tracker-stats-row" id="rapid-stats-row"></div>
@@ -1108,6 +1252,135 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
     </div>
   </div>
 </div><!-- /tab-rapid -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TAB 7: MISTAKE LOG                                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="tab-mistakes" class="tab-panel">
+  <div class="notif-bar" style="border-color:rgba(225,29,72,.25);background:rgba(225,29,72,.05);color:#be123c">❌ <strong>Mistake Log</strong> — Jo galat hua use note karo, revise karo, aur tick off karo. Unresolved count header pe dikhega!</div>
+  <div style="display:grid;grid-template-columns:380px 1fr;gap:20px;margin-bottom:20px">
+    <!-- Add Mistake -->
+    <div class="card" style="padding:24px;align-self:start">
+      <div class="section-title"><span style="background:var(--coral)"></span>➕ New Mistake</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px">Subject</label>
+          <select id="mk-subject" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;padding:9px 12px;outline:none;font-family:'DM Sans',sans-serif">
+            <option value="bio12">🧬 Biology 12</option>
+            <option value="bio11">🌿 Biology 11</option>
+            <option value="phychem">⚗️ Physical Chemistry</option>
+            <option value="orgchem">🔗 Organic Chemistry</option>
+            <option value="inorg">🧪 Inorganic Chemistry</option>
+            <option value="physics">⚡ Physics</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px">Chapter / Topic</label>
+          <input type="text" id="mk-topic" placeholder="e.g. Genetics — Dihybrid cross" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;padding:9px 12px;outline:none;font-family:'DM Sans',sans-serif">
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px">Note / Why you got it wrong</label>
+          <textarea id="mk-note" placeholder="e.g. Phenotypic ratio bhool gaya, 9:3:3:1 tha" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:12px;padding:9px 12px;outline:none;resize:none;height:70px;font-family:'DM Sans',sans-serif;line-height:1.5"></textarea>
+        </div>
+        <button onclick="addMistake()" style="background:linear-gradient(135deg,var(--coral),#be123c);border:none;border-radius:9px;color:#fff;font-size:12px;font-weight:700;padding:10px;cursor:pointer;width:100%">➕ Log Mistake</button>
+      </div>
+    </div>
+    <!-- Mistake Stats -->
+    <div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+        <div class="stat-card" style="--ac:var(--coral)"><div class="stat-label">❌ Total Mistakes</div><div class="stat-value" id="mk-stat-total" style="color:var(--coral)">0</div></div>
+        <div class="stat-card" style="--ac:var(--amber)"><div class="stat-label">⚠️ Unresolved</div><div class="stat-value" id="mk-stat-pending" style="color:var(--amber)">0</div></div>
+        <div class="stat-card" style="--ac:var(--sage)"><div class="stat-label">✅ Resolved</div><div class="stat-value" id="mk-stat-done" style="color:var(--sage)">0</div></div>
+      </div>
+      <!-- Filter row -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <button class="fc-filter-btn on" id="mk-filter-all" onclick="filterMistakes('all',this)">All</button>
+        <button class="fc-filter-btn" id="mk-filter-pending" onclick="filterMistakes('pending',this)">⚠️ Pending</button>
+        <button class="fc-filter-btn" id="mk-filter-resolved" onclick="filterMistakes('resolved',this)">✅ Resolved</button>
+        <button class="fc-filter-btn" id="mk-filter-bio" onclick="filterMistakes('bio',this)">🧬 Bio</button>
+        <button class="fc-filter-btn" id="mk-filter-chem" onclick="filterMistakes('chem',this)">⚗️ Chem</button>
+        <button class="fc-filter-btn" id="mk-filter-physics" onclick="filterMistakes('physics',this)">⚡ Physics</button>
+      </div>
+      <div id="mk-list" style="display:flex;flex-direction:column;gap:8px;max-height:460px;overflow-y:auto;padding-right:4px"></div>
+      <div id="mk-empty" style="text-align:center;padding:32px;color:var(--text3);font-size:13px">Koi mistake nahi! Bahut badhiya 🎉</div>
+    </div>
+  </div>
+</div><!-- /tab-mistakes -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TAB 8: FLASHCARDS                                       -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="tab-flash" class="tab-panel">
+  <div class="notif-bar" style="border-color:rgba(13,148,136,.2);background:rgba(13,148,136,.05);color:var(--teal2)">🃏 <strong>NEET Flashcards</strong> — 100 key facts! Tap card to flip. Mark Know/Review. Works offline. Zero cost!</div>
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:20px">
+    <!-- Card Area -->
+    <div class="card" style="padding:28px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div class="fc-filter-row" style="margin-bottom:0;flex-wrap:wrap">
+          <button class="fc-filter-btn on" onclick="setFcFilter('all',this)">All</button>
+          <button class="fc-filter-btn" onclick="setFcFilter('bio',this)">🧬 Bio</button>
+          <button class="fc-filter-btn" onclick="setFcFilter('chem',this)">⚗️ Chem</button>
+          <button class="fc-filter-btn" onclick="setFcFilter('physics',this)">⚡ Physics</button>
+          <button class="fc-filter-btn" onclick="setFcFilter('review',this)" style="border-color:rgba(225,29,72,.3);color:var(--coral)">⚠️ Review Only</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3)" id="fc-counter">Card 1 of —</div>
+      </div>
+      <div class="fc-progress-bar"><div class="fc-progress-fill" id="fc-prog-fill" style="width:0%"></div></div>
+      <!-- Flip card -->
+      <div class="card-scene" id="fc-scene" onclick="flipCard()">
+        <div class="card-inner" id="fc-inner">
+          <div class="card-face card-front">
+            <div>
+              <div class="card-sub" id="fc-sub-front">Loading...</div>
+              <div class="card-q" id="fc-q">Tap to load flashcards</div>
+              <div style="margin-top:12px;font-size:10px;color:var(--text3)">Tap to reveal answer →</div>
+            </div>
+          </div>
+          <div class="card-face card-back">
+            <div>
+              <div class="card-sub" id="fc-sub-back"></div>
+              <div class="card-a" id="fc-a"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-action-row">
+        <button class="fc-action fc-review" onclick="fcMark('review')">😕 Review</button>
+        <button class="fc-action fc-skip" onclick="fcNext()">⏭ Skip</button>
+        <button class="fc-action fc-know" onclick="fcMark('know')">✅ Know it!</button>
+      </div>
+      <div style="display:flex;justify-content:center;gap:12px;margin-top:10px">
+        <button onclick="fcPrev()" style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 16px;font-size:11px;color:var(--text2);cursor:pointer">← Prev</button>
+        <button onclick="fcShuffle()" style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 16px;font-size:11px;color:var(--text2);cursor:pointer">🔀 Shuffle</button>
+        <button onclick="fcNext()" style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 16px;font-size:11px;color:var(--text2);cursor:pointer">Next →</button>
+      </div>
+    </div>
+    <!-- Stats -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card" style="padding:20px">
+        <div class="section-title" style="margin-bottom:12px"><span style="background:var(--teal)"></span>📊 Session Stats</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div class="fstat"><div class="fstat-val" id="fc-know-count" style="color:var(--sage)">0</div><div class="fstat-label">Know It</div></div>
+          <div class="fstat"><div class="fstat-val" id="fc-review-count" style="color:var(--coral)">0</div><div class="fstat-label">Review</div></div>
+        </div>
+        <div style="height:6px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:8px">
+          <div id="fc-know-bar" style="height:100%;background:linear-gradient(90deg,var(--teal),var(--sage));border-radius:99px;transition:width .4s;width:0%"></div>
+        </div>
+        <div style="font-size:10px;color:var(--text3)" id="fc-pct-lbl">Keep going!</div>
+        <button onclick="fcReset()" style="margin-top:12px;width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:7px;font-size:11px;color:var(--text2);cursor:pointer">↺ Reset Session</button>
+      </div>
+      <div class="card" style="padding:20px">
+        <div class="section-title" style="margin-bottom:10px"><span style="background:var(--amber)"></span>💡 Study Tips</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.8">
+          🔁 <strong>Spaced repetition</strong> — "Review" wale cards zyada baar aayenge<br>
+          ✅ <strong>Active recall</strong> — Answer bolne ke baad flip karo<br>
+          🧠 <strong>Chunking</strong> — Subject filter se ek baar mein ek subject karo<br>
+          🎯 <strong>Review cards</strong> — Focus karo jin pe "Review" hai
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /tab-flash -->
 
 <!-- ═══════════════════════════════════════════════════════ -->
 <!-- TAB 4: DAILY FOCUS GOAL                                -->
@@ -1296,6 +1569,36 @@ body.dark .fw{background:var(--card);border-color:var(--border)}
 <!-- ═══════════════════════════════════════════════════════ -->
 <div id="tab-scores" class="tab-panel">
   <div class="notif-bar" style="border-color:rgba(225,29,72,.25);background:rgba(225,29,72,.05);color:#be123c">🏆 <strong>Score Tracker</strong> — Test ka result yahan save karo. Date, code, aur score — sab ek jagah. Progress graph bhi dekhte raho!</div>
+
+  <!-- Rank Estimator Card -->
+  <div class="card" style="padding:24px;margin-bottom:20px">
+    <div class="section-title"><span style="background:var(--coral)"></span>🏆 NEET Rank Estimator — 2025 Cutoff Data</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:12px">
+      <div>
+        <label style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Your Mock Score / 720</label>
+        <input type="number" id="rank-score-inp" placeholder="e.g. 600" min="0" max="720" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;text-align:center;padding:10px;outline:none" oninput="estimateRank()">
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Category</label>
+        <select id="rank-cat" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;padding:10px;outline:none;font-family:'DM Sans',sans-serif" onchange="estimateRank()">
+          <option value="gen">General (UR)</option>
+          <option value="obc">OBC-NCL</option>
+          <option value="sc">SC</option>
+          <option value="st">ST</option>
+          <option value="ews">EWS</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button onclick="estimateRank()" style="background:linear-gradient(135deg,var(--teal),var(--teal2));border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:700;padding:11px 20px;cursor:pointer;width:100%">🔍 Estimate Rank</button>
+      </div>
+    </div>
+    <div class="rank-result" id="rank-result">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:6px">Estimated NEET 2026 Rank</div>
+      <div class="rank-big" id="rank-range"></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px" id="rank-college"></div>
+      <div style="font-size:10px;color:var(--text3);margin-top:6px">Based on NEET 2024–25 cutoff trends. Indicative only — actual rank depends on exam difficulty & number of candidates.</div>
+    </div>
+  </div>
 
   <!-- Add Score + Stats Row -->
   <div style="display:grid;grid-template-columns:400px 1fr;gap:20px;margin-bottom:20px">
@@ -2329,48 +2632,6 @@ const CH_DATA = {
 if(!S.ncertTracker)S.ncertTracker={};
 if(!S.rapidTracker)S.rapidTracker={};
 
-// ── TAB SWITCHING ──
-function switchTab(tab){
-  ['q','ncert','rapid','focus','tests','scores'].forEach(t=>{
-    const panel=document.getElementById('tab-'+t);
-    if(panel)panel.classList.toggle('active',t===tab);
-    const btn=document.getElementById('tab-btn-'+t);
-    if(btn){
-      btn.classList.remove('active','active-ncert','active-rapid');
-      if(t===tab){
-        if(tab==='ncert')btn.classList.add('active-ncert');
-        else if(tab==='rapid')btn.classList.add('active-rapid');
-        else btn.classList.add('active');
-      }
-    }
-  });
-  if(tab==='ncert'){renderAllTrackers('ncert');renderTrackerStats('ncert');}
-  if(tab==='rapid'){renderAllTrackers('rapid');renderTrackerStats('rapid');}
-  if(tab==='focus'){
-    // initialise preset buttons
-    document.querySelectorAll('.goal-preset-btn').forEach(b=>{
-      b.classList.toggle('active',parseInt(b.textContent)===S.focusGoalHrs);
-    });
-    const ci=document.getElementById('custom-goal-inp');
-    if(ci)ci.value=S.focusGoalHrs;
-    renderFocusGoal();
-  }
-  if(tab==='tests'){
-    // Ensure summary grid has 4 children
-    const sum=document.getElementById('test-plan-summary');
-    if(sum&&!sum.children.length){
-      sum.innerHTML='<div></div><div></div><div></div><div></div>';
-    }
-    renderTestPlanner();
-  }
-  if(tab==='scores'){
-    const sd=document.getElementById('score-date');
-    if(sd&&!sd.value)sd.value=new Date().toISOString().split('T')[0];
-    renderScores();
-  }
-  // scroll to top of main on tab switch
-  window.scrollTo({top:0,behavior:'smooth'});
-}
 
 // ── TRACKER RENDER ──
 function getTrackerState(mode){return mode==='ncert'?S.ncertTracker:S.rapidTracker;}
@@ -3132,37 +3393,544 @@ function updateFocusStatsAndGoal(){
 }
 
 // ══════════════════════════════════════════
+// PINNED FOCUS TIMER WIDGET (all screens)
+// ══════════════════════════════════════════
+let _pftCollapsed = false;
+function pftSync(){
+  // Sync focus btn state
+  const running = focusRunning;
+  const pfb = document.getElementById('pft-focus-btn');
+  const psb = document.getElementById('pft-stop-btn');
+  const dot = document.getElementById('pft-dot');
+  if(pfb){
+    pfb.textContent = running ? '⏸ Pause' : '▶ Focus';
+    pfb.className = 'pft-btn ' + (running ? 'pause' : 'start');
+  }
+  if(psb) psb.style.display = running ? '' : 'none';
+  if(dot) dot.style.opacity = running ? '1' : '.4';
+}
+function pftUpdateClock(){
+  const secs = getFocusSecs ? getFocusSecs() : 0;
+  const h = String(Math.floor(secs/3600)).padStart(2,'0');
+  const m = String(Math.floor(secs%3600/60)).padStart(2,'0');
+  const s = String(secs%60).padStart(2,'0');
+  const c = document.getElementById('pft-clock');
+  if(c) c.textContent = `${h}:${m}:${s}`;
+  // Pomo
+  const pl = typeof getPomoLeft==='function'? getPomoLeft():0;
+  const pm = String(Math.floor(pl/60)).padStart(2,'0');
+  const ps = String(pl%60).padStart(2,'0');
+  const pt = document.getElementById('pft-pomo-tag');
+  const pm2 = document.getElementById('pft-pomo-mode');
+  if(pt) pt.textContent = (pomoRunning?'🍅 ':'🍅 ')+pm+':'+ps;
+  if(pm2) pm2.textContent = pomoRunning?(pomoIsBreak?'Break ☕':'Focus 🧠'):'Pomo ready';
+  // Today focus
+  const tf = typeof getTodayFocus==='function'? getTodayFocus():0;
+  const ptt = document.getElementById('pft-today');
+  if(ptt) ptt.textContent = typeof fmtHM==='function'?fmtHM(tf):'—';
+  // Goal %
+  const gh = S.focusGoalHrs||10;
+  const goalSecs = gh*3600;
+  const gpct = Math.min(100,Math.round(tf/goalSecs*100));
+  const gpel = document.getElementById('pft-goal-pct');
+  if(gpel){ gpel.textContent = gpct+'%'; gpel.style.color = gpct>=100?'var(--sage)':gpct>=60?'var(--teal)':'var(--amber)'; }
+  // Streak
+  const sel = document.getElementById('pft-streak');
+  if(sel && typeof calcStreak==='function') sel.textContent = calcStreak()+'🔥';
+}
+setInterval(pftUpdateClock, 1000);
+
+function pftToggleCollapse(){
+  _pftCollapsed = !_pftCollapsed;
+  const body = document.getElementById('pft-body');
+  const btn = document.getElementById('pft-col-btn');
+  if(body) body.style.display = _pftCollapsed ? 'none' : '';
+  if(btn) btn.textContent = _pftCollapsed ? '+' : '−';
+}
+
+// Make PFT draggable
+(function(){
+  let drag=false,ox=0,oy=0;
+  document.addEventListener('DOMContentLoaded',()=>{
+    const pft=document.getElementById('pft');
+    const handle=document.getElementById('pft-drag');
+    if(!handle||!pft)return;
+    handle.addEventListener('mousedown',e=>{
+      drag=true;ox=e.clientX-pft.getBoundingClientRect().left;oy=e.clientY-pft.getBoundingClientRect().top;
+      pft.style.transition='none';e.preventDefault();
+    });
+    document.addEventListener('mousemove',e=>{
+      if(!drag)return;
+      let nx=e.clientX-ox,ny=e.clientY-oy;
+      nx=Math.max(0,Math.min(window.innerWidth-pft.offsetWidth,nx));
+      ny=Math.max(0,Math.min(window.innerHeight-pft.offsetHeight,ny));
+      pft.style.left=nx+'px';pft.style.top=ny+'px';pft.style.bottom='auto';pft.style.right='auto';
+    });
+    document.addEventListener('mouseup',()=>{drag=false;if(document.getElementById('pft'))document.getElementById('pft').style.transition='all .3s';});
+  });
+})();
+
+// ══════════════════════════════════════════
+// AMBIENT SOUND (Web Audio API — no CDN)
+// ══════════════════════════════════════════
+let _ambCtx=null,_ambSrc=null,_ambOn=false;
+function toggleAmbient(){
+  if(_ambOn){stopAmbient();}else{startAmbient();}
+}
+function stopAmbient(){
+  if(_ambSrc){try{_ambSrc.stop();}catch(e){} _ambSrc=null;}
+  if(_ambCtx){try{_ambCtx.close();}catch(e){} _ambCtx=null;}
+  _ambOn=false;
+  ['pft-sound-btn','sound-hdr-btn'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.textContent=id==='pft-sound-btn'?'🔇 Sound':'🔇 Sound';el.classList.remove('on');}
+  });
+}
+function changeAmbient(){if(_ambOn){stopAmbient();startAmbient();}}
+function startAmbient(){
+  try{
+    _ambCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const bufSecs=5,sr=_ambCtx.sampleRate;
+    const buf=_ambCtx.createBuffer(2,sr*bufSecs,sr);
+    const type=(document.getElementById('pft-sound-sel')||{value:'white'}).value||'white';
+    for(let ch=0;ch<2;ch++){
+      const d=buf.getChannelData(ch);
+      if(type==='white'){for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*0.12;}
+      else if(type==='brown'){let acc=0;for(let i=0;i<d.length;i++){acc+=(Math.random()*2-1)*0.008;acc*=0.998;d[i]=Math.max(-0.2,Math.min(0.2,acc*3));}}
+      else{ // rain
+        for(let i=0;i<d.length;i++){let r=Math.random()*2-1;d[i]=(r*0.15)*(Math.random()<0.008?5:1);}
+      }
+    }
+    const gain=_ambCtx.createGain();gain.gain.value=0.55;
+    _ambSrc=_ambCtx.createBufferSource();
+    _ambSrc.buffer=buf;_ambSrc.loop=true;
+    _ambSrc.connect(gain);gain.connect(_ambCtx.destination);
+    _ambSrc.start();_ambOn=true;
+    ['pft-sound-btn','sound-hdr-btn'].forEach(id=>{
+      const el=document.getElementById(id);
+      const lbl=(document.getElementById('pft-sound-sel')||{value:'white'}).value;
+      if(el){const names={white:'White',brown:'Brown',rain:'Rain'};el.textContent='🎧 '+names[lbl||'white'];el.classList.add('on');}
+    });
+  }catch(e){showToast('❌ Sound not supported in this browser');}
+}
+
+// ══════════════════════════════════════════
+// HYDRATION REMINDER
+// ══════════════════════════════════════════
+let _hydraInterval=null,_hydraNext=0;
+function startHydrationReminder(){
+  clearInterval(_hydraInterval);
+  const INTERVAL_MS=45*60*1000;
+  _hydraNext=Date.now()+INTERVAL_MS;
+  _hydraInterval=setInterval(()=>{
+    showToast('💧 Pani piyo! 8 glasses daily — brain ke liye zaruri hai.');
+    if('Notification' in window&&Notification.permission==='granted'){
+      new Notification('💧 Hydration Reminder',{body:'Ek glass pani piyo! Study continue karo 📚'});
+    }
+    _hydraNext=Date.now()+INTERVAL_MS;
+  },INTERVAL_MS);
+  setInterval(()=>{
+    const rem=Math.max(0,Math.round((_hydraNext-Date.now())/60000));
+    const el=document.getElementById('pft-hydra');
+    if(el)el.textContent='💧 '+rem+'m';
+  },30000);
+}
+
+// ══════════════════════════════════════════
+// SPACED REPETITION NUDGE
+// ══════════════════════════════════════════
+function renderSRNudge(mode){
+  const store = mode==='ncert'?S.ncertTracker:S.rapidTracker;
+  const today = new Date();
+  const overdue = [];
+  Object.keys(CH_DATA).forEach(sub=>{
+    CH_DATA[sub].chapters.forEach((ch,i)=>{
+      const key=sub+'_'+i;
+      const dates=store[key]||[];
+      if(!dates.length)return;
+      const lastDate=dates[dates.length-1].split(' ')[0];
+      const parts=lastDate.split('-').map(Number);
+      const d=new Date(parts[0],parts[1]-1,parts[2]);
+      const daysDiff=Math.round((today-d)/(1000*60*60*24));
+      if(daysDiff>=7)overdue.push({ch,sub,i,days:daysDiff});
+    });
+  });
+  const barId=mode+'-sr-bar';
+  const chipsId=mode+'-sr-chips';
+  const bar=document.getElementById(barId);
+  const chips=document.getElementById(chipsId);
+  if(!bar||!chips)return;
+  if(!overdue.length){bar.style.display='none';return;}
+  bar.style.display='block';
+  overdue.sort((a,b)=>b.days-a.days);
+  chips.innerHTML=overdue.slice(0,12).map(o=>`
+    <span class="sr-chip ${o.days>=14?'urgent':''}" onclick="logChapterRead('${mode}','${o.sub}',${o.i});renderSRNudge('${mode}')">
+      ${CH_DATA[o.sub].chapters[o.i].slice(0,28)} · ${o.days}d ago
+    </span>`).join('');
+}
+
+// ══════════════════════════════════════════
+// MISTAKE LOG
+// ══════════════════════════════════════════
+if(!S.mistakes)S.mistakes=[];
+let _mkFilter='all';
+const MK_COLORS={bio12:'var(--sage)',bio11:'#6ee7b7',phychem:'var(--sky)',orgchem:'var(--amber)',inorg:'var(--orange)',physics:'var(--coral)'};
+
+function addMistake(){
+  const sub=document.getElementById('mk-subject').value;
+  const topic=document.getElementById('mk-topic').value.trim();
+  const note=document.getElementById('mk-note').value.trim();
+  if(!topic){showToast('❌ Topic likhna zaroori hai!');return;}
+  S.mistakes.push({id:'mk_'+Date.now(),sub,topic,note,resolved:false,date:todayKey(),ts:Date.now()});
+  saveState(S);
+  document.getElementById('mk-topic').value='';
+  document.getElementById('mk-note').value='';
+  renderMistakes();
+  showToast('❌ Mistake logged: '+topic.slice(0,30));
+  updateMistakeBadge();
+}
+
+function resolveMistake(id){
+  const m=S.mistakes.find(x=>x.id===id);
+  if(m)m.resolved=!m.resolved;
+  saveState(S);renderMistakes();updateMistakeBadge();
+  showToast(m.resolved?'✅ Mistake resolved!':'↩ Marked pending again');
+}
+
+function deleteMistake(id){
+  if(!confirm('Remove this mistake log?'))return;
+  S.mistakes=S.mistakes.filter(x=>x.id!==id);
+  saveState(S);renderMistakes();updateMistakeBadge();
+}
+
+function filterMistakes(f,btn){
+  _mkFilter=f;
+  document.querySelectorAll('[id^="mk-filter-"]').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  renderMistakes();
+}
+
+function renderMistakes(){
+  let list=[...S.mistakes].sort((a,b)=>b.ts-a.ts);
+  if(_mkFilter==='pending')list=list.filter(m=>!m.resolved);
+  else if(_mkFilter==='resolved')list=list.filter(m=>m.resolved);
+  else if(_mkFilter==='bio')list=list.filter(m=>m.sub.startsWith('bio'));
+  else if(_mkFilter==='chem')list=list.filter(m=>m.sub.includes('chem')||m.sub==='inorg');
+  else if(_mkFilter==='physics')list=list.filter(m=>m.sub==='physics');
+  const el=document.getElementById('mk-list');
+  const em=document.getElementById('mk-empty');
+  if(!el)return;
+  const pending=S.mistakes.filter(m=>!m.resolved).length;
+  const total=S.mistakes.length;
+  const done=total-pending;
+  const st=document.getElementById('mk-stat-total');const sp=document.getElementById('mk-stat-pending');const sd=document.getElementById('mk-stat-done');
+  if(st)st.textContent=total;if(sp)sp.textContent=pending;if(sd)sd.textContent=done;
+  if(!list.length){el.innerHTML='';if(em)em.style.display='block';return;}
+  if(em)em.style.display='none';
+  const LABELS={bio12:'🧬 Bio 12',bio11:'🌿 Bio 11',phychem:'⚗️ PhyChem',orgchem:'🔗 Organic',inorg:'🧪 Inorganic',physics:'⚡ Physics'};
+  el.innerHTML=list.map(m=>`
+    <div class="mistake-item ${m.resolved?'resolved':''}">
+      <div class="mistake-dot" style="background:${MK_COLORS[m.sub]||'var(--text3)'}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="mistake-topic">${LABELS[m.sub]||m.sub} — ${m.topic}</div>
+        ${m.note?`<div class="mistake-note">${m.note}</div>`:''}
+        <div class="mistake-meta">${m.date} ${m.resolved?'· ✅ Resolved':''}</div>
+      </div>
+      <button class="mistake-resolve-btn" onclick="resolveMistake('${m.id}')">${m.resolved?'↩ Undo':'✅ Resolve'}</button>
+      <button class="mistake-del-btn" onclick="deleteMistake('${m.id}')">🗑</button>
+    </div>`).join('');
+}
+
+function updateMistakeBadge(){
+  const pending=S.mistakes.filter(m=>!m.resolved).length;
+  const btn=document.getElementById('tab-btn-mistakes');
+  if(btn)btn.textContent=(pending>0?`❌ Mistakes (${pending})`:`❌ Mistake Log`);
+}
+
+// ══════════════════════════════════════════
+// FLASHCARDS
+// ══════════════════════════════════════════
+const FC_CARDS=[
+  {q:'What is the full form of DNA?',a:'Deoxyribonucleic Acid',sub:'bio'},
+  {q:'How many chromosomes do humans have?',a:'46 (23 pairs)',sub:'bio'},
+  {q:'Which enzyme is used in DNA replication as the primary polymerase?',a:'DNA Polymerase III',sub:'bio'},
+  {q:'What is the monomer of proteins?',a:'Amino acids',sub:'bio'},
+  {q:'Which organelle is called the powerhouse of the cell?',a:'Mitochondria',sub:'bio'},
+  {q:'What is the process of conversion of glucose to pyruvate called?',a:'Glycolysis',sub:'bio'},
+  {q:'Calvin cycle occurs in which part of the chloroplast?',a:'Stroma',sub:'bio'},
+  {q:'What is the site of light reactions in photosynthesis?',a:'Thylakoid membranes (Grana)',sub:'bio'},
+  {q:'What is the full form of ATP?',a:'Adenosine Triphosphate',sub:'bio'},
+  {q:'Which bond joins amino acids in a protein?',a:'Peptide bond',sub:'bio'},
+  {q:'What is transpiration?',a:'Loss of water vapour from aerial parts of a plant (mainly through stomata)',sub:'bio'},
+  {q:'Phloem transports what?',a:'Organic solutes (sucrose/food) — bidirectional',sub:'bio'},
+  {q:'Xylem transports what?',a:'Water and minerals — upward from roots to leaves',sub:'bio'},
+  {q:'What is the role of auxins?',a:'Cell elongation, apical dominance, phototropism, geotropism',sub:'bio'},
+  {q:'What is the Krebs cycle also called?',a:'Citric Acid Cycle / TCA (Tricarboxylic Acid) Cycle',sub:'bio'},
+  {q:'How many ATP are produced by complete oxidation of one glucose?',a:'36–38 ATP (net)',sub:'bio'},
+  {q:'What is the genetic material in most viruses that infect plants?',a:'RNA (single-stranded)',sub:'bio'},
+  {q:'Law of Segregation is Mendel\'s which law?',a:'First Law (Law of Segregation)',sub:'bio'},
+  {q:'What ratio does a dihybrid cross produce in F2?',a:'9:3:3:1 (phenotypic)',sub:'bio'},
+  {q:'What is the shape of DNA as discovered by Watson and Crick?',a:'Double helix (B-DNA)',sub:'bio'},
+  {q:'Which base pairs with Adenine in DNA?',a:'Thymine (T) — connected by 2 H-bonds',sub:'bio'},
+  {q:'Which base pairs with Guanine in DNA?',a:'Cytosine (C) — connected by 3 H-bonds',sub:'bio'},
+  {q:'What is the central dogma of molecular biology?',a:'DNA → RNA → Protein',sub:'bio'},
+  {q:'What enzyme catalyses transcription?',a:'RNA Polymerase',sub:'bio'},
+  {q:'What is the codon for methionine (start codon)?',a:'AUG',sub:'bio'},
+  {q:'What are the stop codons?',a:'UAA, UAG, UGA',sub:'bio'},
+  {q:'What is Darwinism?',a:'Natural selection — survival of the fittest; variations accumulate and lead to new species',sub:'bio'},
+  {q:'What is the full form of PCR?',a:'Polymerase Chain Reaction',sub:'bio'},
+  {q:'Which enzyme cuts DNA at specific sites in genetic engineering?',a:'Restriction endonucleases (restriction enzymes)',sub:'bio'},
+  {q:'What is biodiversity hotspot?',a:'Region with exceptional biodiversity AND high threat of habitat loss (> 70% habitat lost)',sub:'bio'},
+  {q:'What is the Avogadro number?',a:'6.022 × 10²³',sub:'chem'},
+  {q:'What is Hund\'s rule?',a:'Electrons occupy orbitals singly before pairing; all single electrons have same spin',sub:'chem'},
+  {q:'What is Aufbau principle?',a:'Electrons fill orbitals in order of increasing energy (1s 2s 2p 3s 3p 4s…)',sub:'chem'},
+  {q:'State Pauli Exclusion Principle',a:'No two electrons in an atom can have the same set of all four quantum numbers',sub:'chem'},
+  {q:'What is Le Chatelier\'s Principle?',a:'If a system at equilibrium is disturbed, it shifts to counteract the disturbance',sub:'chem'},
+  {q:'What is Raoult\'s Law?',a:'p = xA × p°A — partial pressure of solvent = mole fraction × vapour pressure of pure solvent',sub:'chem'},
+  {q:'What is molarity?',a:'Moles of solute per litre of solution (mol/L)',sub:'chem'},
+  {q:'What is molality?',a:'Moles of solute per kg of solvent (mol/kg)',sub:'chem'},
+  {q:'What is Faraday\'s first law of electrolysis?',a:'Mass deposited ∝ charge passed (m = ZQ = ZIt)',sub:'chem'},
+  {q:'What is a nucleophile?',a:'Species that donates an electron pair (electron-rich, attacks positive/electrophilic centres)',sub:'chem'},
+  {q:'What is an electrophile?',a:'Electron-deficient species that accepts an electron pair',sub:'chem'},
+  {q:'What is Markovnikov\'s Rule?',a:'In addition of HX to alkene, H adds to carbon with more H atoms (major product)',sub:'chem'},
+  {q:'What is the IUPAC name of chloroform?',a:'Trichloromethane',sub:'chem'},
+  {q:'What is saponification?',a:'Alkaline hydrolysis of ester to give alcohol + carboxylate salt (soap-making)',sub:'chem'},
+  {q:'What is the hybridisation of carbon in methane?',a:'sp³',sub:'chem'},
+  {q:'What is hybridisation of carbon in ethylene (ethene)?',a:'sp² (double bond)',sub:'chem'},
+  {q:'What is hybridisation of carbon in acetylene (ethyne)?',a:'sp (triple bond)',sub:'chem'},
+  {q:'What is the shape of water molecule and its bond angle?',a:'Bent/V-shape, 104.5°',sub:'chem'},
+  {q:'What is the shape of NH3 and bond angle?',a:'Trigonal pyramidal, ~107°',sub:'chem'},
+  {q:'What is the colour of K2Cr2O7 in solution?',a:'Orange',sub:'chem'},
+  {q:'What is the colour of KMnO4 in solution?',a:'Purple/violet',sub:'chem'},
+  {q:'Which gas is produced when sodium reacts with water?',a:'Hydrogen (H₂) + NaOH',sub:'chem'},
+  {q:'What is Newton\'s first law of motion?',a:'An object remains at rest or uniform motion unless acted on by external net force (Law of Inertia)',sub:'physics'},
+  {q:'What is Newton\'s second law?',a:'F = ma (net force = mass × acceleration)',sub:'physics'},
+  {q:'What is Newton\'s third law?',a:'Every action has an equal and opposite reaction',sub:'physics'},
+  {q:'What is the SI unit of force?',a:'Newton (N) = kg·m/s²',sub:'physics'},
+  {q:'What is the formula for kinetic energy?',a:'KE = ½mv²',sub:'physics'},
+  {q:'What is the formula for potential energy (gravitational)?',a:'PE = mgh',sub:'physics'},
+  {q:'What is Hooke\'s Law?',a:'F = −kx (restoring force proportional to displacement)',sub:'physics'},
+  {q:'What is the formula for work done?',a:'W = F·d·cosθ',sub:'physics'},
+  {q:'What is Ohm\'s Law?',a:'V = IR (voltage = current × resistance)',sub:'physics'},
+  {q:'What is the formula for electric power?',a:'P = VI = I²R = V²/R',sub:'physics'},
+  {q:'What is Snell\'s Law of refraction?',a:'n₁sinθ₁ = n₂sinθ₂',sub:'physics'},
+  {q:'What is the speed of light in vacuum?',a:'3 × 10⁸ m/s',sub:'physics'},
+  {q:'What is the formula for de Broglie wavelength?',a:'λ = h/mv = h/p',sub:'physics'},
+  {q:'What is Bohr\'s quantisation condition?',a:'mvr = nh/2π (angular momentum is quantised)',sub:'physics'},
+  {q:'What is the energy-mass equivalence by Einstein?',a:'E = mc²',sub:'physics'},
+  {q:'What is the formula for escape velocity?',a:'v = √(2gR) ≈ 11.2 km/s for Earth',sub:'physics'},
+  {q:'What is Bernoulli\'s theorem?',a:'P + ½ρv² + ρgh = constant (energy conservation in fluid flow)',sub:'physics'},
+  {q:'What is the refractive index?',a:'n = c/v = sinθᵢ/sinθᵣ',sub:'physics'},
+  {q:'What is Young\'s double slit experiment used to demonstrate?',a:'Wave nature of light (interference)',sub:'physics'},
+  {q:'What is the photoelectric effect?',a:'Emission of electrons from a metal surface when light above threshold frequency hits it',sub:'physics'},
+  {q:'What is the work function in photoelectric effect?',a:'Minimum energy required to eject an electron from the metal surface',sub:'physics'},
+  {q:'What is Lenz\'s Law?',a:'Induced current opposes the change in magnetic flux that caused it',sub:'physics'},
+  {q:'What is the formula for magnetic force on a current-carrying conductor?',a:'F = BIL sinθ',sub:'physics'},
+  {q:'What are the equations of motion (uniform acceleration)?',a:'v=u+at; s=ut+½at²; v²=u²+2as',sub:'physics'},
+  {q:'What is projectile motion?',a:'Motion under gravity where horizontal velocity is constant and vertical has uniform acceleration',sub:'physics'},
+  {q:'What is the time period of a simple pendulum?',a:'T = 2π√(L/g)',sub:'physics'},
+  {q:'What is Coulomb\'s law?',a:'F = kq₁q₂/r² (force between two point charges)',sub:'physics'},
+  {q:'What is the SI unit of charge?',a:'Coulomb (C)',sub:'physics'},
+  {q:'What is nuclear fission?',a:'Heavy nucleus splits into two lighter nuclei releasing large energy (e.g. U-235 + n)',sub:'physics'},
+  {q:'What is nuclear fusion?',a:'Two light nuclei combine to form heavier nucleus releasing energy (e.g. H + H → He, in sun)',sub:'physics'},
+];
+
+let _fcFiltered=[...FC_CARDS],_fcIdx=0,_fcKnow=0,_fcReview=0,_fcFlipped=false;
+if(!S.fcState)S.fcState={};// {cardIdx: 'know'|'review'}
+
+function setFcFilter(f,btn){
+  document.querySelectorAll('#tab-flash .fc-filter-btn').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  if(f==='all')_fcFiltered=[...FC_CARDS];
+  else if(f==='review')_fcFiltered=FC_CARDS.filter((_,i)=>S.fcState[i]==='review');
+  else _fcFiltered=FC_CARDS.filter(c=>c.sub===f);
+  _fcIdx=0;_fcKnow=0;_fcReview=0;
+  renderFcCard();
+}
+function renderFcCard(){
+  _fcFlipped=false;
+  const sc=document.getElementById('fc-scene');
+  if(sc)sc.classList.remove('flipped');
+  const card=_fcFiltered[_fcIdx];
+  if(!card){
+    document.getElementById('fc-q').textContent='All cards done! 🎉';
+    document.getElementById('fc-a').textContent='';
+    document.getElementById('fc-sub-front').textContent='Complete';
+    return;
+  }
+  document.getElementById('fc-q').textContent=card.q;
+  document.getElementById('fc-a').textContent=card.a;
+  document.getElementById('fc-sub-front').textContent=card.sub==='bio'?'🧬 Biology':card.sub==='chem'?'⚗️ Chemistry':'⚡ Physics';
+  document.getElementById('fc-sub-back').textContent=card.sub==='bio'?'🧬 Biology':card.sub==='chem'?'⚗️ Chemistry':'⚡ Physics';
+  document.getElementById('fc-counter').textContent=`Card ${_fcIdx+1} of ${_fcFiltered.length}`;
+  const pct=Math.round((_fcKnow+_fcReview)/_fcFiltered.length*100);
+  document.getElementById('fc-prog-fill').style.width=pct+'%';
+  document.getElementById('fc-know-count').textContent=_fcKnow;
+  document.getElementById('fc-review-count').textContent=_fcReview;
+  const total=_fcKnow+_fcReview;
+  const kPct=total?Math.round(_fcKnow/total*100):0;
+  document.getElementById('fc-know-bar').style.width=kPct+'%';
+  document.getElementById('fc-pct-lbl').textContent=total?kPct+'% knew it so far':'Flip a card!';
+}
+function flipCard(){
+  _fcFlipped=!_fcFlipped;
+  const sc=document.getElementById('fc-scene');
+  if(sc)sc.classList.toggle('flipped',_fcFlipped);
+}
+function fcMark(type){
+  const realIdx=FC_CARDS.indexOf(_fcFiltered[_fcIdx]);
+  if(realIdx>=0)S.fcState[realIdx]=type;
+  saveState(S);
+  if(type==='know')_fcKnow++;else _fcReview++;
+  fcNext();
+}
+function fcNext(){_fcIdx=Math.min(_fcFiltered.length-1,_fcIdx+1);renderFcCard();}
+function fcPrev(){_fcIdx=Math.max(0,_fcIdx-1);renderFcCard();}
+function fcShuffle(){_fcFiltered.sort(()=>Math.random()-.5);_fcIdx=0;_fcKnow=0;_fcReview=0;renderFcCard();showToast('🔀 Cards shuffled!');}
+function fcReset(){_fcKnow=0;_fcReview=0;_fcIdx=0;renderFcCard();}
+
+// ══════════════════════════════════════════
+// HABIT TRACKER
+// ══════════════════════════════════════════
+const DEFAULT_HABITS=[
+  {id:'h1',name:'💧 8 glasses of water',emoji:'💧'},
+  {id:'h2',name:'🌙 Sleep by 11 PM',emoji:'🌙'},
+  {id:'h3',name:'📵 No social media till 10 AM',emoji:'📵'},
+  {id:'h4',name:'🚶 10-min walk / stretch',emoji:'🚶'},
+  {id:'h5',name:'📖 Read 1 NCERT chapter',emoji:'📖'},
+];
+if(!S.habits)S.habits=DEFAULT_HABITS.map(h=>({...h}));
+if(!S.habitDone)S.habitDone={};
+
+function getHabitDoneToday(){
+  const k=todayKey();
+  if(!S.habitDone[k])S.habitDone[k]={};
+  return S.habitDone[k];
+}
+function toggleHabit(id){
+  const done=getHabitDoneToday();
+  done[id]=!done[id];
+  saveState(S);renderHabits();
+}
+function renderHabits(){
+  const done=getHabitDoneToday();
+  const list=document.getElementById('habit-list');
+  const lbl=document.getElementById('habit-count-lbl');
+  if(!list)return;
+  const doneCount=S.habits.filter(h=>done[h.id]).length;
+  if(lbl)lbl.textContent=`— ${doneCount}/${S.habits.length} done today`;
+  list.innerHTML=S.habits.map(h=>`
+    <div class="habit-item ${done[h.id]?'done-habit':''}" onclick="toggleHabit('${h.id}')">
+      <div class="habit-check">${done[h.id]?'✓':''}</div>
+      <div class="habit-name">${h.name}</div>
+      ${done[h.id]?'<span class="habit-streak">✅</span>':''}
+    </div>`).join('');
+  if(doneCount===S.habits.length)showToast('🌟 Saari habits complete! Amazing discipline!');
+}
+
+// ══════════════════════════════════════════
+// RANK ESTIMATOR
+// ══════════════════════════════════════════
+function estimateRank(){
+  const score=parseInt(document.getElementById('rank-score-inp')?.value)||0;
+  const cat=document.getElementById('rank-cat')?.value||'gen';
+  if(!score){return;}
+  // Based on NEET 2024-25 approximate data
+  const CUT={gen:{720:1,700:50,680:500,660:2000,640:5000,620:10000,600:18000,580:30000,560:50000,540:75000,520:110000,500:160000,480:220000,460:300000,440:400000,420:550000},
+    obc:{720:1,700:50,680:500,660:2000,640:5000,620:10000,600:17000,580:28000,560:45000,540:65000,520:95000,500:140000,480:190000,460:260000,440:340000},
+    sc:{720:1,700:50,680:500,660:1800,640:4500,620:9000,600:15000,580:25000,560:40000,540:58000,520:85000,500:120000,480:160000,460:215000,440:280000},
+    st:{720:1,700:45,680:450,660:1500,640:3800,620:7500,600:12000,580:20000,560:33000,540:48000,520:70000,500:100000,480:135000},
+    ews:{720:1,700:50,680:500,660:2000,640:5000,620:10000,600:17000,580:28000,560:45000,540:65000}};
+  const table=CUT[cat]||CUT.gen;
+  const entries=Object.entries(table).map(([k,v])=>([Number(k),v])).sort((a,b)=>b[0]-a[0]);
+  let rankLow=entries[entries.length-1][1],rankHigh=entries[entries.length-1][1];
+  for(let i=0;i<entries.length-1;i++){
+    if(score<=entries[i][0]&&score>entries[i+1][0]){
+      rankLow=entries[i][1];rankHigh=entries[i+1][1];break;
+    }
+    if(score>entries[0][0]){rankLow=1;rankHigh=10;}
+  }
+  const fmt=n=>n>=100000?Math.round(n/1000)+'L+':n>=1000?Math.round(n/1000)+'K+':n;
+  let college='';
+  if(score>=660)college='AIIMS Delhi / Top government medical colleges likely';
+  else if(score>=620)college='State government MBBS seats likely';
+  else if(score>=580)college='Government MBBS possible — BDS/AYUSH also';
+  else if(score>=520)college='Private MBBS (upper range) / BDS';
+  else college='Private colleges / AYUSH stream — keep pushing!';
+  const res=document.getElementById('rank-result');
+  const rr=document.getElementById('rank-range');
+  const rc=document.getElementById('rank-college');
+  if(res)res.style.display='block';
+  if(rr)rr.textContent=`Rank ~${fmt(rankLow)} – ${fmt(rankHigh)}`;
+  if(rc)rc.textContent=college;
+}
+
+// ══════════════════════════════════════════
+// SWITCH TAB — extended for new tabs
+// ══════════════════════════════════════════
+function switchTab(tab){
+  ['q','ncert','rapid','focus','tests','scores','mistakes','flash'].forEach(t=>{
+    const panel=document.getElementById('tab-'+t);
+    if(panel)panel.classList.toggle('active',t===tab);
+    const btn=document.getElementById('tab-btn-'+t);
+    if(btn){
+      btn.classList.remove('active','active-ncert','active-rapid');
+      if(t===tab){
+        if(tab==='ncert')btn.classList.add('active-ncert');
+        else if(tab==='rapid')btn.classList.add('active-rapid');
+        else btn.classList.add('active');
+      }
+    }
+  });
+  if(tab==='ncert'){renderAllTrackers('ncert');renderTrackerStats('ncert');renderSRNudge('ncert');}
+  if(tab==='rapid'){renderAllTrackers('rapid');renderTrackerStats('rapid');renderSRNudge('rapid');}
+  if(tab==='focus'){
+    document.querySelectorAll('.goal-preset-btn').forEach(b=>{
+      b.classList.toggle('active',parseInt(b.textContent)===S.focusGoalHrs);
+    });
+    const ci=document.getElementById('custom-goal-inp');
+    if(ci)ci.value=S.focusGoalHrs;
+    renderFocusGoal();
+  }
+  if(tab==='tests'){
+    const sum=document.getElementById('test-plan-summary');
+    if(sum&&!sum.children.length)sum.innerHTML='<div></div><div></div><div></div><div></div>';
+    renderTestPlanner();
+  }
+  if(tab==='scores'){
+    const sd=document.getElementById('score-date');
+    if(sd&&!sd.value)sd.value=new Date().toISOString().split('T')[0];
+    renderScores();
+  }
+  if(tab==='mistakes'){renderMistakes();}
+  if(tab==='flash'){renderFcCard();}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 function init(){
   updateCountdown();renderQuote();renderTimetable();renderSubjects();
   renderBio11();renderInorg();initPomo();updateFocusStats();
   updateStreak();renderWeekly();renderJournalHistory();updatePacePredictor();
-  renderTargets();
-  // New feature inits
+  renderTargets();renderHabits();renderMistakes();updateMistakeBadge();
   updateHeaderGoalChip();
-  // Ensure test planner summary has 4 slots
-  const sum=document.getElementById('test-plan-summary');
-  if(sum)sum.innerHTML='<div></div><div></div><div></div><div></div>';
-  renderTestPlanner();
-  renderScores();
-  // Default date for score form
-  const sd=document.getElementById('score-date');
-  if(sd)sd.value=new Date().toISOString().split('T')[0];
-  // Show widget toggle if there are today's targets
+  const sum=document.getElementById("test-plan-summary");
+  if(sum)sum.innerHTML="<div></div><div></div><div></div><div></div>";
+  renderTestPlanner();renderScores();
+  const sd=document.getElementById("score-date");
+  if(sd)sd.value=new Date().toISOString().split("T")[0];
   const todayT=S.targets.filter(t=>t.date===todayKey());
-  if(todayT.length)document.getElementById('fw-toggle-btn').style.display='grid';
+  if(todayT.length)document.getElementById("fw-toggle-btn").style.display="grid";
+  pftSync();pftUpdateClock();startHydrationReminder();
   setInterval(updateCountdown,60000);
   setInterval(renderTimetable,60000);
-  setInterval(()=>{renderWeekly();updatePacePredictor();updateHeaderGoalChip();},120000);
-  // Restore Firebase + group if previously set up
+  setInterval(()=>{renderWeekly();updatePacePredictor();updateHeaderGoalChip();pftSync();},120000);
   if(S.firebaseConfig){
     const ok=initFirebase(S.firebaseConfig);
     if(ok&&S.groupId){
-      document.getElementById('group-code-lbl').textContent=S.groupId;
+      document.getElementById("group-code-lbl").textContent=S.groupId;
       startGroupSync();
     }
   }
-  // Notification permission
-  if('Notification' in window&&Notification.permission==='default'){
+  if("Notification" in window&&Notification.permission==="default"){
     setTimeout(()=>Notification.requestPermission(),3000);
   }
 }

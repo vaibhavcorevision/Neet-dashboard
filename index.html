@@ -1702,7 +1702,7 @@ body.dark .test-modal{background:var(--card);}
             <div class="info-field"><div class="if-label">City</div><div class="if-val">New Delhi</div></div>
             <div class="info-field"><div class="if-label">Preferred Time</div><div class="if-val">Morning (6–10 AM)</div></div>
           </div>
-          <button class="btn-primary" style="margin-top:16px;width:100%;justify-content:center;" onclick="showToast('Profile edit coming soon!')">Edit Profile</button>
+          <button class="btn-primary" style="margin-top:16px;width:100%;justify-content:center;" onclick="openProfileEdit()">✏️ Edit Profile</button>
         </div>
         <div class="info-section">
           <div class="is-title">Achievements 🏆</div>
@@ -1938,6 +1938,12 @@ body.dark .test-modal{background:var(--card);}
             <tr><td>2023</td><td>137</td><td>107</td><td>93</td><td><span style="background:#FDECEA;color:#C0392B;padding:2px 7px;border-radius:20px;font-size:11px;">Tough</span></td></tr>
             <tr><td>2022</td><td>117</td><td>93</td><td>70</td><td><span style="background:#FBF3E2;color:#C4922A;padding:2px 7px;border-radius:20px;font-size:11px;">Standard</span></td></tr>
             <tr><td>2021</td><td>138</td><td>108</td><td>96</td><td><span style="background:#E6F4EF;color:#2D7A5E;padding:2px 7px;border-radius:20px;font-size:11px;">Moderate</span></td></tr>
+            <tr><td>2020</td><td>147</td><td>113</td><td>93</td><td><span style="background:#E6F4EF;color:#2D7A5E;padding:2px 7px;border-radius:20px;font-size:11px;">Moderate</span></td></tr>
+            <tr><td>2019</td><td>134</td><td>107</td><td>93</td><td><span style="background:#FBF3E2;color:#C4922A;padding:2px 7px;border-radius:20px;font-size:11px;">Standard</span></td></tr>
+            <tr><td>2018</td><td>119</td><td>96</td><td>96</td><td><span style="background:#FBF3E2;color:#C4922A;padding:2px 7px;border-radius:20px;font-size:11px;">Standard</span></td></tr>
+            <tr><td>2017</td><td>131</td><td>107</td><td>107</td><td><span style="background:#E6F4EF;color:#2D7A5E;padding:2px 7px;border-radius:20px;font-size:11px;">Moderate</span></td></tr>
+            <tr><td>2016</td><td>145</td><td>118</td><td>118</td><td><span style="background:#E6F4EF;color:#2D7A5E;padding:2px 7px;border-radius:20px;font-size:11px;">Moderate</span></td></tr>
+            <tr><td>2015</td><td>105</td><td>75</td><td>52</td><td><span style="background:#E6F4EF;color:#2D7A5E;padding:2px 7px;border-radius:20px;font-size:11px;">Moderate</span></td></tr>
           </tbody>
         </table>
         <div style="margin-top:20px;">
@@ -1970,6 +1976,12 @@ body.dark .test-modal{background:var(--card);}
         <div class="pyq-tab" data-yr="2023" onclick="selectPyqYear(this)">NEET 2023</div>
         <div class="pyq-tab" data-yr="2022" onclick="selectPyqYear(this)">NEET 2022</div>
         <div class="pyq-tab" data-yr="2021" onclick="selectPyqYear(this)">NEET 2021</div>
+        <div class="pyq-tab" data-yr="2020" onclick="selectPyqYear(this)">NEET 2020</div>
+        <div class="pyq-tab" data-yr="2019" onclick="selectPyqYear(this)">NEET 2019</div>
+        <div class="pyq-tab" data-yr="2018" onclick="selectPyqYear(this)">NEET 2018</div>
+        <div class="pyq-tab" data-yr="2017" onclick="selectPyqYear(this)">NEET 2017</div>
+        <div class="pyq-tab" data-yr="2016" onclick="selectPyqYear(this)">NEET 2016</div>
+        <div class="pyq-tab" data-yr="2015" onclick="selectPyqYear(this)">NEET 2015</div>
       </div>
       <div class="pyq-result-row" id="pyqResultRow"></div>
     </div>
@@ -2066,7 +2078,7 @@ body.dark .test-modal{background:var(--card);}
         <div id="tmPyqYearWrap" style="display:none;">
           <label class="form-label">PYQ Year</label>
           <select class="form-input" id="tm-pyq-year">
-            <option>2024</option><option>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>2018</option>
+            <option>2024</option><option>2023</option><option>2022</option><option>2021</option><option>2020</option><option>2019</option><option>2018</option><option>2017</option><option>2016</option><option>2015</option>
           </select>
         </div>
         <!-- Date + Total -->
@@ -2426,6 +2438,71 @@ body.dark .test-modal{background:var(--card);}
       <button class="ft-ctrl-btn" onclick="ftSkip(event)" title="Skip">⏭</button>
     </div>
     <div class="ft-pom-dots" id="ftPomDots"></div>
+  </div>
+</div>
+
+<!-- PROFILE EDIT MODAL -->
+<div class="test-modal-overlay" id="profileEditModal" onclick="if(event.target.id==='profileEditModal')closeProfileEdit()">
+  <div class="test-modal" style="width:520px;">
+    <div class="tm-header">
+      <div><div class="modal-title">Edit Profile</div><div class="modal-sub">Update your personal information</div></div>
+      <button class="modal-close" onclick="closeProfileEdit()">✕</button>
+    </div>
+    <div class="tm-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" id="pe-name" type="text" placeholder="Your full name"/>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Initials (for avatar)</label>
+          <input class="form-input" id="pe-initials" type="text" placeholder="e.g. AK" maxlength="3"/>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Class</label>
+          <input class="form-input" id="pe-class" type="text" placeholder="e.g. XII — Science"/>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Board</label>
+          <select class="form-input" id="pe-board">
+            <option>CBSE</option><option>ICSE</option><option>State Board</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">School / Institution</label>
+        <input class="form-input" id="pe-school" type="text" placeholder="Your school name"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Target Exam</label>
+          <select class="form-input" id="pe-exam">
+            <option>NEET 2026</option><option>NEET 2027</option><option>JEE Mains + Advanced</option><option>AIIMS</option><option>JIPMER</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">City</label>
+          <input class="form-input" id="pe-city" type="text" placeholder="Your city"/>
+        </div>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Preferred Study Time</label>
+        <select class="form-input" id="pe-time">
+          <option>Morning (6–10 AM)</option>
+          <option>Late Morning (10 AM–1 PM)</option>
+          <option>Afternoon (2–6 PM)</option>
+          <option>Evening (6–9 PM)</option>
+          <option>Night (9 PM–12 AM)</option>
+          <option>Late Night (12 AM–3 AM)</option>
+        </select>
+      </div>
+    </div>
+    <div class="tm-footer">
+      <button class="btn-secondary" onclick="closeProfileEdit()">Cancel</button>
+      <button class="btn-save" onclick="saveProfileEdit()">Save Profile ✦</button>
+    </div>
   </div>
 </div>
 
@@ -3488,8 +3565,14 @@ const PYQ_DATA={
   '2023':{topperScore:720,cutUR:137,cutOBC:107,cutSCST:93,totalAppeaared:2090000,qualified:11,difficulty:'Tough'},
   '2022':{topperScore:715,cutUR:117,cutOBC:93,cutSCST:70,totalAppeaared:1872343,qualified:993069,difficulty:'Standard'},
   '2021':{topperScore:720,cutUR:138,cutOBC:108,cutSCST:96,totalAppeaared:1614777,qualified:870075,difficulty:'Moderate'},
+  '2020':{topperScore:720,cutUR:147,cutOBC:113,cutSCST:93,totalAppeaared:1597433,qualified:771500,difficulty:'Moderate'},
+  '2019':{topperScore:701,cutUR:134,cutOBC:107,cutSCST:93,totalAppeaared:1519375,qualified:797042,difficulty:'Standard'},
+  '2018':{topperScore:691,cutUR:119,cutOBC:96,cutSCST:96,totalAppeaared:1326725,qualified:634897,difficulty:'Standard'},
+  '2017':{topperScore:697,cutUR:131,cutOBC:107,cutSCST:107,totalAppeaared:1138890,qualified:606432,difficulty:'Moderate'},
+  '2016':{topperScore:685,cutUR:145,cutOBC:118,cutSCST:118,totalAppeaared:806000,qualified:409030,difficulty:'Moderate (1st attempt)'},
+  '2015':{topperScore:652,cutUR:105,cutOBC:75,cutSCST:52,totalAppeaared:631000,qualified:396946,difficulty:'Moderate'},
 };
-const CUTOFFS_UR={'2025':137,'2024':164,'2023':137,'2022':117,'2021':138};
+const CUTOFFS_UR={'2025':137,'2024':164,'2023':137,'2022':117,'2021':138,'2020':147,'2019':134,'2018':119,'2017':131,'2016':145,'2015':105};
 const CATEGORY_MULT={UR:1,OBC:0.78,SC:0.68,ST:0.68,EWS:0.82,PH:0.55};
 
 function selectPaperLevel(el){
@@ -3503,6 +3586,12 @@ function selectPaperLevel(el){
     '2023':'📝 2023 paper — tough paper, many found it tricky. Lower scores expected.',
     '2024':'📝 2024 paper — very tough + controversy. Scores were lower overall, rank cutoffs higher.',
     '2025':'🎯 2025 paper — easy paper! Even lower scores got good ranks. Cutoff dropped to 137 for UR.',
+    '2020':'📝 2020 paper — moderate, conducted during COVID. Slightly higher cutoffs.',
+    '2019':'📝 2019 paper — standard difficulty. First year of uniform NEET for all states.',
+    '2018':'📝 2018 paper — standard difficulty. Around 13 lakh candidates appeared.',
+    '2017':'📝 2017 paper — moderate. Significant jump in total candidates from previous years.',
+    '2016':'📝 2016 paper — NEET Phase 1. Moderate difficulty, higher cutoffs for UR.',
+    '2015':'📝 2015 paper (AIPMT) — moderate paper. Lower UR cutoff at 105 marks.',
   };
   document.getElementById('paperLevelNote').textContent=notes[rpSelectedYear]||'';
   rpUpdate();
@@ -3588,190 +3677,226 @@ document.getElementById('paperLevelNote').textContent='📝 2021 paper — moder
 renderPyqStats('2025');
 
 // ===== TEST LOG =====
-let testEntries=JSON.parse(localStorage.getItem('testEntries')||'[]');
-let tmType='full', tmSubj='All';
-let formulaErrors=[],sillyErrors=[],conceptGaps=[],confusions=[];
-let editingTestId=null;
+let testEntries = [];
+try { testEntries = JSON.parse(localStorage.getItem('neetTestEntries') || '[]'); } catch(e){ testEntries=[]; }
+let tmType = 'full', tmSubj = 'All';
+let formulaErrors = [], sillyErrors = [], conceptGaps = [], confusions = [];
+let editingTestId = null;
 
 function openTestModal(){
-  editingTestId=null;
-  document.getElementById('tmTitle').textContent='Add Test Entry';
-  document.getElementById('tm-name').value='';
-  document.getElementById('tm-date').value=new Date().toISOString().slice(0,10);
-  document.getElementById('tm-total').value='180';
-  document.getElementById('tm-correct').value='';
-  document.getElementById('tm-incorrect').value='';
-  document.getElementById('tm-skipped').value='';
-  document.getElementById('tm-notes').value='';
-  document.getElementById('tmScorePreview').style.display='none';
-  formulaErrors=[];sillyErrors=[];conceptGaps=[];confusions=[];
+  editingTestId = null;
+  document.getElementById('tmTitle').textContent = 'Add Test Entry';
+  document.getElementById('tm-name').value = '';
+  document.getElementById('tm-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('tm-total').value = '180';
+  document.getElementById('tm-correct').value = '';
+  document.getElementById('tm-incorrect').value = '';
+  document.getElementById('tm-skipped').value = '';
+  document.getElementById('tm-notes').value = '';
+  document.getElementById('tmScorePreview').style.display = 'none';
+  formulaErrors = []; sillyErrors = []; conceptGaps = []; confusions = [];
   renderWrongLists();
-  tmType='full';tmSubj='All';
-  document.querySelectorAll('#tmTypeRow .tm-type-btn').forEach(b=>{b.classList.toggle('active',b.dataset.t==='full');});
-  document.querySelectorAll('#tmSubjRow .tm-type-btn').forEach(b=>{b.classList.toggle('active',b.dataset.s==='All');});
-  document.getElementById('tmPyqYearWrap').style.display='none';
+  tmType = 'full'; tmSubj = 'All';
+  document.querySelectorAll('#tmTypeRow .tm-type-btn').forEach(b => b.classList.toggle('active', b.dataset.t === 'full'));
+  document.querySelectorAll('#tmSubjRow .tm-type-btn').forEach(b => b.classList.toggle('active', b.dataset.s === 'All'));
+  document.getElementById('tmPyqYearWrap').style.display = 'none';
   document.getElementById('testModal').classList.add('open');
 }
-function closeTestModal(){document.getElementById('testModal').classList.remove('open');}
-function closeTestModalOut(e){if(e.target.id==='testModal')closeTestModal();}
+function closeTestModal(){ document.getElementById('testModal').classList.remove('open'); }
+function closeTestModalOut(e){ if(e.target.id === 'testModal') closeTestModal(); }
 
 function selectTmType(el){
-  tmType=el.dataset.t;
-  document.querySelectorAll('#tmTypeRow .tm-type-btn').forEach(b=>b.classList.remove('active'));
+  tmType = el.dataset.t;
+  document.querySelectorAll('#tmTypeRow .tm-type-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('tmPyqYearWrap').style.display=tmType==='pyq'?'block':'none';
+  document.getElementById('tmPyqYearWrap').style.display = (tmType === 'pyq') ? 'block' : 'none';
 }
 function selectTmSubj(el){
-  tmSubj=el.dataset.s;
-  document.querySelectorAll('#tmSubjRow .tm-type-btn').forEach(b=>b.classList.remove('active'));
+  tmSubj = el.dataset.s;
+  document.querySelectorAll('#tmSubjRow .tm-type-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
 }
 function tmCalcScore(){
-  const c=parseInt(document.getElementById('tm-correct').value)||0;
-  const w=parseInt(document.getElementById('tm-incorrect').value)||0;
-  const t=parseInt(document.getElementById('tm-total').value)||180;
-  const score=c*4-w;
-  const maxScore=t*4;
-  const pct=Math.max(0,((score/maxScore)*100).toFixed(1));
-  document.getElementById('tmScorePreview').style.display=c||w?'block':'none';
-  document.getElementById('tmScoreVal').textContent=score;
-  document.getElementById('tmScoreTotal').textContent=maxScore;
-  document.getElementById('tmScorePct').textContent=pct;
+  const c = parseInt(document.getElementById('tm-correct').value) || 0;
+  const w = parseInt(document.getElementById('tm-incorrect').value) || 0;
+  const t = parseInt(document.getElementById('tm-total').value) || 180;
+  const score = c * 4 - w;
+  const maxScore = t * 4;
+  const pct = Math.max(0, ((score / maxScore) * 100)).toFixed(1);
+  const preview = document.getElementById('tmScorePreview');
+  preview.style.display = (c || w) ? 'block' : 'none';
+  document.getElementById('tmScoreVal').textContent = score;
+  document.getElementById('tmScoreTotal').textContent = maxScore;
+  document.getElementById('tmScorePct').textContent = pct;
 }
 
 function addWrongTopic(type){
-  const inp=document.getElementById(type==='formula'?'formulaInput':'sillyInput');
-  const val=inp.value.trim();if(!val)return;
-  if(type==='formula')formulaErrors.push({topic:val,subj:tmSubj});
-  else sillyErrors.push({topic:val,subj:tmSubj});
-  inp.value='';
+  const inputId = type === 'formula' ? 'formulaInput' : 'sillyInput';
+  const inp = document.getElementById(inputId);
+  const val = inp.value.trim();
+  if(!val) return;
+  const obj = {topic: val, subj: tmSubj === 'All' ? '' : tmSubj};
+  if(type === 'formula') formulaErrors.push(obj);
+  else sillyErrors.push(obj);
+  inp.value = '';
   renderWrongLists();
+  inp.focus();
 }
 function addSkipTopic(type){
-  const inp=document.getElementById(type==='conceptgap'?'conceptGapInput':'confusionInput');
-  const val=inp.value.trim();if(!val)return;
-  if(type==='conceptgap')conceptGaps.push({topic:val,subj:tmSubj});
-  else confusions.push({topic:val,subj:tmSubj});
-  inp.value='';
+  const inputId = type === 'conceptgap' ? 'conceptGapInput' : 'confusionInput';
+  const inp = document.getElementById(inputId);
+  const val = inp.value.trim();
+  if(!val) return;
+  const obj = {topic: val, subj: tmSubj === 'All' ? '' : tmSubj};
+  if(type === 'conceptgap') conceptGaps.push(obj);
+  else confusions.push(obj);
+  inp.value = '';
+  renderWrongLists();
+  inp.focus();
+}
+function removeWrong(type, idx){
+  if(type === 'formula') formulaErrors.splice(idx, 1);
+  else if(type === 'silly') sillyErrors.splice(idx, 1);
+  else if(type === 'conceptgap') conceptGaps.splice(idx, 1);
+  else if(type === 'confusion') confusions.splice(idx, 1);
   renderWrongLists();
 }
 function renderWrongLists(){
-  const fe=document.getElementById('formulaErrorList');
-  const se=document.getElementById('sillyErrorList');
-  const cg=document.getElementById('conceptGapList');
-  const co=document.getElementById('confusionList');
-  const chip=(item,arr,cls)=>`<div style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--bg);border-radius:8px;margin-bottom:4px;font-size:12.5px;"><span style="flex:1;color:var(--text);">${item.topic}</span><span style="font-size:10px;color:var(--text3);">${item.subj||''}</span><button onclick="removeWrong('${cls}',${arr.indexOf(item)})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;">×</button></div>`;
-  fe.innerHTML=formulaErrors.map(i=>chip(i,formulaErrors,'formula')).join('');
-  se.innerHTML=sillyErrors.map(i=>chip(i,sillyErrors,'silly')).join('');
-  cg.innerHTML=conceptGaps.map(i=>chip(i,conceptGaps,'conceptgap')).join('');
-  co.innerHTML=confusions.map(i=>chip(i,confusions,'confusion')).join('');
-}
-function removeWrong(type,idx){
-  if(type==='formula')formulaErrors.splice(idx,1);
-  else if(type==='silly')sillyErrors.splice(idx,1);
-  else if(type==='conceptgap')conceptGaps.splice(idx,1);
-  else if(type==='confusion')confusions.splice(idx,1);
-  renderWrongLists();
+  const chipHTML = (item, type, idx) => `<div style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--bg);border-radius:8px;margin-bottom:4px;">
+    <span style="flex:1;font-size:12.5px;color:var(--text);">${item.topic}</span>
+    ${item.subj ? `<span style="font-size:10px;color:var(--text3);background:var(--card);padding:1px 6px;border-radius:10px;">${item.subj}</span>` : ''}
+    <button onclick="removeWrong('${type}',${idx})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:15px;line-height:1;padding:0 2px;">×</button>
+  </div>`;
+  document.getElementById('formulaErrorList').innerHTML = formulaErrors.map((i,x) => chipHTML(i,'formula',x)).join('');
+  document.getElementById('sillyErrorList').innerHTML = sillyErrors.map((i,x) => chipHTML(i,'silly',x)).join('');
+  document.getElementById('conceptGapList').innerHTML = conceptGaps.map((i,x) => chipHTML(i,'conceptgap',x)).join('');
+  document.getElementById('confusionList').innerHTML = confusions.map((i,x) => chipHTML(i,'confusion',x)).join('');
 }
 
 function saveTestEntry(){
-  const name=document.getElementById('tm-name').value.trim();
-  if(!name){showToast('⚠ Enter a test name');return;}
-  const correct=parseInt(document.getElementById('tm-correct').value)||0;
-  const incorrect=parseInt(document.getElementById('tm-incorrect').value)||0;
-  const skipped=parseInt(document.getElementById('tm-skipped').value)||0;
-  const total=parseInt(document.getElementById('tm-total').value)||180;
-  const score=correct*4-incorrect;
-  const maxScore=total*4;
-  const entry={
-    id:editingTestId||Date.now(),
-    name, type:tmType, subj:tmSubj,
-    date:document.getElementById('tm-date').value,
+  const name = document.getElementById('tm-name').value.trim();
+  if(!name){ showToast('⚠ Enter a test name'); return; }
+  const correct = parseInt(document.getElementById('tm-correct').value) || 0;
+  const incorrect = parseInt(document.getElementById('tm-incorrect').value) || 0;
+  const skipped = parseInt(document.getElementById('tm-skipped').value) || 0;
+  const total = parseInt(document.getElementById('tm-total').value) || 180;
+  const score = correct * 4 - incorrect;
+  const maxScore = total * 4;
+  const pct = parseFloat((Math.max(0, score) / maxScore * 100).toFixed(1));
+  const pyqYear = document.getElementById('tm-pyq-year') ? document.getElementById('tm-pyq-year').value : '';
+  const entry = {
+    id: editingTestId || Date.now(),
+    name, type: tmType, subj: tmSubj,
+    date: document.getElementById('tm-date').value,
     total, correct, incorrect, skipped,
-    score, maxScore,
-    pct:parseFloat(((Math.max(0,score)/maxScore)*100).toFixed(1)),
-    pyqYear:tmType==='pyq'?document.getElementById('tm-pyq-year').value:'',
-    notes:document.getElementById('tm-notes').value.trim(),
-    formulaErrors:[...formulaErrors],
-    sillyErrors:[...sillyErrors],
-    conceptGaps:[...conceptGaps],
-    confusions:[...confusions],
+    score, maxScore, pct,
+    pyqYear: tmType === 'pyq' ? pyqYear : '',
+    notes: document.getElementById('tm-notes').value.trim(),
+    formulaErrors: JSON.parse(JSON.stringify(formulaErrors)),
+    sillyErrors: JSON.parse(JSON.stringify(sillyErrors)),
+    conceptGaps: JSON.parse(JSON.stringify(conceptGaps)),
+    confusions: JSON.parse(JSON.stringify(confusions)),
   };
   if(editingTestId){
-    const idx=testEntries.findIndex(e=>e.id===editingTestId);
-    if(idx>-1)testEntries[idx]=entry;
-  } else { testEntries.unshift(entry); }
-  localStorage.setItem('testEntries',JSON.stringify(testEntries));
+    const idx = testEntries.findIndex(e => e.id === editingTestId);
+    if(idx > -1) testEntries[idx] = entry;
+    showToast(`✓ Test "${name}" updated!`);
+  } else {
+    testEntries.unshift(entry);
+    showToast(`✓ Test "${name}" logged!`);
+  }
+  try { localStorage.setItem('neetTestEntries', JSON.stringify(testEntries)); } catch(e){}
   closeTestModal();
   renderTestLog();
-  updateTestStats();
-  showToast(`✓ Test "${name}" logged!`);
 }
 
 function renderTestLog(){
-  const typeFilter=document.getElementById('tlFilterType').value;
-  const subjFilter=document.getElementById('tlFilterSubj').value;
-  let entries=testEntries.filter(e=>{
-    if(typeFilter!=='all'&&e.type!==typeFilter)return false;
-    if(subjFilter!=='all'&&e.subj!==subjFilter&&e.subj!=='All')return false;
+  const typeFilter = document.getElementById('tlFilterType') ? document.getElementById('tlFilterType').value : 'all';
+  const subjFilter = document.getElementById('tlFilterSubj') ? document.getElementById('tlFilterSubj').value : 'all';
+  let entries = testEntries.filter(e => {
+    if(typeFilter !== 'all' && e.type !== typeFilter) return false;
+    if(subjFilter !== 'all' && e.subj !== subjFilter && e.subj !== 'All') return false;
     return true;
   });
-  const container=document.getElementById('testCardList');
-  const empty=document.getElementById('tlEmpty');
-  if(!entries.length){container.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  container.innerHTML=entries.map(e=>{
-    const typeClass={full:'tec-type-full',part:'tec-type-part',pyq:'tec-type-pyq',mock:'tec-type-mock',custom:'tec-type-full'}[e.type]||'tec-type-full';
-    const typeLabel={full:'Full Syllabus',part:'Part Test',pyq:`PYQ ${e.pyqYear||''}`,mock:'Mock Test',custom:'Custom'}[e.type]||e.type;
-    const scoreColor=e.pct>=80?'#3A9E6C':e.pct>=60?'#C4922A':'#D4563A';
+  const container = document.getElementById('testCardList');
+  const empty = document.getElementById('tlEmpty');
+  if(!container) return;
+  if(!entries.length){
+    container.innerHTML = '';
+    if(empty) empty.style.display = 'block';
+    updateTestStats();
+    renderWeakTopics();
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+  const typeLabels = {full:'Full Syllabus', part:'Part Test', pyq:'PYQ', mock:'Mock Test', custom:'Custom'};
+  const typeClasses = {full:'tec-type-full', part:'tec-type-part', pyq:'tec-type-pyq', mock:'tec-type-mock', custom:'tec-type-full'};
+  container.innerHTML = entries.map(e => {
+    const scoreColor = e.pct >= 80 ? '#3A9E6C' : e.pct >= 55 ? '#C4922A' : '#D4563A';
+    const typeLabel = typeLabels[e.type] || e.type;
+    const typeClass = typeClasses[e.type] || 'tec-type-full';
+    const pyqLabel = e.type === 'pyq' && e.pyqYear ? ` ${e.pyqYear}` : '';
     return `<div class="test-entry-card" id="tec-${e.id}">
-      <div class="tec-header">
-        <span class="tec-type-badge ${typeClass}">${typeLabel}</span>
+      <div class="tec-header" onclick="toggleTecExpand(${e.id})" style="cursor:pointer;">
+        <span class="tec-type-badge ${typeClass}">${typeLabel}${pyqLabel}</span>
         <span class="tec-name">${e.name}</span>
         <span class="tec-date">${e.date}</span>
         <span class="tec-score-chip" style="color:${scoreColor};">${e.pct}%</span>
-        <span class="tec-chevron" onclick="toggleTecExpand(${e.id})">▼</span>
+        <span class="tec-chevron">▼</span>
       </div>
       <div class="tec-summary-bar">
         <span class="tec-bar-seg"><span class="tec-dot" style="background:#3A9E6C;"></span>${e.correct} correct</span>
         <span class="tec-bar-seg"><span class="tec-dot" style="background:#D4563A;"></span>${e.incorrect} wrong</span>
         <span class="tec-bar-seg"><span class="tec-dot" style="background:#C4922A;"></span>${e.skipped} skipped</span>
         <span style="flex:1;"></span>
-        <span style="font-size:12px;color:var(--text3);">Score: ${e.score}/${e.maxScore}</span>
+        <span style="font-size:12px;color:var(--text3);">NEET Score: ${e.score}/${e.maxScore}</span>
       </div>
       <div class="tec-details" id="tec-detail-${e.id}" style="display:none;">
         <div class="tec-tabs" id="tec-tabs-${e.id}">
           <div class="tec-tab active" onclick="switchTecTab(${e.id},'wrong',this)">❌ Wrong (${e.incorrect})</div>
           <div class="tec-tab" onclick="switchTecTab(${e.id},'skip',this)">⏭ Skipped (${e.skipped})</div>
-          ${e.notes?`<div class="tec-tab" onclick="switchTecTab(${e.id},'notes',this)">📝 Notes</div>`:''}
+          <div class="tec-tab" onclick="switchTecTab(${e.id},'notes',this)">📝 Notes</div>
         </div>
+        <!-- WRONG TAB -->
         <div class="tec-tab-panel active" id="tec-wrong-${e.id}">
-          <div class="tec-wrong-tabs">
+          <div class="tec-wrong-tabs" id="wrong-subtabs-${e.id}">
             <div class="tec-sub-tab active" onclick="switchWrongSubTab(${e.id},'formula',this)">🧠 Formula/Concept (${e.formulaErrors.length})</div>
             <div class="tec-sub-tab" onclick="switchWrongSubTab(${e.id},'silly',this)">😅 Silly Mistakes (${e.sillyErrors.length})</div>
           </div>
           <div id="tec-formula-${e.id}">
-            ${e.formulaErrors.length?`<div class="tec-q-list">${e.formulaErrors.map((f,i)=>`<div class="tec-q-item"><span class="tec-q-num">Q${i+1}</span><span class="tec-q-topic">${f.topic}</span><span class="tec-q-subj">${f.subj||''}</span></div>`).join('')}</div>`:'<div style="font-size:13px;color:var(--text3);padding:8px 0;">No formula/concept errors 🎉</div>'}
+            ${e.formulaErrors.length
+              ? `<div class="tec-q-list">${e.formulaErrors.map((f,i)=>`<div class="tec-q-item"><span class="tec-q-num">Q${i+1}</span><span class="tec-q-topic">${f.topic}</span>${f.subj?`<span class="tec-q-subj">${f.subj}</span>`:''}</div>`).join('')}</div>`
+              : '<div style="font-size:13px;color:var(--text3);padding:10px 0;">No formula/concept errors logged 🎉</div>'}
           </div>
           <div id="tec-silly-${e.id}" style="display:none;">
-            ${e.sillyErrors.length?`<div class="tec-q-list">${e.sillyErrors.map((f,i)=>`<div class="tec-q-item"><span class="tec-q-num">Q${i+1}</span><span class="tec-q-topic">${f.topic}</span><span class="tec-q-subj">${f.subj||''}</span></div>`).join('')}</div>`:'<div style="font-size:13px;color:var(--text3);padding:8px 0;">No silly mistakes! 🎉</div>'}
+            ${e.sillyErrors.length
+              ? `<div class="tec-q-list">${e.sillyErrors.map((f,i)=>`<div class="tec-q-item"><span class="tec-q-num">Q${i+1}</span><span class="tec-q-topic">${f.topic}</span>${f.subj?`<span class="tec-q-subj">${f.subj}</span>`:''}</div>`).join('')}</div>`
+              : '<div style="font-size:13px;color:var(--text3);padding:10px 0;">No silly mistakes logged! 🎉</div>'}
           </div>
         </div>
+        <!-- SKIP TAB -->
         <div class="tec-tab-panel" id="tec-skip-${e.id}">
-          <div class="tec-skip-tabs">
+          <div class="tec-skip-tabs" id="skip-subtabs-${e.id}">
             <div class="tec-skip-tab active" onclick="switchSkipSubTab(${e.id},'gap',this)">🔴 Concept Gap (${e.conceptGaps.length})</div>
             <div class="tec-skip-tab" onclick="switchSkipSubTab(${e.id},'conf',this)">🔵 Confusion (${e.confusions.length})</div>
           </div>
           <div id="tec-gap-${e.id}">
-            ${e.conceptGaps.length?`<div class="tec-q-list">${e.conceptGaps.map((f,i)=>`<div class="tec-q-item"><span class="tec-q-num">${i+1}</span><span class="tec-q-topic">${f.topic}</span><span style="font-size:10px;background:#FDECEA;color:#C0392B;padding:2px 7px;border-radius:20px;">Need to learn</span></div>`).join('')}</div>`:'<div style="font-size:13px;color:var(--text3);padding:8px 0;">No complete gaps! 🎉</div>'}
+            ${e.conceptGaps.length
+              ? `<div class="tec-q-list">${e.conceptGaps.map((f,i)=>`<div class="tec-q-item"><span class="tec-q-num">${i+1}</span><span class="tec-q-topic">${f.topic}</span>${f.subj?`<span class="tec-q-subj">${f.subj}</span>`:''}<span style="font-size:10px;background:#FDECEA;color:#C0392B;padding:2px 7px;border-radius:20px;white-space:nowrap;">Need to learn</span></div>`).join('')}</div>`
+              : '<div style="font-size:13px;color:var(--text3);padding:10px 0;">No complete concept gaps! 🎉</div>'}
           </div>
           <div id="tec-conf-${e.id}" style="display:none;">
-            ${e.confusions.length?`<div class="tec-q-list">${e.confusions.map((f,i)=>`<div class="tec-q-item"><span class="tec-q-num">${i+1}</span><span class="tec-q-topic">${f.topic}</span><span style="font-size:10px;background:#EEF0FA;color:#5A5AC4;padding:2px 7px;border-radius:20px;">Need clarity</span></div>`).join('')}</div>`:'<div style="font-size:13px;color:var(--text3);padding:8px 0;">No confusions! 🎉</div>'}
+            ${e.confusions.length
+              ? `<div class="tec-q-list">${e.confusions.map((f,i)=>`<div class="tec-q-item"><span class="tec-q-num">${i+1}</span><span class="tec-q-topic">${f.topic}</span>${f.subj?`<span class="tec-q-subj">${f.subj}</span>`:''}<span style="font-size:10px;background:#EEF0FA;color:#5A5AC4;padding:2px 7px;border-radius:20px;white-space:nowrap;">Need clarity</span></div>`).join('')}</div>`
+              : '<div style="font-size:13px;color:var(--text3);padding:10px 0;">No confusions logged! 🎉</div>'}
           </div>
         </div>
-        ${e.notes?`<div class="tec-tab-panel" id="tec-notes-${e.id}"><div style="font-size:13.5px;color:var(--text);padding:8px 0;line-height:1.6;">${e.notes}</div></div>`:''}
-        <div style="margin-top:12px;display:flex;gap:8px;">
-          <button class="btn-secondary" onclick="deleteTestEntry(${e.id})" style="padding:6px 12px;font-size:12px;">🗑 Delete</button>
+        <!-- NOTES TAB -->
+        <div class="tec-tab-panel" id="tec-notes-${e.id}">
+          <div style="font-size:13.5px;color:var(--text);padding:10px 0;line-height:1.7;">${e.notes || '<span style="color:var(--text3);">No notes added.</span>'}</div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;">
+          <button class="btn-secondary" onclick="deleteTestEntry(${e.id})" style="padding:6px 14px;font-size:12px;">🗑 Delete</button>
         </div>
       </div>
     </div>`;
@@ -3781,115 +3906,116 @@ function renderTestLog(){
 }
 
 function toggleTecExpand(id){
-  const card=document.getElementById('tec-'+id);
-  const detail=document.getElementById('tec-detail-'+id);
-  const expanded=card.classList.toggle('expanded');
-  detail.style.display=expanded?'block':'none';
+  const card = document.getElementById('tec-' + id);
+  const detail = document.getElementById('tec-detail-' + id);
+  if(!card || !detail) return;
+  const isExpanded = card.classList.toggle('expanded');
+  detail.style.display = isExpanded ? 'block' : 'none';
 }
-function switchTecTab(id,tab,el){
-  const tabs=document.getElementById('tec-tabs-'+id);
-  tabs.querySelectorAll('.tec-tab').forEach(t=>t.classList.remove('active'));
+function switchTecTab(id, tab, el){
+  const tabs = document.getElementById('tec-tabs-' + id);
+  if(!tabs) return;
+  tabs.querySelectorAll('.tec-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  ['wrong','skip','notes'].forEach(t=>{
-    const p=document.getElementById('tec-'+t+'-'+id);
-    if(p)p.classList.toggle('active',t===tab);
+  ['wrong','skip','notes'].forEach(t => {
+    const p = document.getElementById('tec-' + t + '-' + id);
+    if(p) p.classList.toggle('active', t === tab);
   });
 }
-function switchWrongSubTab(id,sub,el){
-  const parent=el.closest('.tec-tab-panel');
-  parent.querySelectorAll('.tec-sub-tab').forEach(t=>t.classList.remove('active'));
+function switchWrongSubTab(id, sub, el){
+  const wrap = document.getElementById('wrong-subtabs-' + id);
+  if(wrap) wrap.querySelectorAll('.tec-sub-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  const f=document.getElementById('tec-formula-'+id);
-  const s=document.getElementById('tec-silly-'+id);
-  if(f)f.style.display=sub==='formula'?'block':'none';
-  if(s)s.style.display=sub==='silly'?'block':'none';
+  const f = document.getElementById('tec-formula-' + id);
+  const s = document.getElementById('tec-silly-' + id);
+  if(f) f.style.display = sub === 'formula' ? 'block' : 'none';
+  if(s) s.style.display = sub === 'silly' ? 'block' : 'none';
 }
-function switchSkipSubTab(id,sub,el){
-  const parent=el.closest('.tec-tab-panel');
-  parent.querySelectorAll('.tec-skip-tab').forEach(t=>t.classList.remove('active'));
+function switchSkipSubTab(id, sub, el){
+  const wrap = document.getElementById('skip-subtabs-' + id);
+  if(wrap) wrap.querySelectorAll('.tec-skip-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  const g=document.getElementById('tec-gap-'+id);
-  const c=document.getElementById('tec-conf-'+id);
-  if(g)g.style.display=sub==='gap'?'block':'none';
-  if(c)c.style.display=sub==='conf'?'block':'none';
+  const g = document.getElementById('tec-gap-' + id);
+  const c = document.getElementById('tec-conf-' + id);
+  if(g) g.style.display = sub === 'gap' ? 'block' : 'none';
+  if(c) c.style.display = sub === 'conf' ? 'block' : 'none';
 }
 
 function deleteTestEntry(id){
-  if(!confirm('Delete this test entry?'))return;
-  testEntries=testEntries.filter(e=>e.id!==id);
-  localStorage.setItem('testEntries',JSON.stringify(testEntries));
+  if(!confirm('Delete this test entry?')) return;
+  testEntries = testEntries.filter(e => e.id !== id);
+  try { localStorage.setItem('neetTestEntries', JSON.stringify(testEntries)); } catch(e){}
   renderTestLog();
   showToast('Test entry deleted');
 }
 
 function updateTestStats(){
-  const n=testEntries.length;
-  document.getElementById('tlTotalTests').textContent=n;
+  const n = testEntries.length;
+  const el = id => document.getElementById(id);
+  if(!el('tlTotalTests')) return;
+  el('tlTotalTests').textContent = n;
   if(n){
-    const avg=(testEntries.reduce((a,e)=>a+e.pct,0)/n).toFixed(1);
-    const best=Math.max(...testEntries.map(e=>e.pct)).toFixed(1);
-    document.getElementById('tlAvgScore').textContent=avg+'%';
-    document.getElementById('tlBestScore').textContent=best+'%';
+    const avg = (testEntries.reduce((a,e) => a + e.pct, 0) / n).toFixed(1);
+    const best = Math.max(...testEntries.map(e => e.pct)).toFixed(1);
+    el('tlAvgScore').textContent = avg + '%';
+    el('tlBestScore').textContent = best + '%';
   } else {
-    document.getElementById('tlAvgScore').textContent='—';
-    document.getElementById('tlBestScore').textContent='—';
+    el('tlAvgScore').textContent = '—';
+    el('tlBestScore').textContent = '—';
   }
-  // Count unique concept gaps
-  const allGaps=new Set();
-  testEntries.forEach(e=>e.conceptGaps.forEach(g=>allGaps.add(g.topic)));
-  document.getElementById('tlWeakTopics').textContent=allGaps.size;
-  document.getElementById('weakTopicCount').textContent=allGaps.size+' topics';
+  const allGaps = new Set();
+  testEntries.forEach(e => e.conceptGaps && e.conceptGaps.forEach(g => allGaps.add(g.topic)));
+  if(el('tlWeakTopics')) el('tlWeakTopics').textContent = allGaps.size;
+  if(el('weakTopicCount')) el('weakTopicCount').textContent = allGaps.size + ' topics';
 }
 
 function renderWeakTopics(){
-  // Aggregate all concept gaps and formula errors by topic
-  const gaps={};
-  testEntries.forEach(e=>{
-    e.conceptGaps.forEach(g=>{
-      const k=g.topic;
-      if(!gaps[k])gaps[k]={topic:k,subj:g.subj||'',count:0,type:'gap'};
-      gaps[k].count++;
+  const gaps = {};
+  testEntries.forEach(e => {
+    (e.conceptGaps||[]).forEach(g => {
+      if(!gaps[g.topic]) gaps[g.topic] = {topic:g.topic, subj:g.subj||'', count:0, type:'gap'};
+      gaps[g.topic].count++;
     });
-    e.formulaErrors.forEach(g=>{
-      const k=g.topic;
-      if(!gaps[k])gaps[k]={topic:k,subj:g.subj||'',count:0,type:'formula'};
-      else gaps[k].count++;
+    (e.formulaErrors||[]).forEach(g => {
+      if(!gaps[g.topic]) gaps[g.topic] = {topic:g.topic, subj:g.subj||'', count:0, type:'formula'};
+      else gaps[g.topic].count++;
     });
   });
-  const sorted=Object.values(gaps).sort((a,b)=>b.count-a.count);
-  const body=document.getElementById('weakTopicsBody');
-  const needsGrid=document.getElementById('tlNeedsGrid');
+  const sorted = Object.values(gaps).sort((a,b) => b.count - a.count);
+  const body = document.getElementById('weakTopicsBody');
+  const needsGrid = document.getElementById('tlNeedsGrid');
+  const needsSection = document.getElementById('tlNeedsSection');
+  if(!body) return;
   if(!sorted.length){
-    body.innerHTML='<div style="text-align:center;padding:30px 0;color:var(--text3);font-size:13px;"><div style="font-size:32px;opacity:0.25;margin-bottom:8px;">📌</div>Log tests to see weak topics</div>';
-    needsGrid.innerHTML='';
+    body.innerHTML = '<div style="text-align:center;padding:30px 0;color:var(--text3);font-size:13px;"><div style="font-size:32px;opacity:0.25;margin-bottom:8px;">📌</div>Log tests to see weak topics</div>';
+    if(needsGrid) needsGrid.innerHTML = '';
+    if(needsSection) needsSection.style.display = 'none';
     return;
   }
-  // Group by subj
-  const bySubj={};
-  sorted.forEach(t=>{
-    const s=t.subj||'General';
-    if(!bySubj[s])bySubj[s]=[];
+  const bySubj = {};
+  sorted.forEach(t => {
+    const s = t.subj || 'General';
+    if(!bySubj[s]) bySubj[s] = [];
     bySubj[s].push(t);
   });
-  body.innerHTML=Object.entries(bySubj).map(([s,topics])=>`
-    <div class="wt-subj-section">
+  body.innerHTML = Object.entries(bySubj).map(([s,topics]) =>
+    `<div class="wt-subj-section">
       <div class="wt-subj-label">${s}</div>
-      ${topics.map(t=>`<div class="wt-topic-chip">
+      ${topics.map(t => `<div class="wt-topic-chip">
         <div class="wt-topic-status ${t.type==='gap'?'need':'working'}"></div>
         <div class="wt-topic-name">${t.topic}</div>
         <div class="wt-topic-count">${t.count}×</div>
       </div>`).join('')}
     </div>`).join('');
-  // Needs grid (concept gaps only)
-  const gapOnly=sorted.filter(t=>t.type==='gap');
-  needsGrid.innerHTML=gapOnly.length?gapOnly.map(t=>`
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;border-left:3px solid #D4563A;">
-      <div style="font-size:13.5px;font-weight:500;color:var(--text);">${t.topic}</div>
-      <div style="font-size:11.5px;color:var(--text3);margin-top:3px;">${t.subj||'General'} · ${t.count}× skipped</div>
-      <div style="font-size:10px;background:#FDECEA;color:#C0392B;padding:2px 8px;border-radius:20px;margin-top:6px;width:fit-content;">Needs to Learn</div>
-    </div>`).join('')
-    :'<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text3);font-size:13px;">No concept gaps yet — great work! 🎉</div>';
-  document.getElementById('tlNeedsSection').style.display=gapOnly.length?'block':'none';
+  const gapOnly = sorted.filter(t => t.type === 'gap');
+  if(needsGrid) needsGrid.innerHTML = gapOnly.length
+    ? gapOnly.map(t => `<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;border-left:3px solid #D4563A;">
+        <div style="font-size:13.5px;font-weight:500;color:var(--text);">${t.topic}</div>
+        <div style="font-size:11.5px;color:var(--text3);margin-top:3px;">${t.subj||'General'} · skipped ${t.count}× </div>
+        <div style="font-size:10px;background:#FDECEA;color:#C0392B;padding:2px 8px;border-radius:20px;margin-top:6px;width:fit-content;">Needs to Learn</div>
+      </div>`).join('')
+    : '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text3);font-size:13px;">No concept gaps yet 🎉</div>';
+  if(needsSection) needsSection.style.display = gapOnly.length ? 'block' : 'none';
 }
 
 // ===== STUDY GROUP =====
@@ -3977,6 +4103,73 @@ function initFirebase(){
 renderTestLog();
 updateTestStats();
 renderWeakTopics();
+
+// ===== PROFILE EDIT =====
+let profileData = JSON.parse(localStorage.getItem('neetProfileData') || 'null') || {
+  name:'Arjun Kumar', initials:'AK', class:'XII — Science', board:'CBSE',
+  school:'Delhi Public School', exam:'NEET 2026', city:'New Delhi',
+  preferredTime:'Morning (6–10 AM)'
+};
+function applyProfileData(){
+  const d = profileData;
+  const els = {
+    '.profile-name': d.name,
+    '.profile-class': d.class + ' · ' + d.board,
+    '.profile-avatar': d.initials,
+  };
+  for(const [sel,val] of Object.entries(els)){
+    const el = document.querySelector(sel);
+    if(el) el.textContent = val;
+  }
+  const fields = {
+    'Full Name': d.name, 'Class': d.class, 'Board': d.board,
+    'School': d.school, 'Target Exam': d.exam, 'City': d.city,
+    'Preferred Time': d.preferredTime
+  };
+  document.querySelectorAll('.info-field').forEach(f => {
+    const lbl = f.querySelector('.if-label');
+    const val = f.querySelector('.if-val');
+    if(lbl && val && fields[lbl.textContent]) val.textContent = fields[lbl.textContent];
+  });
+  const avatar = document.querySelector('.avatar');
+  if(avatar) avatar.textContent = d.initials;
+  // update greeting
+  const gt = document.querySelector('.greeting-text h1');
+  if(gt) gt.innerHTML = `Ready to make <em>today count?</em>`;
+  const pageTitle = document.getElementById('pageTitle');
+  if(pageTitle && pageTitle.innerHTML.includes('Good Morning')) pageTitle.innerHTML = `Good Morning, <span>${d.name.split(' ')[0]}</span> ✦`;
+}
+applyProfileData();
+
+function openProfileEdit(){
+  document.getElementById('pe-name').value = profileData.name;
+  document.getElementById('pe-initials').value = profileData.initials;
+  document.getElementById('pe-class').value = profileData.class;
+  document.getElementById('pe-board').value = profileData.board;
+  document.getElementById('pe-school').value = profileData.school;
+  document.getElementById('pe-exam').value = profileData.exam;
+  document.getElementById('pe-city').value = profileData.city;
+  document.getElementById('pe-time').value = profileData.preferredTime;
+  document.getElementById('profileEditModal').classList.add('open');
+}
+function closeProfileEdit(){ document.getElementById('profileEditModal').classList.remove('open'); }
+function saveProfileEdit(){
+  const name = document.getElementById('pe-name').value.trim();
+  if(!name){ showToast('⚠ Name cannot be empty'); return; }
+  profileData = {
+    name, initials: document.getElementById('pe-initials').value.trim() || name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
+    class: document.getElementById('pe-class').value.trim(),
+    board: document.getElementById('pe-board').value.trim(),
+    school: document.getElementById('pe-school').value.trim(),
+    exam: document.getElementById('pe-exam').value.trim(),
+    city: document.getElementById('pe-city').value.trim(),
+    preferredTime: document.getElementById('pe-time').value.trim(),
+  };
+  localStorage.setItem('neetProfileData', JSON.stringify(profileData));
+  applyProfileData();
+  closeProfileEdit();
+  showToast('✓ Profile updated!');
+}
 
 
 </script>

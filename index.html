@@ -940,6 +940,11 @@ body.dark .test-modal{background:var(--card);}
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Study Group
     </div>
+    <div class="nav-item" onclick="navigate('pdfextractor',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      PDF Extractor
+      <span class="nav-badge">New</span>
+    </div>
   </div>
 
   <div class="sidebar-section">
@@ -2386,6 +2391,67 @@ body.dark .test-modal{background:var(--card);}
         <div class="notif-item-title">Biology target completed!</div>
         <div class="notif-item-sub">All chapters marked done · Great work!</div>
         <div class="notif-item-time">3 days ago</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PDF EXTRACTOR PAGE -->
+<div class="page" id="page-pdfextractor">
+  <div style="margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;">📄 PDF Extractor</h2>
+      <p style="font-size:13.5px;color:var(--text3);margin-top:3px;">Physics PDFs upload karo — Gemini questions extract karega — Chapter-wise PDF download karo.</p>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Gemini API Key</span></div>
+        <div class="card-body">
+          <input id="pe-apikey" type="password" placeholder="AIza... (aistudio.google.com se milti hai — free)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text);background:var(--bg);outline:none;"/>
+          <p style="font-size:12px;color:var(--text3);margin-top:6px;">Key save hoti hai — baar baar dalni nahi padegi.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Chapters</span><span class="card-action" onclick="peAddChapter()">+ Add</span></div>
+        <div class="card-body">
+          <div id="pe-chapter-list" style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:8px;"><input class="pe-ch" placeholder="e.g. Laws of Motion" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;"/><button onclick="this.parentElement.remove()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--text2);font-size:12px;">✕</button></div>
+            <div style="display:flex;gap:8px;"><input class="pe-ch" placeholder="e.g. Motion in a Plane" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;"/><button onclick="this.parentElement.remove()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--text2);font-size:12px;">✕</button></div>
+            <div style="display:flex;gap:8px;"><input class="pe-ch" placeholder="e.g. Work, Energy and Power" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;"/><button onclick="this.parentElement.remove()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--text2);font-size:12px;">✕</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">PDFs Upload Karo</span></div>
+        <div class="card-body">
+          <div id="pe-dropzone" onclick="document.getElementById('pe-finput').click()" ondragover="event.preventDefault()" ondrop="event.preventDefault();peDrop(event.dataTransfer.files)" style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;">
+            <div style="font-size:28px;margin-bottom:8px;">📂</div>
+            <div style="font-size:14px;font-weight:500;color:var(--text);">Click ya drag & drop karo</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px;">Multiple PDFs ek saath</div>
+          </div>
+          <input type="file" id="pe-finput" multiple accept=".pdf" style="display:none" onchange="peHandleFiles(this.files)"/>
+          <div id="pe-filelist" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+      </div>
+      <button id="pe-runbtn" onclick="peStartProcess()" disabled style="width:100%;padding:13px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;border:none;border-radius:var(--radius-sm);background:var(--primary);color:white;cursor:pointer;transition:all .2s;opacity:0.4;">
+        Process karo &amp; PDF Download karo ✦
+      </button>
+      <div id="pe-progress-area" style="display:none;">
+        <div style="height:5px;background:var(--border);border-radius:20px;overflow:hidden;margin-bottom:8px;">
+          <div id="pe-pfill" style="height:100%;background:var(--primary);border-radius:20px;transition:width .4s;width:0%"></div>
+        </div>
+        <div id="pe-ptext" style="font-size:13px;color:var(--text2);margin-bottom:8px;"></div>
+        <div id="pe-logbox" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:'DM Mono',monospace;font-size:11.5px;color:var(--text2);max-height:150px;overflow-y:auto;line-height:1.7;"></div>
+      </div>
+      <div id="pe-result" style="display:none;background:linear-gradient(135deg,#E6F2EF,#F6FAF7);border:1px solid var(--primary);border-radius:var(--radius-sm);padding:16px;text-align:center;">
+        <div style="font-size:22px;margin-bottom:6px;">🎉</div>
+        <div style="font-size:15px;font-weight:500;color:var(--primary);">PDF Ready!</div>
+        <div id="pe-result-sub" style="font-size:13px;color:var(--text2);margin-top:4px;"></div>
+        <button onclick="peDownload()" style="margin-top:12px;padding:8px 20px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Download PDF</button>
       </div>
     </div>
   </div>
@@ -4112,15 +4178,21 @@ let profileData = JSON.parse(localStorage.getItem('neetProfileData') || 'null') 
 };
 function applyProfileData(){
   const d = profileData;
-  const els = {
-    '.profile-name': d.name,
-    '.profile-class': d.class + ' · ' + d.board,
-    '.profile-avatar': d.initials,
-  };
-  for(const [sel,val] of Object.entries(els)){
-    const el = document.querySelector(sel);
-    if(el) el.textContent = val;
-  }
+  // Profile page elements
+  const pName = document.querySelector('.profile-name');
+  if(pName) pName.textContent = d.name;
+  const pClass = document.querySelector('.profile-class');
+  if(pClass) pClass.textContent = d.class + ' · ' + d.board;
+  const pAvatar = document.querySelector('.profile-avatar');
+  if(pAvatar) pAvatar.textContent = d.initials;
+  // Sidebar bottom — avatar, name, role
+  const sAvatar = document.querySelector('.sidebar-bottom .avatar');
+  if(sAvatar) sAvatar.textContent = d.initials;
+  const sName = document.querySelector('.sidebar-bottom .user-info .name');
+  if(sName) sName.textContent = d.name;
+  const sRole = document.querySelector('.sidebar-bottom .user-info .role');
+  if(sRole) sRole.textContent = d.class + ' · Science';
+  // Info fields
   const fields = {
     'Full Name': d.name, 'Class': d.class, 'Board': d.board,
     'School': d.school, 'Target Exam': d.exam, 'City': d.city,
@@ -4131,15 +4203,178 @@ function applyProfileData(){
     const val = f.querySelector('.if-val');
     if(lbl && val && fields[lbl.textContent]) val.textContent = fields[lbl.textContent];
   });
-  const avatar = document.querySelector('.avatar');
-  if(avatar) avatar.textContent = d.initials;
-  // update greeting
+  // Topbar greeting — always update
+  const pageTitle = document.getElementById('pageTitle');
+  if(pageTitle) pageTitle.innerHTML = `Good Morning, <span>${d.name.split(' ')[0]}</span> ✦`;
+  // Dashboard greeting
   const gt = document.querySelector('.greeting-text h1');
   if(gt) gt.innerHTML = `Ready to make <em>today count?</em>`;
-  const pageTitle = document.getElementById('pageTitle');
-  if(pageTitle && pageTitle.innerHTML.includes('Good Morning')) pageTitle.innerHTML = `Good Morning, <span>${d.name.split(' ')[0]}</span> ✦`;
 }
 applyProfileData();
+
+// ===== PDF EXTRACTOR =====
+(function(){
+  const PDFJS_CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  const WORKER_CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  let pdfJsLoaded=false;
+  let peFiles=[];
+  let peBlob=null;
+
+  function loadPdfJs(cb){
+    if(pdfJsLoaded){cb();return;}
+    const s=document.createElement('script');
+    s.src=PDFJS_CDN;
+    s.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc=WORKER_CDN;pdfJsLoaded=true;cb();};
+    document.head.appendChild(s);
+  }
+
+  window.peAddChapter=function(){
+    const d=document.createElement('div');
+    d.style.cssText='display:flex;gap:8px;';
+    d.innerHTML='<input class="pe-ch" placeholder="Chapter name..." style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:\'DM Sans\',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;"/><button onclick="this.parentElement.remove()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--text2);font-size:12px;">✕</button>';
+    document.getElementById('pe-chapter-list').appendChild(d);
+  };
+
+  window.peDrop=function(files){peHandleFiles(files);};
+
+  window.peHandleFiles=function(files){
+    peFiles=Array.from(files);
+    const list=document.getElementById('pe-filelist');
+    list.innerHTML='';
+    peFiles.forEach(f=>{
+      const d=document.createElement('div');
+      d.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg);border-radius:var(--radius-sm);font-size:13px;color:var(--text);';
+      d.innerHTML=`<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📄 ${f.name}</span><span style="font-size:11px;color:var(--text3);">${(f.size/1024/1024).toFixed(1)} MB</span>`;
+      list.appendChild(d);
+    });
+    peCheckReady();
+  };
+
+  function peCheckReady(){
+    const btn=document.getElementById('pe-runbtn');
+    const hasKey=document.getElementById('pe-apikey').value.trim().length>5;
+    const hasFiles=peFiles.length>0;
+    btn.disabled=!(hasKey&&hasFiles);
+    btn.style.opacity=(hasKey&&hasFiles)?'1':'0.4';
+    btn.style.cursor=(hasKey&&hasFiles)?'pointer':'not-allowed';
+  }
+  document.getElementById('pe-apikey').addEventListener('input',peCheckReady);
+
+  async function pePdfToImages(file){
+    const ab=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+    const imgs=[];
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i);
+      const vp=page.getViewport({scale:1.5});
+      const canvas=document.createElement('canvas');
+      canvas.width=vp.width;canvas.height=vp.height;
+      await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+      imgs.push(canvas.toDataURL('image/jpeg',0.85).split(',')[1]);
+    }
+    return imgs;
+  }
+
+  async function peCallGemini(apiKey,b64,chapters){
+    const prompt=`Physics exam question slide. Extract question and options. Rules:\n1. Question text exactly.\n2. All options exactly.\n3. has_diagram:true if figure present.\n4. Remove teacher marks/solutions.\n5. Guess chapter from: ${JSON.stringify(chapters)}\nReturn ONLY JSON (no markdown):\n{"question":"...","options":["(1)...","(2)...","(3)...","(4)..."],"has_diagram":false,"chapter":"..."}\nIf solution/blank page: {"skip":true}`;
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:'image/jpeg',data:b64}}]}]})
+    });
+    const d=await res.json();
+    if(d.error)throw new Error(d.error.message);
+    let txt=d.candidates[0].content.parts[0].text.trim().replace(/```json|```/g,'').trim();
+    return JSON.parse(txt);
+  }
+
+  function peLog(msg){
+    const b=document.getElementById('pe-logbox');
+    b.innerHTML+=msg+'<br>';b.scrollTop=b.scrollHeight;
+  }
+
+  function peSetProg(pct,msg){
+    document.getElementById('pe-pfill').style.width=Math.round(pct)+'%';
+    document.getElementById('pe-ptext').textContent=msg;
+  }
+
+  window.peStartProcess=async function(){
+    const apiKey=document.getElementById('pe-apikey').value.trim();
+    const chapters=Array.from(document.querySelectorAll('.pe-ch')).map(i=>i.value.trim()).filter(Boolean);
+    if(!apiKey||!peFiles.length||!chapters.length){showToast('⚠ API key, chapters aur PDFs sab chahiye!');return;}
+    localStorage.setItem('pe-apikey',apiKey);
+    document.getElementById('pe-runbtn').disabled=true;
+    document.getElementById('pe-progress-area').style.display='block';
+    document.getElementById('pe-result').style.display='none';
+    document.getElementById('pe-logbox').innerHTML='';
+    peBlob=null;
+
+    loadPdfJs(async()=>{
+      const chData={};
+      chapters.forEach(c=>chData[c]=[]);
+      chData['Uncategorized']=[];
+      let allPages=[];
+      peLog('PDFs convert ho rahi hain...');
+      for(const f of peFiles){
+        peLog(`📄 ${f.name}`);
+        const imgs=await pePdfToImages(f);
+        imgs.forEach((img,i)=>allPages.push({img,src:f.name,page:i+1}));
+        peLog(`  → ${imgs.length} pages`);
+      }
+      peLog(`\nTotal: ${allPages.length} pages — Gemini processing...\n`);
+      let done=0,skipped=0,errors=0;
+      for(let i=0;i<allPages.length;i++){
+        const {img,src}=allPages[i];
+        peSetProg((i/allPages.length)*90,`Page ${i+1}/${allPages.length}`);
+        try{
+          const data=await peCallGemini(apiKey,img,chapters);
+          if(data.skip){peLog(`[${i+1}] Skipped`);skipped++;done++;continue;}
+          const ch=chapters.includes(data.chapter)?data.chapter:'Uncategorized';
+          chData[ch].push(data);
+          peLog(`[${i+1}] Q${chData[ch].length} → ${ch}${data.has_diagram?' 🖼':''}`);
+          done++;
+          await new Promise(r=>setTimeout(r,400));
+        }catch(e){peLog(`[${i+1}] ERROR: ${e.message}`);errors++;done++;}
+      }
+      peSetProg(98,'PDF bana raha hai...');
+      let lines=['PHYSICS QUESTION BANK — StudyFlow','Generated: '+new Date().toLocaleDateString(),''];
+      let total=0;
+      for(const ch of [...chapters,'Uncategorized']){
+        const qs=chData[ch]||[];
+        if(!qs.length)continue;
+        lines.push('═══════════════════════════════════');
+        lines.push(ch.toUpperCase());
+        lines.push('═══════════════════════════════════');
+        lines.push('');
+        qs.forEach((q,i)=>{
+          lines.push(`Q${i+1}. ${q.question}`);
+          (q.options||[]).forEach(o=>lines.push(`   ${o}`));
+          if(q.has_diagram)lines.push('   [Diagram present in original]');
+          lines.push('');
+          total++;
+        });
+      }
+      peBlob=new Blob([lines.join('\n')],{type:'text/plain'});
+      peSetProg(100,'Done!');
+      peLog(`\n✓ Complete! ${total} questions, ${skipped} skipped, ${errors} errors`);
+      document.getElementById('pe-result-sub').textContent=`${total} questions — ${chapters.length} chapters`;
+      document.getElementById('pe-result').style.display='block';
+      document.getElementById('pe-runbtn').disabled=false;
+      document.getElementById('pe-runbtn').style.opacity='1';
+      showToast('🎉 PDF ready hai! Download karo.');
+    });
+  };
+
+  window.peDownload=function(){
+    if(!peBlob)return;
+    const url=URL.createObjectURL(peBlob);
+    const a=document.createElement('a');
+    a.href=url;a.download='Physics_QB_StudyFlow.txt';a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const saved=localStorage.getItem('pe-apikey');
+  if(saved)document.getElementById('pe-apikey').value=saved;
+})();
 
 function openProfileEdit(){
   document.getElementById('pe-name').value = profileData.name;

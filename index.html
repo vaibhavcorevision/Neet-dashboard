@@ -277,6 +277,8 @@ body.dark .notif-item.unread{background:#1C3028;}
 .ft-mode-row{display:flex;gap:6px;justify-content:center;margin-bottom:12px;}
 .ft-mode-btn{flex:1;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:transparent;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text2);cursor:pointer;transition:all .18s;}
 .ft-mode-btn.active{background:var(--primary);color:white;border-color:var(--primary);}
+.ft-mode-btn[data-inf="1"]{border-color:rgba(232,193,122,0.5);color:rgba(255,255,255,0.6);}
+.ft-mode-btn[data-inf="1"].active{background:linear-gradient(135deg,#C4922A,#E8C17A);color:#2D1500;border-color:transparent;}
 .ft-subj-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
 .ft-subj-chip{padding:4px 10px;border-radius:20px;font-size:11px;background:var(--bg);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .15s;}
 .ft-subj-chip.active{color:white;border-color:transparent;}
@@ -337,11 +339,14 @@ body.dark .notif-item.unread{background:#1C3028;}
 .streak-cell.active{color:white;}
 .streak-cell.inactive{background:var(--bg);color:var(--text3);}
 /* ===== PART 4: FOCUS TIMER ===== */
-.timer-page{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;}
-.timer-left{flex:1;min-width:300px;}
-.timer-right{width:300px;flex-shrink:0;}
+.timer-page{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start;}
+@media(max-width:900px){.timer-page{grid-template-columns:1fr;}}
+.timer-left{min-width:0;}
+.timer-right{min-width:0;display:flex;flex-direction:column;gap:14px;}
 .timer-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px 28px;text-align:center;}
-.timer-mode-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:28px;}
+.timer-mode-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:28px;flex-wrap:wrap;}
+.tm-tab[data-inf="1"]{border-color:var(--accent);color:var(--accent);}
+.tm-tab[data-inf="1"].active{background:linear-gradient(135deg,#C4922A,#E8C17A);color:#2D1500;border-color:transparent;}
 .tm-tab{padding:8px 18px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .2s;font-family:'DM Sans',sans-serif;}
 .tm-tab.active{background:var(--primary);color:white;border-color:var(--primary);}
 .timer-ring-wrap{position:relative;width:220px;height:220px;margin:0 auto 24px;}
@@ -364,7 +369,7 @@ body.dark .notif-item.unread{background:#1C3028;}
 .pom-dot{width:10px;height:10px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);transition:all .3s;}
 .pom-dot.done{background:var(--primary);border-color:var(--primary);}
 .pom-dot.current{background:var(--accent);border-color:var(--accent);transform:scale(1.2);}
-.timer-settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;}
+.timer-settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
 .ts-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;margin-bottom:14px;}
 .ts-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);}
 .ts-row:last-child{border-bottom:none;}
@@ -1570,6 +1575,7 @@ body.dark .test-modal{background:var(--card);}
             <button class="tm-tab" data-dur="50" onclick="setTimerMode(this)">Deep 50</button>
             <button class="tm-tab" data-dur="5" onclick="setTimerMode(this)">Short Break</button>
             <button class="tm-tab" data-dur="15" onclick="setTimerMode(this)">Long Break</button>
+            <button class="tm-tab" data-dur="0" data-inf="1" onclick="setTimerMode(this)" title="Count up — no limit">∞ Free</button>
           </div>
           <div class="timer-ring-wrap">
             <svg class="timer-ring-svg" width="220" height="220" viewBox="0 0 220 220">
@@ -1598,6 +1604,7 @@ body.dark .test-modal{background:var(--card);}
           <div class="ts-row"><span class="ts-label">Short break</span><div class="ts-stepper"><button class="ts-step-btn" onclick="adjustSetting('short',-1)">−</button><span class="ts-step-val" id="sv-short">5</span><span style="font-size:12px;color:var(--text3);">min</span><button class="ts-step-btn" onclick="adjustSetting('short',1)">+</button></div></div>
           <div class="ts-row"><span class="ts-label">Long break</span><div class="ts-stepper"><button class="ts-step-btn" onclick="adjustSetting('long',-5)">−</button><span class="ts-step-val" id="sv-long">15</span><span style="font-size:12px;color:var(--text3);">min</span><button class="ts-step-btn" onclick="adjustSetting('long',5)">+</button></div></div>
           <div class="ts-row"><span class="ts-label">Auto-start breaks</span><div class="toggle-switch on" id="tog-autobreak" onclick="this.classList.toggle('on')"></div></div>
+          <div class="ts-row"><span class="ts-label">Auto-start focus</span><div class="toggle-switch on" id="tog-autofocus" onclick="this.classList.toggle('on')"></div></div>
           <div class="ts-row"><span class="ts-label">Sound alerts</span><div class="toggle-switch on" id="tog-sound" onclick="this.classList.toggle('on')"></div></div>
           <div class="ts-row"><span class="ts-label">Desktop notify</span><div class="toggle-switch" id="tog-notif" onclick="this.classList.toggle('on')"></div></div>
         </div>
@@ -2496,6 +2503,7 @@ body.dark .test-modal{background:var(--card);}
       <button class="ft-mode-btn active" data-dur="25" data-label="Focus" onclick="ftSetMode(this)">25</button>
       <button class="ft-mode-btn" data-dur="5" data-label="Break" onclick="ftSetMode(this)">5</button>
       <button class="ft-mode-btn" data-dur="15" data-label="Long" onclick="ftSetMode(this)">15</button>
+      <button class="ft-mode-btn" data-dur="0" data-label="Free" data-inf="1" onclick="ftSetMode(this)" title="No limit — count up">∞</button>
     </div>
     <div class="ft-subj-row" id="ftSubjRow"></div>
     <div class="ft-controls">
@@ -2636,6 +2644,8 @@ let ftBreakMode=false;
 let ftPomDone=0;
 let ftVisible=true;
 let ftExpanded=false;
+let ftInfinityMode=false;
+let ftInfSeconds=0;
 const ftSubjects=['Maths','Physics','Chem','Bio','Eng'];
 const ftSubjFull={'Maths':'Mathematics','Physics':'Physics','Chem':'Chemistry','Bio':'Biology','Eng':'English'};
 
@@ -2657,56 +2667,80 @@ function ftSelectSubj(el,s){
 function ftSetMode(el){
   document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  const dur=parseInt(el.dataset.dur);
+  const isInf=el.dataset.inf==='1';
+  ftInfinityMode=isInf;
   ftPhase=el.dataset.label||'Focus';
-  ftBreakMode=ftPhase!=='Focus';
-  ftSeconds=dur*60;ftTotal=dur*60;
+  ftBreakMode=ftPhase==='Break'||ftPhase==='Long';
+  if(isInf){
+    ftSeconds=0;ftTotal=1;// count up
+  } else {
+    const dur=parseInt(el.dataset.dur);
+    ftSeconds=dur*60;ftTotal=dur*60;
+  }
   if(ftRunning){clearInterval(ftInterval);ftRunning=false;ftUpdatePlayBtn();}
   ftUpdateDisplay();
   const ring=document.getElementById('ftRing');
   if(ring)ring.classList.toggle('break-ring',ftBreakMode);
   document.getElementById('ftPill')?.classList.toggle('break-mode',ftBreakMode);
 }
+function ftTick(){
+  if(ftInfinityMode){
+    ftInfSeconds++;
+    const m=Math.floor(ftInfSeconds/60);const s=ftInfSeconds%60;
+    const timeStr=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    ['ftPillTime','ftExpTime','timerDisplay'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=timeStr;});
+    ['ftRing','timerRing'].forEach(id=>{const ring=document.getElementById(id);if(ring)ring.style.strokeDashoffset='0';});
+    document.title=`${timeStr} ∞ — StudyFlow`;
+    return;
+  }
+  ftSeconds--;
+  if(ftSeconds<=0){
+    clearInterval(ftInterval);ftInterval=null;ftRunning=false;
+    document.getElementById('ftStatusDot').className='ft-status-dot paused';
+    ftPomDone=Math.min(ftPomDone+1,4);
+    renderFtPomDots();renderPomDots();
+    const autoBreak=document.getElementById('tog-autobreak')?.classList.contains('on');
+    const autoFocus=document.getElementById('tog-autofocus')?.classList.contains('on');
+    if(!ftBreakMode){
+      ftBreakMode=true;ftPhase='Break';
+      const breakDur=ftPomDone%4===0?timerSettings.long:timerSettings.short;
+      ftSeconds=breakDur*60;ftTotal=breakDur*60;
+      document.getElementById('ftPill')?.classList.add('break-mode');
+      document.getElementById('ftRing')?.classList.add('break-ring');
+      document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(breakDur)));
+      document.querySelectorAll('.tm-tab').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(breakDur)));
+      ftUpdateDisplay();
+      showToast(`⏸ Break! ${breakDur} min`);
+      if(autoBreak){setTimeout(()=>{if(!ftRunning){ftRunning=true;document.getElementById('ftStatusDot').className='ft-status-dot running';ftInterval=setInterval(ftTick,1000);ftUpdatePlayBtn();}},400);}
+    } else {
+      ftBreakMode=false;ftPhase='Focus';
+      ftSeconds=timerSettings.focus*60;ftTotal=timerSettings.focus*60;
+      document.getElementById('ftPill')?.classList.remove('break-mode');
+      document.getElementById('ftRing')?.classList.remove('break-ring');
+      document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(timerSettings.focus)));
+      document.querySelectorAll('.tm-tab').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(timerSettings.focus)));
+      ftUpdateDisplay();
+      showToast('🎯 Focus session!');
+      if(autoFocus){setTimeout(()=>{if(!ftRunning){ftRunning=true;document.getElementById('ftStatusDot').className='ft-status-dot running';ftInterval=setInterval(ftTick,1000);ftUpdatePlayBtn();}},400);}
+    }
+    return;
+  }
+  ftUpdateDisplay();
+  const m=Math.floor(ftSeconds/60);const s=ftSeconds%60;
+  document.title=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} — StudyFlow`;
+}
+
 function ftToggle(e){
   if(e)e.stopPropagation();
   if(ftRunning){
-    clearInterval(ftInterval);ftRunning=false;
+    clearInterval(ftInterval);ftInterval=null;ftRunning=false;
     document.getElementById('ftStatusDot').className='ft-status-dot paused';
+    if(ftInfinityMode){document.title='StudyFlow — Premium Learning Platform';}
   } else {
+    if(ftInfinityMode)ftInfSeconds=0;
     ftRunning=true;
     document.getElementById('ftStatusDot').className='ft-status-dot running';
-    ftInterval=setInterval(()=>{
-      ftSeconds--;
-      if(ftSeconds<=0){
-        clearInterval(ftInterval);ftRunning=false;
-        document.getElementById('ftStatusDot').className='ft-status-dot paused';
-        ftPomDone=Math.min(ftPomDone+1,4);
-        renderFtPomDots();
-        if(!ftBreakMode){
-          // Auto switch to break
-          ftBreakMode=true;ftPhase='Break';
-          ftSeconds=5*60;ftTotal=5*60;
-          document.getElementById('ftPill')?.classList.add('break-mode');
-          const ring=document.getElementById('ftRing');if(ring)ring.classList.add('break-ring');
-          showToast('⏸ Break time! 5-minute break started');
-          // update mode btn
-          document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.dur==='5'));
-        } else {
-          ftBreakMode=false;ftPhase='Focus';
-          ftSeconds=25*60;ftTotal=25*60;
-          document.getElementById('ftPill')?.classList.remove('break-mode');
-          const ring=document.getElementById('ftRing');if(ring)ring.classList.remove('break-ring');
-          showToast('🎯 Focus session ready!');
-          document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.dur==='25'));
-        }
-        ftUpdateDisplay();
-        return;
-      }
-      ftUpdateDisplay();
-      // Update page title when running
-      const m=Math.floor(ftSeconds/60);const s=ftSeconds%60;
-      document.title=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} — StudyFlow`;
-    },1000);
+    ftInterval=setInterval(ftTick,1000);
   }
   ftUpdatePlayBtn();
 }
@@ -2719,15 +2753,23 @@ function ftUpdatePlayBtn(){
   if(mainBtn)mainBtn.textContent=icon;
 }
 function ftUpdateDisplay(){
+  if(ftInfinityMode){
+    const m=Math.floor(ftInfSeconds/60);const s=ftInfSeconds%60;
+    const timeStr=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    ['ftPillTime','ftExpTime','timerDisplay'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=timeStr;});
+    ['ftRing','timerRing'].forEach(id=>{const ring=document.getElementById(id);if(ring)ring.style.strokeDashoffset='0';});
+    const phase=document.getElementById('ftExpPhase');if(phase)phase.textContent='∞ Free';
+    const tp=document.getElementById('timerPhase');if(tp)tp.textContent='∞ Free';
+    return;
+  }
   const m=Math.floor(ftSeconds/60);const s=ftSeconds%60;
   const timeStr=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  const el1=document.getElementById('ftPillTime');if(el1)el1.textContent=timeStr;
-  const el2=document.getElementById('ftExpTime');if(el2)el2.textContent=timeStr;
+  ['ftPillTime','ftExpTime'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=timeStr;});
   const el3=document.getElementById('ftDisplay');if(el3)el3.textContent=timeStr;
   const phase=document.getElementById('ftExpPhase');if(phase)phase.textContent=ftPhase;
   const tp=document.getElementById('timerPhase');if(tp)tp.textContent=ftPhase;
   // ring
-  const circ=402.12;const prog=ftSeconds/ftTotal;
+  const circ=402.12;const prog=ftTotal>0?ftSeconds/ftTotal:0;
   const ring=document.getElementById('ftRing');if(ring)ring.style.strokeDashoffset=circ*(1-prog);
   // also sync main ring
   const mainRing=document.getElementById('timerRing');
@@ -2737,7 +2779,9 @@ function ftUpdateDisplay(){
 }
 function ftReset(e){
   if(e)e.stopPropagation();
-  clearInterval(ftInterval);ftRunning=false;ftSeconds=ftTotal;
+  clearInterval(ftInterval);ftInterval=null;ftRunning=false;
+  if(ftInfinityMode){ftInfSeconds=0;}
+  else{ftSeconds=ftTotal;}
   document.getElementById('ftStatusDot').className='ft-status-dot';
   ftUpdateDisplay();ftUpdatePlayBtn();
 }
@@ -2773,8 +2817,9 @@ function renderFtPomDots(){
 }
 ftInit();
 
-// NAVIGATION
-const pageTitles={dashboard:'Good Morning, <span>Arjun</span> ✦',targets:'My <span>Targets</span>',schedule:'My <span>Schedule</span>',progress:'<span>Progress</span> Analytics',notes:'Smart <span>Notes</span>',timer:'Focus <span>Timer</span>',settings:'<span>Settings</span>',profile:'My <span>Profile</span>',testlog:'Test <span>Log</span>',rankpredictor:'NEET <span>Rank Predictor</span>',studygroup:'Study <span>Group</span>'};
+// NAVIGATION — lazy page init
+const pageTitles={dashboard:'Good Morning, <span>Arjun</span> ✦',targets:'My <span>Targets</span>',schedule:'My <span>Schedule</span>',progress:'<span>Progress</span> Analytics',notes:'Smart <span>Notes</span>',timer:'Focus <span>Timer</span>',settings:'<span>Settings</span>',profile:'My <span>Profile</span>',testlog:'Test <span>Log</span>',rankpredictor:'NEET <span>Rank Predictor</span>',studygroup:'Study <span>Group</span>',pdfextractor:'PDF <span>Extractor</span>'};
+const _pageInited={dashboard:true}; // dashboard inits on load
 function navigate(page,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -2782,8 +2827,18 @@ function navigate(page,el){
   if(pg)pg.classList.add('active');
   if(el)el.classList.add('active');
   document.getElementById('pageTitle').innerHTML=pageTitles[page]||page;
-  if(page==='dashboard')animateBars();
-  showToast('Navigated to '+page.charAt(0).toUpperCase()+page.slice(1));
+  if(!_pageInited[page]){
+    _pageInited[page]=true;
+    if(page==='progress')initProgress();
+    else if(page==='timer')initTimer();
+    else if(page==='notes')initNotes();
+    else if(page==='targets'){filterTargets('all');updateStats();}
+    else if(page==='schedule'){renderWeekGrid();updateWeekLabel();renderAgenda();}
+    else if(page==='testlog'){renderTestLog();updateTestStats();renderWeakTopics();}
+    else if(page==='rankpredictor'){setTimeout(()=>{rpUpdate();renderPyqStats('2025');},100);}
+  } else {
+    if(page==='dashboard')animateBars();
+  }
 }
 
 // TOAST
@@ -2828,7 +2883,6 @@ function renderCal(){
 }
 function prevMonth(){calDate=new Date(calDate.getFullYear(),calDate.getMonth()-1,1);renderCal();}
 function nextMonth(){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+1,1);renderCal();}
-renderCal();
 
 
 
@@ -3221,10 +3275,16 @@ function initTimer(){
   if(pills){
     pills.innerHTML=timerSubjects.map(s=>`<div class="timer-pill${s===timerSubj?' active':''}" style="${s===timerSubj?`background:${SUBJ_COLORS?.[s]||'#3A7A6C'};`:''}" onclick="selectTimerSubj(this,'${s}')">${s}</div>`).join('');
   }
-  // sync display from floating timer state
   ftUpdateDisplay();
   renderPomDots();
   renderTimerLog();
+  // Auto-start focus session if not already running
+  if(!ftRunning&&!ftInfinityMode){
+    setTimeout(()=>{
+      ftToggle(null);
+      showToast('🎯 Focus session started!');
+    },500);
+  }
 }
 function selectTimerSubj(el,s){
   timerSubj=s;
@@ -3237,11 +3297,14 @@ function selectTimerSubj(el,s){
 function setTimerMode(el){
   document.querySelectorAll('.tm-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  const dur=parseInt(el.dataset.dur);
+  const isInf=el.dataset.inf==='1';
   // delegate to floating timer
-  const ftBtn=document.querySelector(`.ft-mode-btn[data-dur="${dur}"]`);
+  const dur=parseInt(el.dataset.dur)||0;
+  const ftBtn=isInf
+    ? document.querySelector('.ft-mode-btn[data-inf="1"]')
+    : document.querySelector(`.ft-mode-btn[data-dur="${dur}"]:not([data-inf])`);
   if(ftBtn)ftSetMode(ftBtn);
-  else{ftSeconds=dur*60;ftTotal=dur*60;ftUpdateDisplay();}
+  else{ftInfinityMode=isInf;ftInfSeconds=0;ftSeconds=dur*60;ftTotal=dur*60;ftUpdateDisplay();}
 }
 function toggleTimer(){
   // delegate to floating timer
@@ -3371,26 +3434,9 @@ function selectTheme(el,color){
   showToast('Theme colour updated!');
 }
 
-// Override navigate to init pages
-const _origNavigate=navigate;
-navigate=function(page,el){
-  _origNavigate(page,el);
-  if(page==='progress')setTimeout(initProgress,100);
-  if(page==='timer')setTimeout(initTimer,100);
-  if(page==='notes')setTimeout(initNotes,100);
-  if(page==='testlog'){setTimeout(()=>{renderTestLog();updateTestStats();renderWeakTopics();},100);}
-  if(page==='rankpredictor'){setTimeout(()=>{rpUpdate();renderPyqStats('2025');},100);}
-};
+// rankpredictor init handled in navigate lazily
 
-// init schedule
-updateWeekLabel();
-renderWeekGrid();
-renderAgenda();
-
-// Pre-init pages 4 & 5
-initTimer();
-initNotes();
-initProgress();
+// Schedule, timer, notes, progress — now lazily inited on first navigate
 
 
 let targets=[
@@ -3617,10 +3663,7 @@ function saveTarget(){
   filterTargets(currentFilter);
 }
 
-// ===== INIT TARGETS ON LOAD =====
-filterTargets('all');
-updateStats();
-animateBars();
+// targets init lazily on navigate
 
 // ===== RANK PREDICTOR =====
 let rpSelectedYear='2021', rpSelectedAdj=0.92;
@@ -4165,10 +4208,9 @@ function initFirebase(){
   showToast('🔗 Connecting to Firebase… (requires Firebase SDK setup)');
 }
 
-// Init on load
-renderTestLog();
-updateTestStats();
-renderWeakTopics();
+// Init on load — only dashboard stuff
+animateBars();
+renderCal();
 
 // ===== PROFILE EDIT =====
 let profileData = JSON.parse(localStorage.getItem('neetProfileData') || 'null') || {

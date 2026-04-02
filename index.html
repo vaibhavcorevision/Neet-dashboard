@@ -4277,7 +4277,7 @@ applyProfileData();
 
   async function peCallGemini(apiKey,b64,chapters){
     const prompt=`Physics exam question slide. Extract question and options. Rules:\n1. Question text exactly.\n2. All options exactly.\n3. has_diagram:true if figure present.\n4. Remove teacher marks/solutions.\n5. Guess chapter from: ${JSON.stringify(chapters)}\nReturn ONLY JSON (no markdown):\n{"question":"...","options":["(1)...","(2)...","(3)...","(4)..."],"has_diagram":false,"chapter":"..."}\nIf solution/blank page: {"skip":true}`;
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:'image/jpeg',data:b64}}]}]})
     });

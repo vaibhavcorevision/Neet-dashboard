@@ -2045,6 +2045,11 @@ body.dark .ai-input-wrap{background:var(--bg);}
             <button class="timer-btn-main play" id="timerPlayBtn" onclick="toggleTimer()">▶</button>
             <button class="timer-btn-main secondary" onclick="skipTimer()" title="Skip">⏭</button>
           </div>
+          <!-- Mid-session save row — shown when paused with elapsed time -->
+          <div class="ft-mid-save-row" style="display:none;align-items:center;justify-content:center;gap:8px;margin-top:10px;flex-wrap:wrap;">
+            <span class="ft-mid-save-label" style="font-size:12px;color:var(--text2);text-align:center;">Save session & switch subject?</span>
+            <button onclick="ftSaveMidSession()" style="background:var(--primary);color:white;border:none;border-radius:8px;padding:6px 14px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">💾 Save & Reset</button>
+          </div>
           <div class="pomodoro-dots" id="pomDots"></div>
           <div style="font-size:12px;color:var(--text3);margin-top:12px;" id="pomCounter">Session 1 of 4 · Long break after session 4</div>
         </div>
@@ -2846,19 +2851,19 @@ body.dark .ai-input-wrap{background:var(--bg);}
       <p style="font-size:13.5px;color:var(--text3);margin-top:3px;">NEET-focused AI tutor — Physics, Chemistry, Biology explained step by step.</p>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
-      <div style="font-size:12px;color:var(--text3);background:var(--primary-light);border:1px solid var(--primary);padding:5px 12px;border-radius:20px;">Powered by Gemini AI</div>
+      <div style="font-size:12px;color:var(--primary);background:var(--primary-light);border:1px solid var(--primary);padding:5px 12px;border-radius:20px;">✦ Powered by Claude AI</div>
     </div>
   </div>
   <div class="ai-layout">
     <!-- LEFT: API + History -->
     <div class="ai-sidebar-panel">
-      <div class="ai-api-box">
-        <div class="ai-api-title">🔑 Gemini API Key</div>
-        <div class="ai-key-row">
-          <input type="password" class="ai-key-input" id="aiApiKey" placeholder="AIza... (free from aistudio.google.com)"/>
-          <button class="ai-key-save" onclick="aiSaveKey()">Save</button>
+      <div class="ai-api-box" style="background:linear-gradient(135deg,#E6F2EF,#EDF6F2);border:1px solid #A8D4C8;">
+        <div class="ai-api-title" style="color:var(--primary);">✦ Powered by Claude AI</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#3A9E6C;box-shadow:0 0 0 3px rgba(58,158,108,0.2);flex-shrink:0;"></div>
+          <p style="font-size:12.5px;color:var(--primary);font-weight:500;margin:0;">No API key needed — ready to use!</p>
         </div>
-        <p style="font-size:11.5px;color:var(--text3);margin-top:7px;">Same key as PDF Extractor. Stored locally, never shared.</p>
+        <p style="font-size:11.5px;color:var(--text3);margin-top:7px;">Uses Claude Sonnet — Anthropic's latest model. Fast, accurate NEET explanations.</p>
       </div>
       <div class="ai-history-box">
         <div class="ai-history-title">
@@ -3060,6 +3065,11 @@ body.dark .ai-input-wrap{background:var(--bg);}
       <button class="ft-ctrl-btn" onclick="ftReset(event)" title="Reset">↺</button>
       <button class="ft-ctrl-btn ft-play" id="ftPlayBtn" onclick="ftToggle(event)">▶</button>
       <button class="ft-ctrl-btn" onclick="ftSkip(event)" title="Skip">⏭</button>
+    </div>
+    <!-- Mid-session Save & Switch row (visible when paused with elapsed time) -->
+    <div class="ft-mid-save-row" style="display:none;align-items:center;justify-content:center;gap:8px;margin-top:8px;flex-wrap:wrap;">
+      <span class="ft-mid-save-label" style="font-size:11.5px;color:var(--text3);text-align:center;flex:1;">Save session & switch?</span>
+      <button onclick="ftSaveMidSession()" style="background:var(--primary);color:white;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;">💾 Save & Reset</button>
     </div>
     <div class="ft-pom-dots" id="ftPomDots"></div>
   </div>
@@ -3294,6 +3304,26 @@ function ftSetMode(el){
   if(ring)ring.classList.toggle('break-ring',ftBreakMode);
   document.getElementById('ftPill')?.classList.toggle('break-mode',ftBreakMode);
 }
+// Helper: save a completed/partial focus session entry
+function ftSaveSessionEntry(durMins, subjectKey){
+  if(!durMins || durMins < 1) return;
+  const subjName = ftSubjFull[subjectKey||ftSubject]||(subjectKey||ftSubject);
+  const now = new Date();
+  const entry = {
+    subj: subjName,
+    subject: subjName,
+    dur: durMins,
+    duration: durMins,
+    time: now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),
+    ts: now.toISOString()
+  };
+  timerLog.push(entry);
+  sfSave('timerLog', timerLog);
+  renderTimerLog();
+  updateDashboardStats();
+  renderDashActivity();
+}
+
 function ftTick(){
   if(ftInfinityMode){
     ftInfSeconds++;
@@ -3313,6 +3343,11 @@ function ftTick(){
     const autoBreak=document.getElementById('tog-autobreak')?.classList.contains('on');
     const autoFocus=document.getElementById('tog-autofocus')?.classList.contains('on');
     if(!ftBreakMode){
+      // ✅ FIX: Save completed focus session to log
+      const completedMins = Math.round(ftTotal/60);
+      ftSaveSessionEntry(completedMins, ftSubject);
+      showToast(`✅ ${completedMins} min ${ftSubjFull[ftSubject]||ftSubject} session saved!`, 3000);
+
       ftBreakMode=true;ftPhase='Break';
       const breakDur=ftPomDone%4===0?timerSettings.long:timerSettings.short;
       ftSeconds=breakDur*60;ftTotal=breakDur*60;
@@ -3321,7 +3356,6 @@ function ftTick(){
       document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(breakDur)));
       document.querySelectorAll('.tm-tab').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(breakDur)));
       ftUpdateDisplay();
-      showToast(`⏸ Break! ${breakDur} min`);
       if(autoBreak){setTimeout(()=>{if(!ftRunning){ftRunning=true;document.getElementById('ftStatusDot').className='ft-status-dot running';ftInterval=setInterval(ftTick,1000);ftUpdatePlayBtn();}},400);}
     } else {
       ftBreakMode=false;ftPhase='Focus';
@@ -3331,7 +3365,7 @@ function ftTick(){
       document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(timerSettings.focus)));
       document.querySelectorAll('.tm-tab').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(timerSettings.focus)));
       ftUpdateDisplay();
-      showToast('🎯 Focus session!');
+      showToast('🎯 Break done! Focus session ready.');
       if(autoFocus){setTimeout(()=>{if(!ftRunning){ftRunning=true;document.getElementById('ftStatusDot').className='ft-status-dot running';ftInterval=setInterval(ftTick,1000);ftUpdatePlayBtn();}},400);}
     }
     return;
@@ -3347,13 +3381,47 @@ function ftToggle(e){
     clearInterval(ftInterval);ftInterval=null;ftRunning=false;
     document.getElementById('ftStatusDot').className='ft-status-dot paused';
     if(ftInfinityMode){document.title='StudyFlow — Premium Learning Platform';}
+    // Show "Save & Switch" button when paused mid-session
+    ftShowMidSaveBtn(true);
   } else {
     if(ftInfinityMode)ftInfSeconds=0;
     ftRunning=true;
     document.getElementById('ftStatusDot').className='ft-status-dot running';
     ftInterval=setInterval(ftTick,1000);
+    ftShowMidSaveBtn(false);
   }
   ftUpdatePlayBtn();
+}
+
+// Show/hide the mid-session save button
+function ftShowMidSaveBtn(show){
+  document.querySelectorAll('.ft-mid-save-row').forEach(el=>{
+    el.style.display = show ? 'flex' : 'none';
+    // Update elapsed time label
+    if(show){
+      let elapsed = 0;
+      if(ftInfinityMode){ elapsed = Math.round(ftInfSeconds/60); }
+      else { elapsed = Math.round((ftTotal - ftSeconds)/60); }
+      const subjName = ftSubjFull[ftSubject]||ftSubject;
+      const label = el.querySelector('.ft-mid-save-label');
+      if(label) label.textContent = elapsed > 0 ? `Save ${elapsed} min (${subjName}) & switch?` : `Save session & switch?`;
+    }
+  });
+}
+
+// Save current elapsed time as a session and optionally reset for new subject
+function ftSaveMidSession(){
+  let elapsed = 0;
+  if(ftInfinityMode){ elapsed = Math.round(ftInfSeconds/60); }
+  else { elapsed = Math.round((ftTotal - ftSeconds)/60); }
+  if(elapsed < 1){ showToast('⚠ At least 1 minute needed to save'); return; }
+  ftSaveSessionEntry(elapsed, ftSubject);
+  // Reset timer state for new session
+  if(ftInfinityMode){ ftInfSeconds=0; }
+  else { ftSeconds=ftTotal; }
+  ftUpdateDisplay();
+  ftShowMidSaveBtn(false);
+  showToast(`✅ ${elapsed} min ${ftSubjFull[ftSubject]||ftSubject} saved! Start new session.`, 3000);
 }
 function ftUpdatePlayBtn(){
   const icon=ftRunning?'⏸':'▶';
@@ -3395,6 +3463,7 @@ function ftReset(e){
   else{ftSeconds=ftTotal;}
   document.getElementById('ftStatusDot').className='ft-status-dot';
   ftUpdateDisplay();ftUpdatePlayBtn();
+  ftShowMidSaveBtn(false);
 }
 function ftSkip(e){
   if(e)e.stopPropagation();
@@ -5599,6 +5668,45 @@ function initAppForUser(){
   renderMemberList();
 
   showToast(`Welcome back, ${profileData.name.split(' ')[0]}! 👋`);
+
+  // ✅ FIX: Schedule browser notifications for today's scheduled sessions
+  scheduleSchSessionNotifications();
+}
+
+// Schedule browser notifications for today's schSessions
+function scheduleSchSessionNotifications(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission !== 'granted') return;
+  const now = new Date();
+  const todayDow = now.getDay()===0?6:now.getDay()-1; // Mon=0..Sun=6
+  const todaySess = schSessions.filter(s=>s.day===todayDow);
+  todaySess.forEach(s=>{
+    const h = Math.floor(s.startSlot/2)+6;
+    const m = s.startSlot%2?30:0;
+    // Notify 5 mins before
+    const target = new Date(); target.setHours(h, m-5, 0, 0);
+    const diff = target - now;
+    if(diff > 0 && diff < 86400000){
+      setTimeout(()=>{
+        new Notification(`📚 Study time in 5 min: ${s.subject}`, {
+          body: `${s.topic||s.type} · ${s.dur*30} min session starting at ${h>12?h-12:h}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`,
+          icon: '📚'
+        });
+      }, diff);
+    }
+    // Notify at exact time
+    const onTime = new Date(); onTime.setHours(h, m, 0, 0);
+    const diff2 = onTime - now;
+    if(diff2 > 0 && diff2 < 86400000){
+      setTimeout(()=>{
+        new Notification(`⏰ Study session: ${s.subject} starts now!`, {
+          body: `${s.topic||s.type} · ${s.dur*30} min. Open StudyFlow to start the timer.`,
+          icon: '📚'
+        });
+      }, diff2);
+    }
+  });
+  if(todaySess.length > 0) console.log(`[StudyFlow] Scheduled ${todaySess.length*2} notifications for today's sessions.`);
 }
 
 // ---- Dashboard Stats (computed from real data) ----
@@ -5926,20 +6034,8 @@ Rules:
 9. Use structured format: Concept → Explanation → Example → MCQ Practice
 10. If asked about NEET PG: include clinical correlations and PG-level details`;
 
-function aiSaveKey(){
-  const key = document.getElementById('aiApiKey').value.trim();
-  if(!key){ showToast('⚠ Enter your Gemini API key'); return; }
-  localStorage.setItem('sf_ai_gemini_key', key);
-  showToast('✓ API key saved!');
-}
-
-function aiLoadKey(){
-  const saved = localStorage.getItem('sf_ai_gemini_key');
-  if(saved){
-    const el = document.getElementById('aiApiKey');
-    if(el) el.value = saved;
-  }
-}
+function aiSaveKey(){ /* No longer needed — Claude API requires no key */ }
+function aiLoadKey(){ /* No longer needed — Claude API requires no key */ }
 
 function aiSelSubj(el){
   document.querySelectorAll('.ai-spill').forEach(p => p.classList.remove('active'));
@@ -5980,9 +6076,6 @@ async function aiSend(){
   const question = input.value.trim();
   if(!question){ showToast('⚠ Type your doubt first'); return; }
 
-  const apiKey = localStorage.getItem('sf_ai_gemini_key') || document.getElementById('aiApiKey').value.trim();
-  if(!apiKey){ showToast('⚠ Add your Gemini API key first (left panel)'); return; }
-
   // Hide empty state & quick grid
   const emptyState = document.getElementById('aiEmptyState');
   if(emptyState) emptyState.remove();
@@ -5991,8 +6084,8 @@ async function aiSend(){
   // Add user message to UI
   const userInitials = (profileData && profileData.initials) ? profileData.initials : 'ME';
   const avatarColor = (profileData && profileData.avatarColor) ? profileData.avatarColor : 'var(--primary)';
-  const subjLabel = aiSelectedSubj !== 'All' ? ` [${aiSelectedSubj}]` : '';
-  const fullQuestion = `${subjLabel ? '['+aiSelectedSubj+'] ' : ''}${question}`;
+  const subjLabel = aiSelectedSubj !== 'All' ? `[${aiSelectedSubj}] ` : '';
+  const fullQuestion = `${subjLabel}${question}`;
 
   aiAddMessage('user', question, userInitials, avatarColor);
   input.value = '';
@@ -6007,52 +6100,53 @@ async function aiSend(){
   const typingId = 'ai-typing-' + Date.now();
   const msgArea = document.getElementById('aiMessages');
   msgArea.innerHTML += `<div class="ai-msg bot" id="${typingId}">
-    <div class="ai-msg-avatar">🔬</div>
+    <div class="ai-msg-avatar">✦</div>
     <div class="ai-msg-bubble"><div class="ai-typing"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div></div>
   </div>`;
   msgArea.scrollTop = msgArea.scrollHeight;
 
   try {
-    // Build dynamic system prompt based on user type
+    // Build dynamic system prompt
     const userExam = profileData ? profileData.exam : 'NEET UG';
     const isPGUser = isNEETPG();
     const dynamicSystem = isPGUser
       ? AI_NEET_SYSTEM + `\n\nIMPORTANT: This student is preparing for ${userExam}. Focus on POSTGRADUATE level clinical correlations, mechanisms, and exam-style questions relevant to NEET PG / INICET / DNB CET. Include clinical vignettes, previous year question patterns, and PG-level high-yield facts.`
       : AI_NEET_SYSTEM + `\n\nThis student is preparing for ${userExam} (NEET UG). Keep explanations at Class 11-12 / NCERT level with NEET UG exam focus.`;
 
-    // Build messages for Gemini
+    // Build messages for Claude API (standard OpenAI-compatible format)
     const messages = aiConversation.map(m => ({
-      role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.content }]
+      role: m.role === 'user' ? 'user' : 'assistant',
+      content: m.content
     }));
 
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: dynamicSystem }] },
-        contents: messages,
-        generationConfig: { temperature: 0.7, maxOutputTokens: 1200 }
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: dynamicSystem,
+        messages: messages
       })
     });
 
     const data = await res.json();
-    if(data.error) throw new Error(data.error.message);
-    const answer = data.candidates[0].content.parts[0].text;
+    if(data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    const answer = data.content.find(b => b.type === 'text')?.text || 'No response received.';
 
     // Remove typing indicator
     document.getElementById(typingId)?.remove();
 
     // Add bot response
-    aiAddMessage('bot', answer, '🔬', null);
-    aiConversation.push({ role: 'model', content: answer });
+    aiAddMessage('bot', answer, '✦', null);
+    aiConversation.push({ role: 'assistant', content: answer });
 
-    // Save to history (user's localStorage)
+    // Save to history
     aiSaveToHistory(question, answer, aiSelectedSubj);
 
   } catch(err) {
     document.getElementById(typingId)?.remove();
-    aiAddMessage('bot', `❌ Error: ${err.message}. Check your API key or internet connection.`, '🔬', null);
+    aiAddMessage('bot', `❌ Error: ${err.message}`, '✦', null);
   }
 
   aiIsLoading = false;
@@ -6995,7 +7089,6 @@ async function ftOpenPip(e) {
 const _origFtUpdateDisplay = ftUpdateDisplay;
 ftUpdateDisplay = function() {
   _origFtUpdateDisplay();
-  // Update browser tab title with timer for taskbar visibility
   if (ftRunning) {
     const m = ftInfinityMode ? Math.floor(ftInfSeconds/60) : Math.floor(ftSeconds/60);
     const s = ftInfinityMode ? ftInfSeconds%60 : ftSeconds%60;
@@ -7004,6 +7097,484 @@ ftUpdateDisplay = function() {
   }
 };
 
+</script>
+
+<!-- ============================================================
+     VOICE CONTROL — Wake word always-on ("Hey Flow")
+     Uses Web Speech API (Chrome/Edge built-in, 100% free)
+     ============================================================ -->
+<style>
+/* ---- Voice indicator pill (always visible, bottom-left) ---- */
+#vcPill {
+  position: fixed;
+  bottom: 28px;
+  left: 28px;
+  z-index: 997;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--sidebar);
+  color: rgba(255,255,255,0.75);
+  border-radius: 50px;
+  padding: 8px 14px 8px 10px;
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 4px 20px rgba(10,25,20,0.25);
+  cursor: pointer;
+  user-select: none;
+  transition: all .25s;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+#vcPill:hover { background: #2D4F47; color: white; }
+#vcPill.vc-active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 24px rgba(58,122,108,0.45);
+}
+#vcPill.vc-command {
+  background: #C4922A;
+  color: white;
+  box-shadow: 0 4px 24px rgba(196,146,42,0.5);
+  animation: vcPulse .7s ease-in-out infinite;
+}
+@keyframes vcPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+
+/* The pulsing dot */
+#vcDot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  flex-shrink: 0;
+  transition: background .3s;
+}
+#vcPill.vc-active #vcDot {
+  background: #7BE6A0;
+  box-shadow: 0 0 0 3px rgba(123,230,160,0.25);
+  animation: vcDotPulse 1.4s ease-in-out infinite;
+}
+#vcPill.vc-command #vcDot {
+  background: #FFE066;
+  box-shadow: 0 0 0 3px rgba(255,224,102,0.3);
+  animation: vcDotPulse .6s ease-in-out infinite;
+}
+@keyframes vcDotPulse {
+  0%,100% { box-shadow: 0 0 0 2px rgba(123,230,160,0.25); }
+  50%      { box-shadow: 0 0 0 5px rgba(123,230,160,0.1); }
+}
+
+/* Transcript whisper shown below mic pill */
+#vcTranscript {
+  position: fixed;
+  bottom: 76px;
+  left: 28px;
+  z-index: 996;
+  background: var(--sidebar);
+  color: rgba(255,255,255,0.85);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  max-width: 280px;
+  display: none;
+  box-shadow: 0 4px 16px rgba(10,25,20,0.2);
+  border: 1px solid rgba(255,255,255,0.08);
+  animation: fadeUp .25s ease;
+}
+/* Tutorial tooltip shown on first load */
+#vcTutorial {
+  position: fixed;
+  bottom: 76px;
+  left: 28px;
+  z-index: 996;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  width: 270px;
+  box-shadow: 0 8px 32px rgba(10,25,20,0.15);
+  animation: fadeUp .3s ease;
+}
+#vcTutorial .vc-t-head {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+#vcTutorial .vc-t-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+#vcTutorial .vc-t-cmd {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+#vcTutorial .vc-t-desc { font-size: 11.5px; color: var(--text3); line-height: 1.5; }
+#vcTutorial .vc-t-close {
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none; color: var(--text3);
+  font-size: 16px; cursor: pointer; padding: 0;
+}
+body.dark #vcTutorial { background: var(--card); }
+</style>
+
+<!-- The always-visible voice pill -->
+<div id="vcPill" onclick="vcToggleManual()" title="Click to toggle voice control">
+  <div id="vcDot"></div>
+  <span id="vcLabel">Hey Flow</span>
+</div>
+
+<!-- Live transcript whisper -->
+<div id="vcTranscript"></div>
+
+<!-- First-run tutorial card -->
+<div id="vcTutorial" style="display:none;">
+  <button class="vc-t-close" onclick="vcCloseTutorial()">✕</button>
+  <div class="vc-t-head">🎙 Voice Control — always on</div>
+  <div class="vc-t-row">
+    <span class="vc-t-cmd">Hey Flow</span>
+    <span class="vc-t-desc">wake word — app listens</span>
+  </div>
+  <div class="vc-t-row">
+    <span class="vc-t-cmd">…start Biology 50 minutes</span>
+    <span class="vc-t-desc">sets subject + time, starts timer</span>
+  </div>
+  <div class="vc-t-row">
+    <span class="vc-t-cmd">…pause timer</span>
+    <span class="vc-t-desc">pauses focus session</span>
+  </div>
+  <div class="vc-t-row">
+    <span class="vc-t-cmd">…open progress</span>
+    <span class="vc-t-desc">navigates to any page</span>
+  </div>
+  <div class="vc-t-row">
+    <span class="vc-t-cmd">…save and switch</span>
+    <span class="vc-t-desc">saves partial session</span>
+  </div>
+  <div style="margin-top:10px;font-size:11px;color:var(--text3);">Works in Chrome &amp; Edge. Needs microphone permission.</div>
+</div>
+
+<script>
+// ============================================================
+//  STUDYFLOW VOICE CONTROL ENGINE
+//  Wake word: "hey flow" | "ok flow" | "hey studyflow"
+// ============================================================
+
+const VC_WAKE_WORDS = ['hey flow', 'ok flow', 'hey studyflow', 'hey study flow', 'a flow', 'hey flo'];
+const VC_CMD_TIMEOUT = 6000; // ms to wait for command after wake word
+
+let vcRecognition = null;
+let vcState = 'idle';    // idle | listening | command
+let vcCmdTimer = null;
+let vcEnabled = false;
+let vcManuallyDisabled = false;
+
+// Subject keyword map
+const VC_SUBJECTS = {
+  'physics': 'Physics', 'phy': 'Physics',
+  'chemistry': 'Chemistry', 'chem': 'Chemistry',
+  'biology': 'Biology', 'bio': 'Biology'
+};
+
+// Page navigation map
+const VC_PAGES = {
+  'dashboard': 'dashboard', 'home': 'dashboard',
+  'schedule': 'schedule', 'timetable': 'schedule', 'calendar': 'schedule',
+  'progress': 'progress', 'stats': 'progress', 'analytics': 'progress',
+  'notes': 'notes', 'note': 'notes',
+  'focus timer': 'timer', 'timer': 'timer', 'focus': 'timer', 'pomodoro': 'timer',
+  'test log': 'testlog', 'tests': 'testlog', 'test': 'testlog',
+  'rank predictor': 'rank', 'rank': 'rank',
+  'study group': 'group', 'group': 'group',
+  'ai doubt solver': 'ai', 'ai': 'ai', 'doubt solver': 'ai',
+  'settings': 'settings', 'setting': 'settings',
+  'targets': 'targets', 'target': 'targets', 'goals': 'targets'
+};
+
+// ---- UI helpers ----
+function vcSetState(state, labelText){
+  vcState = state;
+  const pill = document.getElementById('vcPill');
+  const label = document.getElementById('vcLabel');
+  pill.classList.remove('vc-active','vc-command');
+  if(state === 'listening') pill.classList.add('vc-active');
+  if(state === 'command')   pill.classList.add('vc-command');
+  if(label) label.textContent = labelText || (state === 'idle' ? 'Hey Flow' : state === 'listening' ? 'Listening…' : 'Speak command…');
+}
+
+function vcShowTranscript(text, duration){
+  const el = document.getElementById('vcTranscript');
+  if(!el) return;
+  el.textContent = '🎙 "' + text + '"';
+  el.style.display = 'block';
+  clearTimeout(vcShowTranscript._t);
+  vcShowTranscript._t = setTimeout(() => { el.style.display = 'none'; }, duration || 3000);
+}
+
+function vcCloseTutorial(){
+  document.getElementById('vcTutorial').style.display = 'none';
+  localStorage.setItem('sf_vc_tutorial_seen', '1');
+}
+
+// ---- Init: called after user logs in ----
+function vcInit(){
+  if(!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)){
+    document.getElementById('vcPill').title = 'Voice control not supported in this browser (use Chrome/Edge)';
+    document.getElementById('vcLabel').textContent = 'No voice support';
+    return;
+  }
+
+  // Show tutorial on first use
+  if(!localStorage.getItem('sf_vc_tutorial_seen')){
+    setTimeout(() => {
+      document.getElementById('vcTutorial').style.display = 'block';
+    }, 2000);
+  }
+
+  // Request mic permission upfront
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(() => vcStartListening())
+    .catch(() => {
+      document.getElementById('vcLabel').textContent = 'Mic blocked';
+      showToast('🎙 Allow microphone to use voice control', 4000);
+    });
+}
+
+// ---- Core recognition setup ----
+function vcBuildRecognition(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const r = new SR();
+  r.continuous = true;
+  r.interimResults = true;
+  r.lang = 'en-IN';
+  r.maxAlternatives = 3;
+
+  r.onresult = (e) => {
+    // Collect all results into one string
+    let interim = '', final = '';
+    for(let i = e.resultIndex; i < e.results.length; i++){
+      const t = e.results[i][0].transcript.toLowerCase().trim();
+      if(e.results[i].isFinal) final += t + ' ';
+      else interim += t + ' ';
+    }
+    const fullText = (final + interim).trim();
+    if(!fullText) return;
+
+    if(vcState === 'idle' || vcState === 'listening'){
+      // Check for wake word in current utterance
+      const hasWake = VC_WAKE_WORDS.some(w => fullText.includes(w));
+      if(hasWake){
+        vcActivateCommandMode();
+        // If there's already a command after the wake word in the same utterance
+        const afterWake = vcStripWakeWord(fullText);
+        if(afterWake.length > 3) vcProcessCommand(afterWake);
+      }
+    } else if(vcState === 'command'){
+      // Show live transcript
+      vcShowTranscript(fullText, 2000);
+      // Only process final results as commands
+      if(final.trim().length > 2){
+        clearTimeout(vcCmdTimer);
+        vcProcessCommand(final.trim());
+      }
+    }
+  };
+
+  r.onerror = (e) => {
+    if(e.error === 'not-allowed') {
+      vcEnabled = false;
+      document.getElementById('vcLabel').textContent = 'Mic blocked';
+      return;
+    }
+    // For 'no-speech', 'aborted', 'network' — restart silently
+    if(!vcManuallyDisabled) setTimeout(vcStartListening, 800);
+  };
+
+  r.onend = () => {
+    if(!vcManuallyDisabled && vcEnabled) {
+      // Auto-restart to keep always-on
+      setTimeout(vcStartListening, 300);
+    }
+  };
+
+  return r;
+}
+
+function vcStartListening(){
+  if(vcManuallyDisabled) return;
+  try {
+    if(vcRecognition){ try{ vcRecognition.stop(); }catch(e){} }
+    vcRecognition = vcBuildRecognition();
+    vcRecognition.start();
+    vcEnabled = true;
+    vcSetState('listening', 'Hey Flow');
+  } catch(e) {
+    setTimeout(vcStartListening, 1000);
+  }
+}
+
+function vcActivateCommandMode(){
+  vcSetState('command', 'Speak command…');
+  showToast('🎙 Listening for command…', 2500);
+  // Revert to wake-word mode after timeout
+  clearTimeout(vcCmdTimer);
+  vcCmdTimer = setTimeout(() => {
+    vcSetState('listening', 'Hey Flow');
+  }, VC_CMD_TIMEOUT);
+}
+
+function vcStripWakeWord(text){
+  let t = text;
+  VC_WAKE_WORDS.forEach(w => { t = t.replace(w, ''); });
+  return t.trim();
+}
+
+// ---- Manual toggle (clicking the pill) ----
+function vcToggleManual(){
+  if(vcManuallyDisabled){
+    vcManuallyDisabled = false;
+    vcStartListening();
+    showToast('🎙 Voice control ON — say "Hey Flow"');
+  } else {
+    vcManuallyDisabled = true;
+    vcEnabled = false;
+    if(vcRecognition){ try{ vcRecognition.stop(); }catch(e){} }
+    vcSetState('idle', 'Voice off');
+    showToast('🔇 Voice control OFF');
+  }
+}
+
+// ---- Command processor ----
+function vcProcessCommand(rawText){
+  const t = rawText.toLowerCase().replace(/[^a-z0-9 ]/g,'').trim();
+  vcSetState('listening', 'Hey Flow');
+  vcShowTranscript(rawText, 3500);
+
+  // ---- 1. TIMER CONTROLS ----
+  if(/\b(pause|stop|hold)\b/.test(t) && /timer|session|pomodoro|focus/.test(t)){
+    if(ftRunning){ ftToggle(null); showToast('⏸ Timer paused'); } else showToast('Timer is already paused');
+    return;
+  }
+  if(/\b(resume|continue|start again|unpause)\b/.test(t)){
+    if(!ftRunning){ ftToggle(null); showToast('▶ Timer resumed'); } else showToast('Timer is already running');
+    return;
+  }
+  if(/\breset\b/.test(t)){
+    ftReset(null); showToast('↺ Timer reset'); return;
+  }
+  if(/\bskip\b/.test(t)){
+    ftSkip(null); showToast('⏭ Session skipped'); return;
+  }
+  if(/\b(save and switch|save session|save and change|save it)\b/.test(t)){
+    ftSaveMidSession(); return;
+  }
+
+  // ---- 2. START SESSION with subject + duration ----
+  // Patterns: "start Biology 50 minutes", "Chemistry session 25", "deep 50 physics", "pomodoro Chemistry"
+  let subjFound = null;
+  let durFound = null;
+
+  // Detect subject
+  for(const [kw, fullName] of Object.entries(VC_SUBJECTS)){
+    if(t.includes(kw)){ subjFound = fullName; break; }
+  }
+
+  // Detect duration (number followed by optional "min"/"minute")
+  const durMatch = t.match(/\b(\d{1,3})\s*(min|minute|minutes|m)?\b/);
+  if(durMatch) durFound = parseInt(durMatch[1]);
+
+  // If we found start intent or subject/duration combo
+  const hasStartIntent = /\b(start|begin|set|launch|run)\b/.test(t) || subjFound || durFound;
+
+  if(hasStartIntent && (subjFound || durFound)){
+    // Navigate to timer page
+    navigate('timer');
+
+    // Set subject if found
+    if(subjFound){
+      ftSubject = Object.keys(ftSubjFull).find(k => ftSubjFull[k] === subjFound) || 'Chemistry';
+      // Update UI chips
+      document.querySelectorAll('.ft-subj-chip, .timer-pill').forEach(c => {
+        c.classList.remove('active');
+        c.style.background = '';
+        c.style.color = '';
+      });
+      const chip = document.querySelector(`.ft-subj-chip[onclick*="${ftSubject}"]`)
+               || document.querySelector(`.timer-pill[onclick*="${subjFound}"]`);
+      if(chip){ chip.classList.add('active'); chip.style.background = SUBJ_COLORS?.[subjFound] || '#3A7A6C'; chip.style.color = 'white'; }
+      timerSubj = subjFound;
+      const pillSubj = document.getElementById('ftPillSubj');
+      if(pillSubj) pillSubj.textContent = subjFound;
+    }
+
+    // Set duration if found
+    if(durFound && durFound >= 1 && durFound <= 180){
+      ftInfinityMode = false;
+      ftSeconds = durFound * 60;
+      ftTotal   = durFound * 60;
+      ftPhase   = 'Focus';
+      ftBreakMode = false;
+      ftUpdateDisplay();
+      // Update mode buttons
+      document.querySelectorAll('.ft-mode-btn, .tm-tab').forEach(b => b.classList.remove('active'));
+    }
+
+    // Start timer
+    if(!ftRunning){ ftToggle(null); }
+
+    const msg = `▶ ${subjFound||''} ${durFound ? durFound+' min' : ''} session started!`.trim();
+    showToast(msg, 3000);
+    return;
+  }
+
+  // ---- 3. NAVIGATION ----
+  // "open progress", "go to notes", "show dashboard"
+  const navMatch = t.match(/\b(open|go to|show|navigate to|switch to)\s+(.+)/);
+  if(navMatch){
+    const pageName = navMatch[2].trim();
+    for(const [kw, pageId] of Object.entries(VC_PAGES)){
+      if(pageName.includes(kw)){
+        navigate(pageId);
+        showToast(`📂 Opened ${pageId}`, 2000);
+        return;
+      }
+    }
+  }
+  // Also try direct page name without verb
+  for(const [kw, pageId] of Object.entries(VC_PAGES)){
+    if(t.includes(kw)){
+      navigate(pageId);
+      showToast(`📂 Opened ${pageId}`, 2000);
+      return;
+    }
+  }
+
+  // ---- 4. Nothing matched ----
+  showToast(`🤔 Didn't understand: "${rawText.slice(0,40)}"`, 3000);
+}
+
+// ---- Hook into app init ---- (called after login)
+const _origInitAppForUser = initAppForUser;
+initAppForUser = function(){
+  _origInitAppForUser();
+  setTimeout(vcInit, 1200); // slight delay so login toast clears first
+};
+
+// If already logged in on page load, start vc
+if(typeof currentUser !== 'undefined' && currentUser){
+  setTimeout(vcInit, 1500);
+}
 </script>
 </body>
 </html>

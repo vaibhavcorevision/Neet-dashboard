@@ -4,6 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>StudyFlow — Premium Learning Platform</title>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -455,8 +458,10 @@ body.dark .notif-item.unread{background:#1C3028;}
 .ach-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 12px;text-align:center;transition:all .2s;}
 .ach-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
 .ach-card.locked{opacity:0.4;filter:grayscale(0.6);}
-.ach-icon{font-size:26px;margin-bottom:6px;}
-.ach-name{font-size:12px;font-weight:600;color:var(--text);}
+.ach-card.unlocked{border-color:var(--primary);background:var(--primary-light);}
+.ach-icon{font-size:26px;margin-bottom:6px;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+.ach-name,.ach-title{font-size:12px;font-weight:600;color:var(--text);}
+.ach-desc{font-size:11px;color:var(--text3);margin-top:3px;}
 .ach-desc{font-size:11px;color:var(--text3);margin-top:2px;}
 /* ===== PART 5: SETTINGS ===== */
 .settings-layout{display:grid;grid-template-columns:210px 1fr;gap:20px;align-items:start;}
@@ -1128,7 +1133,7 @@ body.dark .ai-input-wrap{background:var(--bg);}
 .ls-btn-secondary{background:transparent;color:var(--text2);border:1.5px solid var(--border);margin-top:10px;}
 .ls-btn-secondary:hover{background:var(--bg);transform:none;box-shadow:none;}
 
-.ls-divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.ls-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--text3);font-size:12.5px;}
 .ls-divider::before,.ls-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 .ls-divider span{font-size:12px;color:var(--text3);}
 
@@ -1156,6 +1161,27 @@ body.dark .ai-input-wrap{background:var(--bg);}
   .ls-left{display:none;}
   .ls-right{padding:24px;}
 }
+
+/* Log Past Session modal */
+.lps-dur-btn{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:12.5px;font-weight:500;cursor:pointer;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .18s;}
+.lps-dur-btn:hover{border-color:var(--primary);color:var(--primary);}
+.lps-dur-btn.active{background:var(--primary);border-color:var(--primary);color:white;}
+.lps-subj-pill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:12.5px;cursor:pointer;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .18s;}
+.lps-subj-pill.selected{color:white;border-color:transparent;}
+.sl-item:hover .sl-del-btn{opacity:1!important;}
+/* Google Sign-In Button */
+.google-signin-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:12px 16px;
+  background:white;border:1.5px solid #dadce0;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#3c4043;
+  cursor:pointer;transition:all .2s;margin-bottom:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.08);
+}
+.google-signin-btn:hover{background:#f8f9fa;box-shadow:0 2px 8px rgba(0,0,0,0.12);transform:translateY(-1px);}
+.google-signin-btn svg{flex-shrink:0;}
+.firebase-setup-note{background:#FBF3E2;border:1px solid #E8D0A0;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#7A5020;margin-top:10px;line-height:1.5;}
+.firebase-setup-note a{color:var(--primary);font-weight:500;}
 
 </style>
 </head>
@@ -1192,7 +1218,17 @@ body.dark .ai-input-wrap{background:var(--bg);}
       <!-- STEP: Choose (new or switch) -->
       <div class="ls-step active" id="lsStepChoose">
         <div class="ls-form-title">Welcome to<br>StudyFlow</div>
-        <div class="ls-form-sub">Sign in to an existing profile or create a new one.</div>
+        <div class="ls-form-sub" id="lsChooseSub">Sign in with Google or create a new profile.</div>
+
+        <!-- Google Sign In — always visible -->
+        <button class="google-signin-btn" onclick="googleSignIn()">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A353" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+          Continue with Google
+        </button>
+        <div id="googleAuthStatus" style="font-size:12.5px;color:var(--text3);text-align:center;margin-bottom:2px;min-height:18px;"></div>
+
+        <div class="ls-divider" id="lsOrDivider">or use local profile</div>
+
         <div class="ls-switcher-row" id="lsSwitcherList"></div>
         <button class="ls-btn" onclick="lsShowStep('create')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px;vertical-align:-2px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1203,7 +1239,15 @@ body.dark .ai-input-wrap{background:var(--bg);}
       <!-- STEP: Create new profile -->
       <div class="ls-step" id="lsStepCreate">
         <div class="ls-form-title">Create Profile</div>
-        <div class="ls-form-sub">Just a few details to get started. No password needed.</div>
+        <div class="ls-form-sub">Sign in with Google for easy access, or fill details below.</div>
+
+        <!-- Google Sign-In at top of Create too -->
+        <button class="google-signin-btn" onclick="googleSignIn()" style="margin-bottom:4px;">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A353" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+          Continue with Google
+        </button>
+        <div id="googleAuthStatus2" style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:4px;min-height:16px;"></div>
+        <div class="ls-divider">or create a local profile</div>
 
         <div class="ls-field">
           <label>Your Full Name</label>
@@ -1772,7 +1816,59 @@ body.dark .ai-input-wrap{background:var(--bg);}
     </div>
   </div>
 
-  <!-- SCHEDULE SESSION MODAL -->
+  <!-- LOG PAST SESSION MODAL -->
+<div class="sch-modal-overlay" id="logPastModal" onclick="if(event.target===this)closeLogPastSession()">
+  <div class="sch-modal" style="width:440px;">
+    <div class="sm-header">
+      <div>
+        <div class="modal-title">📝 Log a Past Session</div>
+        <div class="modal-sub">Manually add a study session you forgot to track.</div>
+      </div>
+      <button class="modal-close" onclick="closeLogPastSession()">✕</button>
+    </div>
+    <div class="sm-body">
+      <!-- Subject -->
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Subject</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="lpsSubjRow"></div>
+      </div>
+      <!-- Date & Time -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Date</label>
+          <input class="form-input" id="lps-date" type="date"/>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Time (Start)</label>
+          <input class="form-input" id="lps-time" type="time" value="09:00"/>
+        </div>
+      </div>
+      <!-- Duration -->
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Duration (minutes)</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="lpsDurPresets">
+          <button class="lps-dur-btn active" data-dur="25" onclick="lpsSelDur(this)">25 min</button>
+          <button class="lps-dur-btn" data-dur="30" onclick="lpsSelDur(this)">30 min</button>
+          <button class="lps-dur-btn" data-dur="45" onclick="lpsSelDur(this)">45 min</button>
+          <button class="lps-dur-btn" data-dur="50" onclick="lpsSelDur(this)">50 min</button>
+          <button class="lps-dur-btn" data-dur="60" onclick="lpsSelDur(this)">1 hr</button>
+          <button class="lps-dur-btn" data-dur="90" onclick="lpsSelDur(this)">90 min</button>
+          <button class="lps-dur-btn" data-dur="120" onclick="lpsSelDur(this)">2 hr</button>
+        </div>
+        <input class="form-input" id="lps-dur" type="number" min="1" max="480" value="25" placeholder="Or type custom minutes…" style="margin-top:8px;"/>
+      </div>
+      <!-- Topic (optional) -->
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Topic / Notes <span style="font-weight:400;color:var(--text3);">(optional)</span></label>
+        <input class="form-input" id="lps-topic" type="text" placeholder="e.g. Ray Optics, Organic Chemistry…"/>
+      </div>
+    </div>
+    <div class="sm-footer">
+      <button class="btn-secondary" onclick="closeLogPastSession()">Cancel</button>
+      <button class="btn-save" onclick="saveLogPastSession()">Save Session ✦</button>
+    </div>
+  </div>
+</div>
   <div class="sch-modal-overlay" id="schModal" onclick="closeSchModalOut(event)">
     <div class="sch-modal">
       <div class="sm-header">
@@ -1847,10 +1943,10 @@ body.dark .ai-input-wrap{background:var(--bg);}
       </div>
     </div>
     <div class="prog-grid-top">
-      <div class="prog-kpi"><div class="prog-kpi-val">147h</div><div class="prog-kpi-label">Total Study Hours</div><div class="prog-kpi-delta up">↑ 18% vs last month</div></div>
-      <div class="prog-kpi"><div class="prog-kpi-val">83%</div><div class="prog-kpi-label">Average Score</div><div class="prog-kpi-delta up">↑ 5 points</div></div>
-      <div class="prog-kpi"><div class="prog-kpi-val">38</div><div class="prog-kpi-label">Focus Sessions</div><div class="prog-kpi-delta down">↓ 3 this week</div></div>
-      <div class="prog-kpi"><div class="prog-kpi-val">12</div><div class="prog-kpi-label">Day Streak 🔥</div><div class="prog-kpi-delta up">Personal best!</div></div>
+      <div class="prog-kpi"><div class="prog-kpi-val" id="prog-kpi-hours">0h</div><div class="prog-kpi-label">Total Study Hours</div><div class="prog-kpi-delta up" id="prog-kpi-hours-delta">Start studying to track!</div></div>
+      <div class="prog-kpi"><div class="prog-kpi-val" id="prog-kpi-score">—</div><div class="prog-kpi-label">Average Score</div><div class="prog-kpi-delta up" id="prog-kpi-score-delta">Log tests to see avg</div></div>
+      <div class="prog-kpi"><div class="prog-kpi-val" id="prog-kpi-sessions">0</div><div class="prog-kpi-label">Focus Sessions</div><div class="prog-kpi-delta up" id="prog-kpi-sessions-delta">Use the timer!</div></div>
+      <div class="prog-kpi"><div class="prog-kpi-val" id="prog-kpi-streak">0</div><div class="prog-kpi-label">Day Streak 🔥</div><div class="prog-kpi-delta up" id="prog-kpi-streak-delta">Study daily!</div></div>
     </div>
     <div class="prog-main-grid">
       <div style="display:flex;flex-direction:column;gap:18px;">
@@ -1887,12 +1983,8 @@ body.dark .ai-input-wrap{background:var(--bg);}
         <div class="prog-card">
           <div class="prog-card-header"><div class="prog-card-title">Subject Scores</div></div>
           <div class="prog-card-body">
-            <div class="subject-score-list">
-
-              <div class="ssl-item"><div class="ssl-icon" style="background:#E6F3FA;">⚛️</div><div class="ssl-info"><div class="ssl-name">Physics</div><div class="ssl-track"><div class="ssl-fill" style="width:65%;background:#5AADCC;"></div></div></div><div><div class="ssl-score">65%<span class="ssl-delta down">↓2</span></div></div></div>
-              <div class="ssl-item"><div class="ssl-icon" style="background:#FBF3E2;">🧪</div><div class="ssl-info"><div class="ssl-name">Chemistry</div><div class="ssl-track"><div class="ssl-fill" style="width:82%;background:#E8C17A;"></div></div></div><div><div class="ssl-score">82%<span class="ssl-delta up">↑7</span></div></div></div>
-              <div class="ssl-item"><div class="ssl-icon" style="background:#E8F4EF;">🧬</div><div class="ssl-info"><div class="ssl-name">Biology</div><div class="ssl-track"><div class="ssl-fill" style="width:91%;background:#7BAE9A;"></div></div></div><div><div class="ssl-score">91%<span class="ssl-delta up">↑3</span></div></div></div>
-
+            <div class="subject-score-list" id="subjectScoreList">
+              <!-- Populated by renderSubjectScores() -->
             </div>
           </div>
         </div>
@@ -1967,7 +2059,10 @@ body.dark .ai-input-wrap{background:var(--bg);}
           <div class="ts-row"><span class="ts-label">Desktop notify</span><div class="toggle-switch" id="tog-notif" onclick="this.classList.toggle('on')"></div></div>
         </div>
         <div class="sessions-log">
-          <div class="sl-title">Today's Sessions</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="sl-title" style="margin-bottom:0;">Today's Sessions</div>
+            <button onclick="openLogPastSession()" style="background:var(--primary-light);color:var(--primary);border:1px solid var(--primary);border-radius:8px;padding:5px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='var(--primary)';this.style.color='white'" onmouseout="this.style.background='var(--primary-light)';this.style.color='var(--primary)'">+ Log Past</button>
+          </div>
           <div class="sl-list" id="sessionLog"></div>
         </div>
       </div>
@@ -2033,19 +2128,16 @@ body.dark .ai-input-wrap{background:var(--bg);}
     <div class="profile-layout">
       <div>
         <div class="profile-card">
-          <div class="profile-avatar">AK</div>
-          <div class="profile-name">Arjun Kumar</div>
-          <div class="profile-class">Class XII · Science Stream · CBSE</div>
+          <div class="profile-avatar" style="background:var(--primary);">AK</div>
+          <div class="profile-name">—</div>
+          <div class="profile-class">—</div>
           <div class="profile-stats-row">
-            <div><div class="ps-val">147h</div><div class="ps-label">Study Hrs</div></div>
-            <div><div class="ps-val">12🔥</div><div class="ps-label">Day Streak</div></div>
-            <div><div class="ps-val">83%</div><div class="ps-label">Avg Score</div></div>
+            <div><div class="ps-val">0h</div><div class="ps-label">Study Hrs</div></div>
+            <div><div class="ps-val">0🔥</div><div class="ps-label">Day Streak</div></div>
+            <div><div class="ps-val">—</div><div class="ps-label">Avg Score</div></div>
           </div>
           <div class="profile-badges-wrap">
-            <div class="badge-chip" style="background:#E6F2EF;color:#2D7A5E;">🏅 Top Scorer</div>
-            <div class="badge-chip" style="background:#FBF3E2;color:#C4922A;">🔥 12-Day Streak</div>
-            <div class="badge-chip" style="background:#EEF0FA;color:#5A5AC4;">⭐ Consistent</div>
-            <div class="badge-chip" style="background:#FDECEA;color:#C0392B;">🎯 Goal Setter</div>
+            <div class="badge-chip" style="background:#E6F2EF;color:#2D7A5E;">🚀 Just Getting Started</div>
           </div>
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:16px;">
@@ -2076,16 +2168,8 @@ body.dark .ai-input-wrap{background:var(--bg);}
         </div>
         <div class="info-section">
           <div class="is-title">Achievements 🏆</div>
-          <div class="achievements-grid">
-            <div class="ach-card"><div class="ach-icon">🔥</div><div class="ach-name">On Fire</div><div class="ach-desc">12-day streak</div></div>
-            <div class="ach-card"><div class="ach-icon">🎯</div><div class="ach-name">Goal Setter</div><div class="ach-desc">5 targets added</div></div>
-            <div class="ach-card"><div class="ach-icon">⭐</div><div class="ach-name">Star Student</div><div class="ach-desc">Score 90%+</div></div>
-            <div class="ach-card"><div class="ach-icon">📚</div><div class="ach-name">Bookworm</div><div class="ach-desc">100h studied</div></div>
-            <div class="ach-card"><div class="ach-icon">⏱️</div><div class="ach-name">Deep Focus</div><div class="ach-desc">30 pomodoros</div></div>
-            <div class="ach-card"><div class="ach-icon">📝</div><div class="ach-name">Note Taker</div><div class="ach-desc">20 notes</div></div>
-            <div class="ach-card locked"><div class="ach-icon">🏅</div><div class="ach-name">Topper</div><div class="ach-desc">Score 95%+ avg</div></div>
-            <div class="ach-card locked"><div class="ach-icon">💯</div><div class="ach-name">Perfect Week</div><div class="ach-desc">7-day streak</div></div>
-            <div class="ach-card locked"><div class="ach-icon">🚀</div><div class="ach-name">Rocket</div><div class="ach-desc">200h studied</div></div>
+          <div class="achievements-grid ach-grid">
+            <!-- Populated dynamically by renderProfilePage() -->
           </div>
         </div>
       </div>
@@ -2573,21 +2657,7 @@ body.dark .ai-input-wrap{background:var(--bg);}
             <button class="gcb-copy" onclick="copyGroupCode()">📋 Copy</button>
           </div>
           <div class="member-list" id="memberList">
-            <div class="member-item">
-              <div class="member-av" style="background:#3A7A6C;">AK</div>
-              <div><div class="member-name">You (Arjun)</div><div class="member-status">Physics 87% · 12🔥</div></div>
-              <div class="member-online" title="Online"></div>
-            </div>
-            <div class="member-item">
-              <div class="member-av" style="background:#5A5AC4;">RK</div>
-              <div><div class="member-name">Rahul K.</div><div class="member-status">Chem 92% · 8🔥</div></div>
-              <div class="member-online"></div>
-            </div>
-            <div class="member-item">
-              <div class="member-av" style="background:#E8C17A;color:#2D1500;">PS</div>
-              <div><div class="member-name">Priya S.</div><div class="member-status">Bio 94% · 20🔥</div></div>
-              <div class="member-offline"></div>
-            </div>
+            <!-- Rendered by renderMemberList() after login -->
           </div>
           <div style="display:flex;gap:8px;margin-top:12px;">
             <input class="form-input" id="joinCodeInput" type="text" placeholder="Enter group code to join…" style="flex:1;padding:9px 12px;font-size:13px;"/>
@@ -2651,23 +2721,9 @@ body.dark .ai-input-wrap{background:var(--bg);}
         <!-- Group Progress Compare -->
         <div class="sg-card">
           <div class="sg-title">📊 Group Progress</div>
-          <div class="sg-sub">See how everyone is doing this week.</div>
+          <div class="sg-sub">Your study summary this week.</div>
           <div id="groupProgressList" style="display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:10px;">
-              <div class="member-av" style="background:#3A7A6C;width:30px;height:30px;font-size:11px;">AK</div>
-              <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text);">You (Arjun)</div><div style="height:5px;background:var(--border);border-radius:5px;margin-top:4px;"><div style="height:100%;width:78%;background:#3A7A6C;border-radius:5px;"></div></div></div>
-              <div style="font-size:13px;font-weight:600;color:var(--primary);">78%</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:10px;">
-              <div class="member-av" style="background:#5A5AC4;width:30px;height:30px;font-size:11px;">RK</div>
-              <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text);">Rahul K.</div><div style="height:5px;background:var(--border);border-radius:5px;margin-top:4px;"><div style="height:100%;width:85%;background:#5A5AC4;border-radius:5px;"></div></div></div>
-              <div style="font-size:13px;font-weight:600;color:#5A5AC4;">85%</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:10px;">
-              <div class="member-av" style="background:#E8C17A;color:#2D1500;width:30px;height:30px;font-size:11px;">PS</div>
-              <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text);">Priya S.</div><div style="height:5px;background:var(--border);border-radius:5px;margin-top:4px;"><div style="height:100%;width:92%;background:#E8C17A;border-radius:5px;"></div></div></div>
-              <div style="font-size:13px;font-weight:600;color:#C4922A;">92%</div>
-            </div>
+            <!-- Rendered by renderGroupProgress() after login -->
           </div>
         </div>
 
@@ -2715,49 +2771,7 @@ body.dark .ai-input-wrap{background:var(--bg);}
     <button class="notif-mark-all" onclick="markAllRead()">Mark all read</button>
   </div>
   <div class="notif-list" id="notifList">
-    <div class="notif-item unread" data-id="1" onclick="readNotif(this)">
-      <div class="notif-item-icon" style="background:#E6F2EF;">🎯</div>
-      <div class="notif-item-body">
-        <div class="notif-item-title">Target deadline tomorrow!</div>
-        <div class="notif-item-sub">Chemistry — Organic Reactions · Due 2 Apr</div>
-        <div class="notif-item-time">2 hours ago</div>
-      </div>
-      <div class="notif-green-dot"></div>
-    </div>
-    <div class="notif-item unread" data-id="2" onclick="readNotif(this)">
-      <div class="notif-item-icon" style="background:#FBF3E2;">🔥</div>
-      <div class="notif-item-body">
-        <div class="notif-item-title">12-day streak! Keep going 🔥</div>
-        <div class="notif-item-sub">You studied yesterday. Don't break the chain!</div>
-        <div class="notif-item-time">6 hours ago</div>
-      </div>
-      <div class="notif-green-dot"></div>
-    </div>
-    <div class="notif-item unread" data-id="3" onclick="readNotif(this)">
-      <div class="notif-item-icon" style="background:#EEF0FA;">📊</div>
-      <div class="notif-item-body">
-        <div class="notif-item-title">Weekly report is ready</div>
-        <div class="notif-item-sub">You studied 28h this week — 14% more than last!</div>
-        <div class="notif-item-time">Yesterday</div>
-      </div>
-      <div class="notif-green-dot"></div>
-    </div>
-    <div class="notif-item" data-id="4" onclick="readNotif(this)">
-      <div class="notif-item-icon" style="background:#FAF0EA;">📝</div>
-      <div class="notif-item-body">
-        <div class="notif-item-title">Mock test results saved</div>
-        <div class="notif-item-sub">Physics — Electrostatics · Score: 88/100</div>
-        <div class="notif-item-time">2 days ago</div>
-      </div>
-    </div>
-    <div class="notif-item" data-id="5" onclick="readNotif(this)">
-      <div class="notif-item-icon" style="background:#E8F4EF;">✅</div>
-      <div class="notif-item-body">
-        <div class="notif-item-title">Biology target completed!</div>
-        <div class="notif-item-sub">All chapters marked done · Great work!</div>
-        <div class="notif-item-time">3 days ago</div>
-      </div>
-    </div>
+    <!-- Rendered dynamically by renderNotifications() -->
   </div>
 </div>
 
@@ -3127,13 +3141,73 @@ function toggleDarkMode(){
 
 // ===== NOTIFICATIONS =====
 let notifOpen=false;
-let unreadCount=3;
+let unreadCount=0;
+let _readNotifIds=new Set();
+
+function renderNotifications(){
+  const list=document.getElementById('notifList');
+  if(!list) return;
+  const items=[];
+  const streak=calcStreak();
+
+  // Streak notification
+  if(streak>0){
+    items.push({id:'streak',icon:'🔥',bg:'#FBF3E2',title:`${streak}-day streak! Keep it up 🔥`,sub:'You studied yesterday. Don\'t break the chain!',time:'Today'});
+  }
+
+  // Recent test notification
+  if(testEntries.length>0){
+    const last=testEntries[testEntries.length-1];
+    items.push({id:'test_'+testEntries.length,icon:'📝',bg:'#FAF0EA',title:'Test result logged',sub:`${last.name||'Test'} · Score: ${last.score||''}/${last.total||''} (${last.pct||0}%)`,time:'Recently'});
+  }
+
+  // Upcoming deadline from targets
+  const upcoming=targets.filter(t=>t.status==='active'&&t.deadline);
+  if(upcoming.length>0){
+    const next=upcoming.sort((a,b)=>new Date(a.deadline)-new Date(b.deadline))[0];
+    const daysLeft=Math.ceil((new Date(next.deadline)-Date.now())/86400000);
+    if(daysLeft<=3&&daysLeft>=0){
+      items.push({id:'deadline_'+next.id,icon:'🎯',bg:'#E6F2EF',title:`Target deadline in ${daysLeft} day${daysLeft!==1?'s':''}!`,sub:`${next.name} · Due ${new Date(next.deadline).toLocaleDateString('en-IN')}`,time:`${daysLeft}d left`});
+    }
+  }
+
+  // Sessions today
+  const todaySess=getTodaySessions();
+  if(todaySess.length>0){
+    items.push({id:'schedule',icon:'📅',bg:'#EEF0FA',title:`${todaySess.length} session${todaySess.length>1?'s':''} scheduled today`,sub:todaySess.map(s=>s.subject).join(', '),time:'Today'});
+  }
+
+  // If nothing, show welcome
+  if(!items.length){
+    list.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:var(--text3);">No notifications yet. Start studying to get updates!</div>';
+    unreadCount=0;updateNotifBadge();return;
+  }
+
+  unreadCount=items.filter(i=>!_readNotifIds.has(i.id)).length;
+  updateNotifBadge();
+
+  list.innerHTML=items.map(item=>{
+    const isUnread=!_readNotifIds.has(item.id);
+    return `<div class="notif-item${isUnread?' unread':''}" data-id="${item.id}" onclick="readNotif(this)">
+      <div class="notif-item-icon" style="background:${item.bg};">${item.icon}</div>
+      <div class="notif-item-body">
+        <div class="notif-item-title">${item.title}</div>
+        <div class="notif-item-sub">${item.sub}</div>
+        <div class="notif-item-time">${item.time}</div>
+      </div>
+      ${isUnread?'<div class="notif-green-dot"></div>':''}
+    </div>`;
+  }).join('');
+}
 function toggleNotifPanel(e){
   if(e)e.stopPropagation();
   notifOpen=!notifOpen;
+  if(notifOpen) renderNotifications();
   document.getElementById('notifPanel').classList.toggle('open',notifOpen);
 }
 function readNotif(el){
+  const id=el.dataset.id;
+  if(id) _readNotifIds.add(id);
   if(el.classList.contains('unread')){
     el.classList.remove('unread');
     const dot=el.querySelector('.notif-green-dot');
@@ -3143,7 +3217,8 @@ function readNotif(el){
   }
 }
 function markAllRead(){
-  document.querySelectorAll('.notif-item.unread').forEach(el=>{
+  document.querySelectorAll('.notif-item').forEach(el=>{
+    const id=el.dataset.id;if(id)_readNotifIds.add(id);
     el.classList.remove('unread');
     const dot=el.querySelector('.notif-green-dot');
     if(dot)dot.remove();
@@ -3659,12 +3734,44 @@ function saveSchSession(){
 
 
 // ===== PART 4: PROGRESS =====
-const progPeriodData={
-  week:{hours:[4.5,6,3,7,5.5,8,4],labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],kpi:['28h','83%','7','12🔥'],deltas:['+18%','+5pts','-1','Best!']},
-  month:{hours:[22,18,25,28,20,30,26,32],labels:['W1','W2','W3','W4','W5','W6','W7','W8'],kpi:['147h','83%','38','12🔥'],deltas:['+18%','+5pts','-3','Best!']},
-  year:{hours:[60,75,90,80,110,130,100,147,0,0,0,0],labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],kpi:['812h','81%','190','12🔥'],deltas:['+22%','+8pts','+12','Best!']}
-};
 let currentPeriod='week';
+
+// Build real progress data from timerLog
+function buildProgData(period){
+  const now=new Date();
+  if(period==='week'){
+    const dow=now.getDay()===0?6:now.getDay()-1;
+    const mon=new Date(now);mon.setDate(now.getDate()-dow);mon.setHours(0,0,0,0);
+    const labels=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const hours=Array(7).fill(0);
+    timerLog.forEach(l=>{
+      const d=new Date(l.ts||Date.now());
+      for(let i=0;i<7;i++){
+        const day=new Date(mon);day.setDate(mon.getDate()+i);
+        if(d.toDateString()===day.toDateString()){hours[i]+=(l.dur||l.duration||0)/60;}
+      }
+    });
+    return {hours:hours.map(h=>parseFloat(h.toFixed(1))),labels};
+  }
+  if(period==='month'){
+    const labels=[];const hours=[];
+    for(let w=7;w>=0;w--){
+      const wStart=new Date(now);wStart.setDate(now.getDate()-w*7);wStart.setHours(0,0,0,0);
+      const wEnd=new Date(wStart);wEnd.setDate(wStart.getDate()+7);
+      const wHrs=timerLog.filter(l=>{const d=new Date(l.ts||Date.now());return d>=wStart&&d<wEnd;}).reduce((s,l)=>s+(l.dur||l.duration||0)/60,0);
+      labels.push('W'+(8-w));hours.push(parseFloat(wHrs.toFixed(1)));
+    }
+    return {hours,labels};
+  }
+  const monthNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const hours=Array(12).fill(0);const labels=[];
+  for(let i=0;i<12;i++){
+    const mi=(now.getMonth()-11+i+12)%12;
+    labels.push(monthNames[mi]);
+    timerLog.forEach(l=>{const d=new Date(l.ts||Date.now());if(d.getMonth()===mi)hours[i]+=(l.dur||l.duration||0)/60;});
+  }
+  return {hours:hours.map(h=>parseFloat(h.toFixed(1))),labels};
+}
 
 function setPeriod(p,el){
   document.querySelectorAll('.pp-tab').forEach(t=>t.classList.remove('active'));
@@ -3676,10 +3783,10 @@ function setPeriod(p,el){
 }
 
 function renderBarChart(){
-  const d=progPeriodData[currentPeriod]||progPeriodData.week;
-  const data=d.hours.filter(v=>v>0);
-  const labels=d.labels.slice(0,data.length);
-  const maxH=Math.max(...data)||1;
+  const d=buildProgData(currentPeriod);
+  const data=d.hours;
+  const labels=d.labels;
+  const maxH=Math.max(...data,0.1);
   const todayIdx=currentPeriod==='week'?2:currentPeriod==='month'?3:-1;
   const wrap=document.getElementById('barChartWrap');
   const lblWrap=document.getElementById('barChartLabels');
@@ -3698,28 +3805,37 @@ function renderScoreTrend(){
   const svg=document.getElementById('scoreTrendSvg');
   const lblEl=document.getElementById('scoreTrendLabels');
   if(!svg)return;
-  const scores=[68,72,75,71,78,80,83,83];
-  const weeks=['W1','W2','W3','W4','W5','W6','W7','W8'];
-  const W=560,H=140,pad=20;
-  const minS=60,maxS=100;
-  const pts=scores.map((s,i)=>{
-    const x=pad+(i/(scores.length-1))*(W-pad*2);
-    const y=H-pad-((s-minS)/(maxS-minS))*(H-pad*2);
-    return [x,y];
+  // Use real test entries sorted by date
+  const sorted=[...testEntries].filter(e=>e.pct!=null).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(sorted.length<2){
+    svg.innerHTML=`<text x="280" y="70" text-anchor="middle" font-size="13" fill="var(--text3)">Log at least 2 tests to see score trend</text>`;
+    if(lblEl)lblEl.innerHTML='';
+    return;
+  }
+  const scores=sorted.map(e=>e.pct);
+  const labels=sorted.map(e=>{
+    const d=new Date(e.date);
+    return `${d.getDate()}/${d.getMonth()+1}`;
   });
-  const polyline=pts.map(p=>p.join(',')).join(' ');
-  // area fill path
+  const W=560,H=140,pad=20;
+  const minS=Math.max(0,Math.min(...scores)-10);
+  const maxS=Math.min(100,Math.max(...scores)+10);
+  const range=maxS-minS||1;
+  const pts=scores.map((s,i)=>{
+    const x=pad+(i/(scores.length-1||1))*(W-pad*2);
+    const y=H-pad-((s-minS)/range)*(H-pad*2);
+    return [x,y,s];
+  });
+  const polyline=pts.map(p=>`${p[0]},${p[1]}`).join(' ');
   const area=`M${pts[0][0]},${H-pad} `+pts.map(p=>`L${p[0]},${p[1]}`).join(' ')+` L${pts[pts.length-1][0]},${H-pad} Z`;
-  // grid lines at 70, 80, 90
-  const gridLines=[70,80,90].map(v=>{
-    const y=H-pad-((v-minS)/(maxS-minS))*(H-pad*2);
-    return `<line x1="${pad}" y1="${y}" x2="${W-pad}" y2="${y}" stroke="var(--border)" stroke-width="1" stroke-dasharray="4,4"/><text x="${pad-4}" y="${y+4}" font-size="10" fill="var(--text3)" text-anchor="end">${v}</text>`;
+  const gridVals=[Math.round(minS+range*0.25),Math.round(minS+range*0.5),Math.round(minS+range*0.75)];
+  const gridLines=gridVals.map(v=>{
+    const y=H-pad-((v-minS)/range)*(H-pad*2);
+    return `<line x1="${pad}" y1="${y}" x2="${W-pad}" y2="${y}" stroke="var(--border)" stroke-width="1" stroke-dasharray="4,4"/><text x="${pad-4}" y="${y+4}" font-size="10" fill="var(--text3)" text-anchor="end">${v}%</text>`;
   }).join('');
-  // dots & tooltips
   const dots=pts.map((p,i)=>`
-    <circle cx="${p[0]}" cy="${p[1]}" r="5" fill="${i===pts.length-1?'var(--primary)':'white'}" stroke="var(--primary)" stroke-width="2" style="cursor:pointer;" onclick="showToast('Week ${i+1}: ${scores[i]}%')"/>
-    <circle cx="${p[0]}" cy="${p[1]}" r="12" fill="transparent" style="cursor:pointer;" onclick="showToast('Week ${i+1}: ${scores[i]}%')"/>`).join('');
-
+    <circle cx="${p[0]}" cy="${p[1]}" r="5" fill="${i===pts.length-1?'var(--primary)':'white'}" stroke="var(--primary)" stroke-width="2" style="cursor:pointer;" onclick="showToast('${labels[i]}: ${p[2]}%')"/>
+    <circle cx="${p[0]}" cy="${p[1]}" r="12" fill="transparent" style="cursor:pointer;" onclick="showToast('${labels[i]}: ${p[2]}%')"/>`).join('');
   svg.innerHTML=`
     <defs>
       <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
@@ -3731,20 +3847,29 @@ function renderScoreTrend(){
     <path d="${area}" fill="url(#areaGrad)"/>
     <polyline points="${polyline}" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
     ${dots}`;
-  if(lblEl)lblEl.innerHTML=weeks.map(w=>`<span>${w}</span>`).join('');
+  if(lblEl)lblEl.innerHTML=labels.map(l=>`<span>${l}</span>`).join('');
 }
 
 function renderHeatmap(){
   const g=document.getElementById('heatmapGrid');
   if(!g)return;
   const levels=['#EEF2EE','#C8E2DC','#7BAE9A','#3A7A6C'];
-  // deterministic-ish pattern
-  const seed=[0,2,3,1,3,2,0,1,3,2,1,3,2,1,0,2,3,1,2,3,0,1,2,3,1,0,2,3,2,1,3,2,0,1,3,2,1,0,3,2,1,3,0,2,1,3,2,1,0,3,2,1,3,2,0,1,3,2,1,0,2,3,1,2,0,3,1,2,3,0,2,1,3,2,0,1,3,2,1,3,0,2,1,3,2,1,0,2,3,1,2];
+  // Build a map of date -> hours from real timerLog
+  const dayMap={};
+  timerLog.forEach(l=>{
+    const d=new Date(l.ts||Date.now());
+    const key=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    dayMap[key]=(dayMap[key]||0)+(l.dur||l.duration||0)/60;
+  });
   let html='';
-  for(let i=0;i<91;i++){
-    const lvl=seed[i]||0;
-    const hrs=lvl*2;
-    html+=`<div class="hm-day" style="background:${levels[lvl]};" title="${hrs?hrs+'h studied':'No activity'}"></div>`;
+  const today=new Date();
+  for(let i=90;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const key=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const hrs=dayMap[key]||0;
+    const lvl=hrs===0?0:hrs<1?1:hrs<3?2:3;
+    const dateStr=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    html+=`<div class="hm-day" style="background:${levels[lvl]};" title="${hrs>0?hrs.toFixed(1)+'h studied on '+dateStr:'No activity on '+dateStr}"></div>`;
   }
   g.innerHTML=html;
 }
@@ -3752,14 +3877,19 @@ function renderHeatmap(){
 function renderStreakRow(){
   const r=document.getElementById('streakRow');
   if(!r)return;
-  const today=new Date(2026,3,1);
-  // deterministic streak
-  const offPattern=[true,true,true,false,true,true,true,true,false,true,true,true,true,true,false,true,true,true,false,true,true,true,true,true,true,false,true,true,true,true,true];
+  // Build set of active days from real timerLog
+  const activeDays=new Set(timerLog.map(l=>{
+    const d=new Date(l.ts||Date.now());
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }));
+  const today=new Date();
   let html='';
   for(let i=30;i>=0;i--){
     const d=new Date(today);d.setDate(today.getDate()-i);
-    const active=offPattern[30-i];
-    html+=`<div class="streak-cell ${active?'active':'inactive'}" style="${active?`background:${i<=11?'var(--primary)':'var(--sage)'};`:''}" title="${d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}">${d.getDate()}</div>`;
+    const key=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const active=activeDays.has(key);
+    const dateStr=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    html+=`<div class="streak-cell ${active?'active':'inactive'}" style="${active?`background:${i<=calcStreak()?'var(--primary)':'var(--sage)'};`:''}" title="${dateStr}">${d.getDate()}</div>`;
   }
   r.innerHTML=html;
 }
@@ -3767,8 +3897,19 @@ function renderStreakRow(){
 function renderTimeDistrib(){
   const el=document.getElementById('timeDistrib');
   if(!el)return;
-  const data=[{s:'Physics',h:28,c:'#5AADCC'},{s:'Chemistry',h:26,c:'#E8C17A'},{s:'Biology',h:38,c:'#7BAE9A'}];
-  const tot=data.reduce((a,d)=>a+d.h,0);
+  const colors={'Physics':'#5AADCC','Chemistry':'#E8C17A','Biology':'#7BAE9A'};
+  // Aggregate from real timerLog
+  const subjMap={};
+  timerLog.forEach(l=>{
+    const s=l.subj||l.subject||'Other';
+    subjMap[s]=(subjMap[s]||0)+(l.dur||l.duration||0)/60;
+  });
+  const data=Object.entries(subjMap).map(([s,h])=>({s,h:parseFloat(h.toFixed(1)),c:colors[s]||'#8AADA5'})).sort((a,b)=>b.h-a.h);
+  if(!data.length){
+    el.innerHTML='<div style="text-align:center;padding:16px;font-size:13px;color:var(--text3);">Use the Focus Timer to track time by subject</div>';
+    return;
+  }
+  const tot=data.reduce((a,d)=>a+d.h,0)||1;
   el.innerHTML=data.map(d=>`
     <div style="display:flex;align-items:center;gap:10px;">
       <div style="width:9px;height:9px;border-radius:50%;background:${d.c};flex-shrink:0;"></div>
@@ -3778,12 +3919,78 @@ function renderTimeDistrib(){
     </div>`).join('');
 }
 
+function renderProgressKPIs(){
+  const totalMins = timerLog.reduce((s,l)=>s+(l.dur||l.duration||0),0);
+  const totalHrs = (totalMins/60).toFixed(1);
+  const streak = calcStreak();
+  const sessions = timerLog.length;
+  const avgScore = testEntries.length
+    ? (testEntries.reduce((s,e)=>s+(e.pct||0),0)/testEntries.length).toFixed(1)+'%'
+    : '—';
+
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('prog-kpi-hours', totalHrs+'h');
+  set('prog-kpi-hours-delta', totalMins>0?`${sessions} sessions total`:'Start studying to track!');
+  set('prog-kpi-score', avgScore);
+  set('prog-kpi-score-delta', testEntries.length?`Across ${testEntries.length} test${testEntries.length>1?'s':''}`:'Log tests to see avg');
+  set('prog-kpi-sessions', sessions);
+  set('prog-kpi-sessions-delta', sessions>0?`${(totalMins/Math.max(sessions,1)).toFixed(0)} min avg/session`:'Use the timer!');
+  set('prog-kpi-streak', streak+'🔥');
+  set('prog-kpi-streak-delta', streak>=7?'🔥 On fire! Keep going':streak>0?`Keep going — ${7-streak} days to 7-day streak`:'Study daily to build a streak!');
+}
+
+function renderSubjectScores(){
+  const el = document.getElementById('subjectScoreList');
+  if(!el) return;
+  const subjects = [
+    {name:'Physics', icon:'⚛️', bg:'#E6F3FA', color:'#5AADCC'},
+    {name:'Chemistry', icon:'🧪', bg:'#FBF3E2', color:'#E8C17A'},
+    {name:'Biology', icon:'🧬', bg:'#E8F4EF', color:'#7BAE9A'},
+  ];
+  const subjTests = subjects.map(s=>{
+    const tests = testEntries.filter(e=>e.subj===s.name);
+    if(!tests.length) return {...s, avg:null, delta:null};
+    const avg = tests.reduce((a,t)=>a+(t.pct||0),0)/tests.length;
+    // delta: compare last 3 vs previous 3
+    const sorted = [...tests].sort((a,b)=>new Date(a.date)-new Date(b.date));
+    const recent = sorted.slice(-3);
+    const prev = sorted.slice(-6,-3);
+    let delta = null;
+    if(recent.length && prev.length){
+      const rAvg = recent.reduce((a,t)=>a+(t.pct||0),0)/recent.length;
+      const pAvg = prev.reduce((a,t)=>a+(t.pct||0),0)/prev.length;
+      delta = rAvg - pAvg;
+    }
+    return {...s, avg: avg.toFixed(1), delta};
+  });
+  if(subjTests.every(s=>s.avg===null)){
+    el.innerHTML='<div style="text-align:center;padding:20px;font-size:13px;color:var(--text3);">Log subject-wise tests to see scores here</div>';
+    return;
+  }
+  el.innerHTML = subjTests.map(s => {
+    const pct = s.avg ? parseFloat(s.avg) : 0;
+    const deltaHtml = s.delta!=null
+      ? `<span class="ssl-delta ${s.delta>=0?'up':'down'}">${s.delta>=0?'↑':'↓'}${Math.abs(s.delta).toFixed(1)}</span>`
+      : '';
+    return `<div class="ssl-item">
+      <div class="ssl-icon" style="background:${s.bg};">${s.icon}</div>
+      <div class="ssl-info">
+        <div class="ssl-name">${s.name}</div>
+        <div class="ssl-track"><div class="ssl-fill" style="width:${pct}%;background:${s.color};transition:width 1s ease;"></div></div>
+      </div>
+      <div><div class="ssl-score">${s.avg?s.avg+'%':'—'}${deltaHtml}</div></div>
+    </div>`;
+  }).join('');
+}
+
 function initProgress(){
+  renderProgressKPIs();
   renderBarChart();
   renderScoreTrend();
   renderHeatmap();
   renderStreakRow();
   renderTimeDistrib();
+  renderSubjectScores();
 }
 
 // ===== PART 4: TIMER (synced with floating timer) =====
@@ -3852,9 +4059,166 @@ function renderPomDots(){
 }
 function renderTimerLog(){
   const el=document.getElementById('sessionLog');if(!el)return;
-  const all=[{subj:'Physics',dur:25,time:'08:00 AM'},{subj:'Chemistry',dur:25,time:'09:00 AM'},...timerLog];
-  el.innerHTML=all.map(s=>`<div class="sl-item"><div class="sl-dot" style="background:${SUBJ_COLORS?.[s.subj]||'#3A7A6C'};"></div><div class="sl-info"><div class="sl-subj">${s.subj}</div><div class="sl-time">${s.time}</div></div><div class="sl-dur">${s.dur} min</div></div>`).join('');
+  const todayStr=new Date().toDateString();
+
+  // Separate today vs past
+  const todaySessions=timerLog.filter(s=>{
+    try{ return new Date(s.ts||Date.now()).toDateString()===todayStr; }catch(e){ return false; }
+  });
+  const pastSessions=timerLog.filter(s=>{
+    try{ return new Date(s.ts||Date.now()).toDateString()!==todayStr; }catch(e){ return true; }
+  });
+
+  if(!timerLog.length){
+    el.innerHTML='<div style="text-align:center;padding:20px;font-size:13px;color:var(--text3);">No sessions yet. Start a timer or log a past session!</div>';
+    return;
+  }
+
+  function sessionHTML(s, showDate=false){
+    const subj=s.subj||s.subject||'Study';
+    const dur=s.dur||s.duration||0;
+    const timeStr=s.time||(s.ts?new Date(s.ts).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):'');
+    const dateStr=showDate&&s.ts?new Date(s.ts).toLocaleDateString('en-IN',{day:'numeric',month:'short'})+' · ':'';
+    const manualTag=s.manualEntry?`<span style="font-size:9.5px;background:#FBF3E2;color:#C4922A;padding:1px 5px;border-radius:4px;margin-left:4px;">manual</span>`:'';
+    const tsKey=s.ts||'';
+    return `<div class="sl-item" style="position:relative;">
+      <div class="sl-dot" style="background:${SUBJ_COLORS?.[subj]||'#3A7A6C'};"></div>
+      <div class="sl-info">
+        <div class="sl-subj">${subj}${manualTag}</div>
+        <div class="sl-time">${dateStr}${timeStr}</div>
+      </div>
+      <div class="sl-dur">${dur} min</div>
+      <button onclick="deleteTimerSession('${tsKey}',event)" title="Delete this session"
+        style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:2px 4px;border-radius:5px;margin-left:4px;opacity:0;transition:opacity .15s;"
+        class="sl-del-btn">✕</button>
+    </div>`;
+  }
+
+  let html='';
+  if(todaySessions.length){
+    html+=todaySessions.slice().reverse().map(s=>sessionHTML(s,false)).join('');
+  } else {
+    html+='<div style="text-align:center;padding:12px 0 6px;font-size:12.5px;color:var(--text3);">No sessions today yet.</div>';
+  }
+
+  if(pastSessions.length){
+    const showPast=el.dataset.showPast==='1';
+    html+=`<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;">
+      <div onclick="this.closest('.sl-list').dataset.showPast=this.closest('.sl-list').dataset.showPast==='1'?'0':'1';renderTimerLog();"
+        style="font-size:12px;color:var(--primary);cursor:pointer;text-align:center;padding:4px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:4px;">
+        ${showPast?'▲ Hide':'▼ Show'} ${pastSessions.length} past session${pastSessions.length>1?'s':''}
+      </div>
+      ${showPast?pastSessions.slice().reverse().map(s=>sessionHTML(s,true)).join(''):''}
+    </div>`;
+  }
+  el.innerHTML=html;
 }
+// ===== LOG PAST SESSION =====
+let lpsSelSubj = 'Physics';
+
+function openLogPastSession(){
+  // Set default date to today
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('lps-date').value = `${yyyy}-${mm}-${dd}`;
+  document.getElementById('lps-date').max = `${yyyy}-${mm}-${dd}`; // can't log future
+  document.getElementById('lps-time').value = '09:00';
+  document.getElementById('lps-dur').value = '25';
+  document.getElementById('lps-topic').value = '';
+
+  // Build subject pills
+  const subjects = timerSubjects.length ? timerSubjects : ['Physics','Chemistry','Biology'];
+  lpsSelSubj = subjects[0];
+  document.getElementById('lpsSubjRow').innerHTML = subjects.map((s,i) => `
+    <div class="lps-subj-pill${i===0?' selected':''}" data-s="${s}"
+      style="${i===0?`background:${SUBJ_COLORS?.[s]||'#3A7A6C'};border-color:transparent;`:''}"
+      onclick="lpsSelSubjFn(this)">${s}</div>`).join('');
+
+  // Reset dur preset buttons
+  document.querySelectorAll('.lps-dur-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.dur==='25');
+  });
+
+  document.getElementById('logPastModal').classList.add('open');
+}
+
+function closeLogPastSession(){
+  document.getElementById('logPastModal').classList.remove('open');
+}
+
+function lpsSelSubjFn(el){
+  lpsSelSubj = el.dataset.s;
+  document.querySelectorAll('.lps-subj-pill').forEach(p=>{
+    p.classList.remove('selected');
+    p.style.background=''; p.style.borderColor='';
+  });
+  el.classList.add('selected');
+  el.style.background = SUBJ_COLORS?.[lpsSelSubj] || '#3A7A6C';
+  el.style.borderColor = 'transparent';
+}
+
+function lpsSelDur(el){
+  document.querySelectorAll('.lps-dur-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('lps-dur').value = el.dataset.dur;
+}
+
+function saveLogPastSession(){
+  const dateVal = document.getElementById('lps-date').value;
+  const timeVal = document.getElementById('lps-time').value;
+  const durVal  = parseInt(document.getElementById('lps-dur').value);
+  const topic   = document.getElementById('lps-topic').value.trim();
+
+  if(!dateVal){ showToast('⚠ Please select a date'); return; }
+  if(!durVal || durVal < 1 || durVal > 480){
+    showToast('⚠ Duration must be 1–480 minutes'); return;
+  }
+
+  // Build timestamp from date + time
+  const [h, m] = timeVal.split(':').map(Number);
+  const ts = new Date(dateVal);
+  ts.setHours(h, m, 0, 0);
+
+  // Format display time
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12  = h % 12 || 12;
+  const timeStr = `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+
+  const entry = {
+    subj: lpsSelSubj,
+    subject: lpsSelSubj,
+    dur: durVal,
+    duration: durVal,
+    time: timeStr,
+    topic: topic || lpsSelSubj,
+    ts: ts.toISOString(),
+    manualEntry: true
+  };
+
+  timerLog.push(entry);
+  sfSave('timerLog', timerLog);
+
+  closeLogPastSession();
+  renderTimerLog();
+  updateDashboardStats();
+  showToast(`✓ Session logged: ${lpsSelSubj} · ${durVal} min on ${new Date(dateVal).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}`);
+}
+
+function deleteTimerSession(tsKey, e){
+  if(e) e.stopPropagation();
+  if(!confirm('Delete this session?')) return;
+  const idx = timerLog.findIndex(s=>(s.ts||'')===tsKey);
+  if(idx>-1){
+    timerLog.splice(idx,1);
+    sfSave('timerLog', timerLog);
+    renderTimerLog();
+    updateDashboardStats();
+    showToast('Session deleted');
+  }
+}
+
 function adjustSetting(k,d){
   const keys=['focus','short','long'];const ids=['sv-focus','sv-short','sv-long'];
   const idx=keys.indexOf(k);if(idx<0)return;
@@ -5054,18 +5418,23 @@ function lsRender(){
   const chips = document.getElementById('lsUserChips');
   const backBtn = document.getElementById('lsBackBtn');
 
-  // Hide back button if no users
+  // Back button only needed if there are existing users
   if(backBtn) backBtn.style.display = users.length ? 'block' : 'none';
 
+  // ALWAYS show Choose step first — so Google button is always visible
+  lsShowStep('choose');
+
   if(!users.length){
-    // No users — skip choose step, go straight to create
-    lsShowStep('create');
-    if(list) list.innerHTML='';
+    // No users yet — show only Google + "Create" button, hide existing list
+    if(list) list.innerHTML = `
+      <div style="text-align:center;padding:10px 0 4px;font-size:13px;color:var(--text3);">
+        No profiles yet. Sign in with Google above or create one below.
+      </div>`;
     if(existWrap) existWrap.style.display='none';
     return;
   }
 
-  // Show existing users in left panel
+  // Show existing users in left panel chips
   if(existWrap) existWrap.style.display='block';
   if(chips) chips.innerHTML = users.map(u=>`
     <div class="ls-user-chip" onclick="lsLoginUser('${u.username}')">
@@ -5083,8 +5452,7 @@ function lsRender(){
       </div>
       <span class="ls-sw-arrow">→</span>
       <button class="ls-delete-user" title="Delete profile" onclick="event.stopPropagation();lsDeleteUser('${u.username}')">🗑</button>
-    </div>`).join('') +
-    (users.length ? '' : '<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No profiles yet</div>');
+    </div>`).join('');
 }
 
 function lsShowStep(step){
@@ -5152,12 +5520,18 @@ function lsDeleteUser(username){
 
 function logoutUser(){
   if(!confirm('Switch account? Your data is saved.')) return;
+  // Sign out of Firebase if active
+  if(_fbAuth){
+    _fbAuth.signOut().catch(()=>{});
+  }
   localStorage.removeItem(SF_SESSION_KEY);
   currentUser = null;
   // Reset in-memory data
-  targets=[]; testEntries=[]; notes=[]; schSessions=[]; timerLog=[];
+  targets=[]; testEntries=[]; notes=[]; schSessions=[]; timerLog=[]; sgSharedSlots=[];
   document.getElementById('loginScreen').classList.remove('hidden');
   lsRender();
+  // Re-init Firebase for next login attempt
+  setTimeout(initFirebaseAuth, 300);
 }
 
 // ---- Initialize app after login ----
@@ -5193,10 +5567,19 @@ function initAppForUser(){
   schNextId = Math.max(200, ...schSessions.map(s=>s.id+1), 200);
 
   timerLog = sfLoad('timerLog', []);
+  sgSharedSlots = sfLoad('sgSharedSlots', []);
 
   // Apply profile to UI
   applyProfileData();
   applyPGAwareness();
+
+  // Show Google photo if available
+  if(currentUser && currentUser.googlePhoto){
+    const sAvatar = document.querySelector('.sidebar-bottom .avatar');
+    if(sAvatar){
+      sAvatar.innerHTML = `<img src="${currentUser.googlePhoto}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'"/>`;
+    }
+  }
 
   // Initialize dashboard
   animateBars();
@@ -5208,6 +5591,8 @@ function initAppForUser(){
 
   // Update profile page
   renderProfilePage();
+  renderGroupProgress();
+  renderMemberList();
 
   showToast(`Welcome back, ${profileData.name.split(' ')[0]}! 👋`);
 }
@@ -5403,17 +5788,118 @@ function renderDashActivity(){
 }
 
 function renderProfilePage(){
-  // Update profile page stats
-  const pStudyHours = document.querySelector('.ps-val');
+  if(!profileData) return;
+  // --- Name, class, avatar ---
+  const pName = document.querySelector('.profile-name');
+  if(pName) pName.textContent = profileData.name;
+  const pClass = document.querySelector('.profile-class');
+  if(pClass) pClass.textContent = (profileData.class||'') + ' · ' + (profileData.board||'CBSE');
+  const pAvatar = document.querySelector('.profile-avatar');
+  if(pAvatar){ pAvatar.textContent = profileData.initials||''; if(profileData.avatarColor) pAvatar.style.background=profileData.avatarColor; }
+
+  // --- Real stats ---
+  const totalMins = timerLog.reduce((s,l)=>s+(l.dur||l.duration||0),0);
+  const totalHrs = (totalMins/60).toFixed(0);
+  const streak = calcStreak();
+  const avgScore = testEntries.length ? (testEntries.reduce((s,e)=>s+(e.pct||0),0)/testEntries.length).toFixed(1)+'%' : '—';
+
   const allVals = document.querySelectorAll('.ps-val');
-  if(allVals[0]) allVals[0].textContent = (timerLog.reduce((s,l)=>s+(l.dur||0),0)/60).toFixed(0);
-  if(allVals[1]) allVals[1].textContent = testEntries.length;
-  if(allVals[2]) allVals[2].textContent = targets.filter(t=>t.status==='done').length;
+  if(allVals[0]) allVals[0].textContent = totalHrs+'h';
+  if(allVals[1]) allVals[1].textContent = streak+'🔥';
+  if(allVals[2]) allVals[2].textContent = avgScore;
+
+  // --- Dynamic badges ---
+  const badgesWrap = document.querySelector('.profile-badges-wrap');
+  if(badgesWrap){
+    const badges = [];
+    if(streak>=7) badges.push({icon:'🔥',label:`${streak}-Day Streak`,bg:'#FBF3E2',col:'#C4922A'});
+    if(testEntries.length>0){
+      const best=Math.max(...testEntries.map(e=>e.pct||0));
+      if(best>=90) badges.push({icon:'🏅',label:'Top Scorer',bg:'#E6F2EF',col:'#2D7A5E'});
+    }
+    if(targets.filter(t=>t.status==='done').length>0) badges.push({icon:'🎯',label:'Goal Getter',bg:'#FDECEA',col:'#C0392B'});
+    if(totalHrs>=10) badges.push({icon:'⭐',label:'Consistent',bg:'#EEF0FA',col:'#5A5AC4'});
+    if(!badges.length) badges.push({icon:'🚀',label:'Just Getting Started',bg:'#E6F2EF',col:'#2D7A5E'});
+    badgesWrap.innerHTML = badges.map(b=>`<div class="badge-chip" style="background:${b.bg};color:${b.col};">${b.icon} ${b.label}</div>`).join('');
+  }
+
+  // --- Real achievements section ---
+  const achGrid = document.querySelector('.ach-grid');
+  if(achGrid){
+    const achs = [
+      {icon:'⏱',title:'10h Studied',desc:'Log 10+ hours',done:totalMins>=600,bg:'#E6F2EF',col:'#3A7A6C'},
+      {icon:'⏱',title:'50h Studied',desc:'Log 50+ hours',done:totalMins>=3000,bg:'#E6F2EF',col:'#3A7A6C'},
+      {icon:'⏱',title:'100h Studied',desc:'Log 100+ hours',done:totalMins>=6000,bg:'#E6F2EF',col:'#3A7A6C'},
+      {icon:'🔥',title:'3-Day Streak',desc:'Study 3 days in a row',done:streak>=3,bg:'#FBF3E2',col:'#C4922A'},
+      {icon:'🔥',title:'7-Day Streak',desc:'Study 7 days in a row',done:streak>=7,bg:'#FBF3E2',col:'#C4922A'},
+      {icon:'🔥',title:'30-Day Streak',desc:'Study 30 days in a row',done:streak>=30,bg:'#FBF3E2',col:'#C4922A'},
+      {icon:'📝',title:'First Test',desc:'Log your first test',done:testEntries.length>=1,bg:'#EEF0FA',col:'#5A5AC4'},
+      {icon:'📝',title:'10 Tests',desc:'Log 10 tests',done:testEntries.length>=10,bg:'#EEF0FA',col:'#5A5AC4'},
+      {icon:'🎯',title:'Goal Setter',desc:'Create your first target',done:targets.length>=1,bg:'#FDECEA',col:'#C0392B'},
+      {icon:'✅',title:'Goal Achiever',desc:'Complete a target',done:targets.filter(t=>t.status==='done').length>=1,bg:'#FDECEA',col:'#C0392B'},
+      {icon:'📅',title:'Planner',desc:'Add 3+ schedule sessions',done:schSessions.length>=3,bg:'#E8F4EF',col:'#2D7A5E'},
+      {icon:'📓',title:'Note Taker',desc:'Write your first note',done:notes.length>=1,bg:'#F3EEF8',col:'#7A2D7A'},
+    ];
+    achGrid.innerHTML = achs.map(a=>`
+      <div class="ach-card ${a.done?'unlocked':'locked'}" style="opacity:${a.done?1:0.4};">
+        <div class="ach-icon" style="background:${a.bg};color:${a.col};">${a.icon}</div>
+        <div class="ach-title">${a.title}</div>
+        <div class="ach-desc">${a.done?'✓ Unlocked':a.desc}</div>
+      </div>`).join('');
+  }
 }
 
-// ---- Hook into existing save functions ----
-// Override saveTarget to also persist
-const _origSaveTarget = window.saveTarget;
+function renderMemberList(){
+  const el = document.getElementById('memberList');
+  if(!el || !profileData) return;
+  const streak = calcStreak();
+  const avgScore = testEntries.length
+    ? (testEntries.reduce((s,e)=>s+(e.pct||0),0)/testEntries.length).toFixed(0)+'%'
+    : '—';
+  const color = profileData.avatarColor || '#3A7A6C';
+  const initials = profileData.initials || '?';
+  el.innerHTML = `
+    <div class="member-item">
+      <div class="member-av" style="background:${color};">${initials}</div>
+      <div style="flex:1;">
+        <div class="member-name">You (${profileData.name.split(' ')[0]})</div>
+        <div class="member-status">Avg ${avgScore} · ${streak}🔥</div>
+      </div>
+      <div class="member-online" title="Online"></div>
+    </div>
+    <div style="text-align:center;padding:14px 10px;font-size:12.5px;color:var(--text3);border:1.5px dashed var(--border);border-radius:10px;margin-top:4px;">
+      Share your <b>group code</b> with friends to see them here.<br>
+      <span style="font-size:11.5px;">(Real-time sync requires Firebase setup)</span>
+    </div>`;
+}
+
+function renderGroupProgress(){
+  const el=document.getElementById('groupProgressList');
+  if(!el||!profileData) return;
+  // Compute this week's study hours for current user
+  const now=new Date();
+  const dow=now.getDay()===0?6:now.getDay()-1;
+  const mon=new Date(now);mon.setDate(now.getDate()-dow);mon.setHours(0,0,0,0);
+  const weekMins=timerLog.filter(l=>{try{return new Date(l.ts||Date.now())>=mon;}catch(e){return false;}}).reduce((s,l)=>s+(l.dur||l.duration||0),0);
+  const weekHrs=(weekMins/60).toFixed(1);
+  // Target: 40h/week = 100%
+  const pct=Math.min(100,Math.round((weekMins/60/40)*100));
+  const color=profileData.avatarColor||'#3A7A6C';
+  const initials=profileData.initials||'?';
+  const firstName=profileData.name.split(' ')[0];
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:10px;">
+      <div class="member-av" style="background:${color};width:30px;height:30px;font-size:11px;">${initials}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:500;color:var(--text);">You (${firstName})</div>
+        <div style="height:5px;background:var(--border);border-radius:5px;margin-top:4px;"><div style="height:100%;width:${pct}%;background:${color};border-radius:5px;transition:width 1s;"></div></div>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--primary);">${weekHrs}h</div>
+    </div>
+    <div style="text-align:center;padding:12px;font-size:12.5px;color:var(--text3);">
+      Invite friends using your group code to compare progress in real-time.
+    </div>`;
+}
 
 // =========================================================
 // ===== AI DOUBT SOLVER =====
@@ -6010,9 +6496,283 @@ function applyPGAwareness(){
 }
 
 // =========================================================
+// ===== FIREBASE GOOGLE SIGN-IN =====
+// =========================================================
+
+// IMPORTANT: To enable Google login, replace these values with your own
+// Firebase project config from https://console.firebase.google.com
+// Steps: Create project → Add web app → Copy config → Paste below
+// Then enable "Google" sign-in method in Firebase Auth console.
+const SF_FIREBASE_CONFIG_KEY = 'sf_firebase_config';
+
+function getFirebaseConfig(){
+  try{
+    const saved = localStorage.getItem(SF_FIREBASE_CONFIG_KEY);
+    if(saved) return JSON.parse(saved);
+  }catch(e){}
+  return null;
+}
+
+let _fbApp = null;
+let _fbAuth = null;
+
+function initFirebaseAuth(){
+  const cfg = getFirebaseConfig();
+  if(!cfg || !cfg.apiKey){
+    console.log('No Firebase config found — Google login unavailable');
+    return false;
+  }
+  try{
+    if(!_fbApp){
+      // Check if already initialized
+      if(typeof firebase !== 'undefined'){
+        try{ _fbApp = firebase.app(); }catch(e){ _fbApp = firebase.initializeApp(cfg); }
+      } else { return false; }
+    }
+    _fbAuth = firebase.auth();
+    // Listen for auth state changes (handles redirect result too)
+    _fbAuth.onAuthStateChanged(function(fbUser){
+      if(fbUser && !currentUser){
+        handleGoogleUser(fbUser);
+      }
+    });
+    return true;
+  }catch(e){
+    console.error('Firebase init error:', e);
+    return false;
+  }
+}
+
+function googleSignIn(){
+  // First check if Firebase is configured
+  const cfg = getFirebaseConfig();
+  if(!cfg || !cfg.apiKey){
+    showFirebaseSetupModal();
+    return;
+  }
+  const ok = initFirebaseAuth();
+  if(!ok){
+    showToast('⚠ Firebase not loaded. Check your config.');
+    return;
+  }
+
+  function setStatus(msg){
+    ['googleAuthStatus','googleAuthStatus2'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.textContent=msg;
+    });
+  }
+  setStatus('Opening Google sign-in…');
+
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('profile');
+  provider.addScope('email');
+
+  _fbAuth.signInWithPopup(provider)
+    .then(result => {
+      setStatus('');
+      handleGoogleUser(result.user);
+    })
+    .catch(err => {
+      console.error('Google sign-in error:', err);
+      if(err.code === 'auth/popup-blocked'){
+        setStatus('⚠ Popup blocked — please allow popups for this site.');
+      } else if(err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user'){
+        setStatus('');
+      } else {
+        setStatus('⚠ Sign-in failed: ' + (err.message||err.code));
+      }
+    });
+}
+
+function handleGoogleUser(fbUser){
+  const email = fbUser.email || '';
+  const displayName = fbUser.displayName || email.split('@')[0] || 'Student';
+  const photoURL = fbUser.photoURL || '';
+  // Create a stable username from Google UID
+  const username = 'g_' + (fbUser.uid || email.replace(/[^a-z0-9]/gi,'_').toLowerCase());
+
+  const users = getUsers();
+  let user = users.find(u => u.username === username);
+
+  if(!user){
+    // First time Google login — create profile
+    const initials = displayName.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || 'ST';
+    const avatarColors = ['#3A7A6C','#5AADCC','#E8C17A','#D4886A','#8A9AD4','#D48AAD'];
+    const avatarColor = avatarColors[Math.abs(username.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % avatarColors.length];
+    user = {
+      name: displayName,
+      username,
+      initials,
+      class: 'XII — Science',
+      exam: 'NEET UG 2026',
+      school: '',
+      board: 'CBSE',
+      city: '',
+      preferredTime: 'Morning (6–10 AM)',
+      avatarColor,
+      googleEmail: email,
+      googlePhoto: photoURL,
+      createdAt: Date.now(),
+      isGoogleUser: true
+    };
+    users.push(user);
+    saveUsers(users);
+    // Hide setup modal if open
+    const modal = document.getElementById('firebaseSetupModal');
+    if(modal) modal.style.display='none';
+    // After Google login, prompt to complete profile
+    localStorage.setItem(SF_SESSION_KEY, username);
+    currentUser = user;
+    initAppForUser();
+    // Show profile edit to let them set class/exam
+    setTimeout(()=>{
+      showToast(`Welcome, ${displayName.split(' ')[0]}! 🎉 Please complete your profile.`);
+      setTimeout(openProfileEdit, 1200);
+    }, 600);
+  } else {
+    // Existing Google user — log in directly
+    localStorage.setItem(SF_SESSION_KEY, username);
+    currentUser = user;
+    initAppForUser();
+  }
+}
+
+function showFirebaseSetupModal(){
+  // Create modal dynamically if not already there
+  let modal = document.getElementById('firebaseSetupModal');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'firebaseSetupModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);';
+    modal.innerHTML = `
+      <div style="background:white;border-radius:20px;width:500px;max-width:95vw;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,0.2);">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;margin-bottom:6px;">🔥 Enable Google Login</div>
+        <div style="font-size:13.5px;color:#4A6A62;margin-bottom:20px;line-height:1.6;">Google Sign-In requires a free Firebase project. One-time setup takes ~3 minutes.</div>
+
+        <div style="background:#F6FAF7;border-radius:12px;padding:16px;margin-bottom:18px;font-size:13px;color:#2E4A42;line-height:1.8;">
+          <b>Setup steps:</b><br>
+          1. Go to <a href="https://console.firebase.google.com" target="_blank" style="color:#3A7A6C;font-weight:600;">console.firebase.google.com</a><br>
+          2. Create a project (any name) → Add a <b>Web app</b><br>
+          3. In Authentication → Sign-in method → Enable <b>Google</b><br>
+          4. Go to Project Settings → copy the <code style="background:#E6F2EF;padding:1px 5px;border-radius:4px;">firebaseConfig</code> object<br>
+          5. Paste it below and click Save
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label style="font-size:12px;font-weight:600;color:#4A6A62;letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:6px;">Firebase Config (JSON)</label>
+          <textarea id="fbConfigInput" rows="6" placeholder='{\n  "apiKey": "AIza...",\n  "authDomain": "your-app.firebaseapp.com",\n  "projectId": "your-app",\n  "storageBucket": "your-app.appspot.com",\n  "messagingSenderId": "12345",\n  "appId": "1:12345:web:abc123"\n}'
+            style="width:100%;padding:10px 12px;border:1.5px solid #D8E8E4;border-radius:10px;font-family:'DM Mono',monospace;font-size:12px;color:#1C2E2A;background:#F6FAF7;outline:none;resize:vertical;line-height:1.5;"></textarea>
+        </div>
+        <div id="fbConfigErr" style="font-size:12.5px;color:#C0392B;margin-bottom:10px;display:none;"></div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="saveFbConfig()" style="flex:1;padding:12px;background:#3A7A6C;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;">Save & Sign In with Google</button>
+          <button onclick="document.getElementById('firebaseSetupModal').style.display='none'" style="padding:12px 18px;background:#F6FAF7;border:1.5px solid #D8E8E4;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:#4A6A62;">Cancel</button>
+        </div>
+        <div style="text-align:center;margin-top:14px;font-size:12px;color:#8AADA5;">Or continue without Google — use a local profile instead.</div>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+  modal.style.display = 'flex';
+}
+
+function saveFbConfig(){
+  const raw = document.getElementById('fbConfigInput').value.trim();
+  const errEl = document.getElementById('fbConfigErr');
+  try{
+    // Accept both JS object and JSON — try to normalize
+    let jsonStr = raw;
+    // Replace JS property names (no quotes) with JSON-compatible ones
+    jsonStr = jsonStr.replace(/^\s*\{/, '{').replace(/\}\s*$/, '}');
+    jsonStr = jsonStr.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":');
+    // Replace single quotes with double
+    jsonStr = jsonStr.replace(/'/g, '"');
+    const cfg = JSON.parse(jsonStr);
+    if(!cfg.apiKey || !cfg.authDomain){ errEl.style.display='block'; errEl.textContent='⚠ Missing apiKey or authDomain. Copy the full firebaseConfig object.'; return; }
+    localStorage.setItem(SF_FIREBASE_CONFIG_KEY, JSON.stringify(cfg));
+    errEl.style.display='none';
+    document.getElementById('firebaseSetupModal').style.display='none';
+    showToast('✓ Firebase config saved! Signing in…');
+    // Re-init and sign in
+    _fbApp = null; _fbAuth = null;
+    setTimeout(googleSignIn, 400);
+  }catch(e){
+    errEl.style.display='block';
+    errEl.textContent = '⚠ Invalid JSON. Make sure the config is correctly formatted.';
+  }
+}
+
+// ---- Fix sgSharedSlots persistence ----
+let sgSharedSlots = [];
+
+function initSharedSlots(){
+  sgSharedSlots = sfLoad('sgSharedSlots', []);
+  renderSharedTimetable();
+}
+
+function renderSharedTimetable(){
+  const wrap = document.getElementById('sharedTimetable');
+  if(!wrap) return;
+  if(!sgSharedSlots.length){
+    wrap.innerHTML = '<div style="text-align:center;padding:16px;font-size:13px;color:var(--text3);">No shared slots yet. Click "Add Slot" to schedule a group session.</div>';
+    return;
+  }
+  wrap.innerHTML = sgSharedSlots.map((s,i) => `
+    <div class="st-item">
+      <div class="st-time">${s.time}</div>
+      <div class="st-subject">${s.subject}</div>
+      <div class="st-members">${s.members}</div>
+      <button onclick="removeSharedSlot(${i})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:2px 6px;border-radius:6px;transition:color .15s;" onmouseover="this.style.color='#C0392B'" onmouseout="this.style.color='var(--text3)'">✕</button>
+    </div>`).join('');
+}
+
+function removeSharedSlot(i){
+  sgSharedSlots.splice(i,1);
+  sfSave('sgSharedSlots', sgSharedSlots);
+  renderSharedTimetable();
+  showToast('Slot removed');
+}
+
+// Override saveSharedSlot to actually persist
+const _origSaveSharedSlot = window.saveSharedSlot;
+window.saveSharedSlot = function(){
+  const time = document.getElementById('st-time').value;
+  const subject = document.getElementById('st-subject').value.trim();
+  const members = document.getElementById('st-members').value.trim() || 'All members';
+  if(!subject){ showToast('⚠ Enter subject/topic'); return; }
+  const [h,m] = time.split(':');
+  const hNum = parseInt(h), ampm = hNum>=12?'PM':'AM', h12 = hNum%12||12;
+  const displayTime = `${h12}:${m} ${ampm}`;
+  sgSharedSlots.push({ time: displayTime, subject, members, addedAt: Date.now() });
+  sfSave('sgSharedSlots', sgSharedSlots);
+  renderSharedTimetable();
+  document.getElementById('stModal').classList.remove('open');
+  showToast(`📅 Slot added: ${subject} at ${displayTime}`);
+  addAutoNotif(hNum, parseInt(m), subject);
+};
+
+// =========================================================
 
 // ---- Boot sequence ----
 (function sfBoot(){
+  // Try to restore Firebase session first (async)
+  const fbCfg = getFirebaseConfig();
+  if(fbCfg && fbCfg.apiKey && typeof firebase !== 'undefined'){
+    try{
+      initFirebaseAuth();
+      // onAuthStateChanged will handle auto-login for Google users
+      // Give it a moment before falling back to local session
+      setTimeout(function(){
+        if(currentUser) return; // already logged in via Google
+        tryLocalSession();
+      }, 800);
+      return;
+    }catch(e){}
+  }
+  tryLocalSession();
+})();
+
+function tryLocalSession(){
   const savedSession = localStorage.getItem(SF_SESSION_KEY);
   if(savedSession){
     const users = getUsers();
@@ -6025,7 +6785,9 @@ function applyPGAwareness(){
   }
   // Not logged in — show login screen
   lsRender();
-})();
+  // Try to init Firebase in background (for Google button)
+  setTimeout(initFirebaseAuth, 500);
+}
 
 </script>
 </body>

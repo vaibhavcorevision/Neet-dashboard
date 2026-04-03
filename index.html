@@ -267,6 +267,8 @@ body.dark .notif-item.unread{background:#1C3028;}
 .ft-pill-btn{background:rgba(255,255,255,0.12);border:none;color:rgba(255,255,255,0.8);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;transition:all .18s;flex-shrink:0;}
 .ft-pill-btn:hover{background:rgba(255,255,255,0.25);color:white;}
 .ft-close-btn:hover{background:rgba(220,60,60,0.5)!important;}
+.ft-pip-btn:hover{background:rgba(122,174,154,0.4)!important;color:#A8D5C4!important;}
+.ft-pip-btn.active{background:rgba(58,122,108,0.5)!important;color:#A8D5C4!important;}
 
 .ft-expanded{background:var(--card);border-radius:20px;padding:20px;width:280px;box-shadow:var(--shadow-lg);border:1px solid var(--border);animation:ftSlideIn .3s cubic-bezier(.34,1.56,.64,1);}
 @keyframes ftSlideIn{from{opacity:0;transform:translateY(20px) scale(0.9);}to{opacity:1;transform:translateY(0) scale(1);}}
@@ -3023,6 +3025,7 @@ body.dark .ai-input-wrap{background:var(--bg);}
     <div class="ft-pill-btns">
       <button class="ft-pill-btn" id="ftMiniPlayBtn" onclick="ftToggle(event)" title="Play/Pause">▶</button>
       <button class="ft-pill-btn" onclick="ftExpand(event)" id="ftExpandBtn" title="Expand">▲</button>
+      <button class="ft-pill-btn ft-pip-btn" id="ftPipBtn" onclick="ftOpenPip(event)" title="Float over other apps (Picture-in-Picture)">⧉</button>
       <button class="ft-pill-btn ft-close-btn" onclick="ftClose(event)" title="Close">✕</button>
     </div>
   </div>
@@ -3032,6 +3035,7 @@ body.dark .ai-input-wrap{background:var(--bg);}
       <div class="ft-exp-title">Focus Timer</div>
       <div style="display:flex;gap:6px;">
         <button class="ft-pill-btn" onclick="ftMinimize(event)" title="Minimize">_</button>
+        <button class="ft-pill-btn ft-pip-btn" onclick="ftOpenPip(event)" title="Float over other apps">⧉</button>
         <button class="ft-pill-btn ft-close-btn" onclick="ftClose(event)" title="Close">✕</button>
       </div>
     </div>
@@ -6788,6 +6792,217 @@ function tryLocalSession(){
   // Try to init Firebase in background (for Google button)
   setTimeout(initFirebaseAuth, 500);
 }
+
+// ===== DOCUMENT PICTURE-IN-PICTURE (Always-on-top system floating timer) =====
+let pipWindowRef = null;
+let pipSyncInterval = null;
+
+async function ftOpenPip(e) {
+  if (e) e.stopPropagation();
+
+  // If PiP already open, close it
+  if (pipWindowRef && !pipWindowRef.closed) {
+    pipWindowRef.close();
+    pipWindowRef = null;
+    clearInterval(pipSyncInterval);
+    document.querySelectorAll('.ft-pip-btn').forEach(b => b.classList.remove('active'));
+    showToast('🖼️ Floating timer closed');
+    return;
+  }
+
+  // Check API support
+  if (!('documentPictureInPicture' in window)) {
+    showToast('⚠️ Your browser doesn\'t support system floating windows. Use Chrome 116+', 4000);
+    return;
+  }
+
+  try {
+    // Request a Document PiP window (always-on-top, floats over all apps)
+    const pipWin = await window.documentPictureInPicture.requestWindow({
+      width: 260,
+      height: 160,
+      preferInitialWindowPlacement: true,
+    });
+    pipWindowRef = pipWin;
+
+    // Mark pip buttons as active
+    document.querySelectorAll('.ft-pip-btn').forEach(b => b.classList.add('active'));
+
+    // Copy essential styles into PiP window
+    const styleEl = pipWin.document.createElement('style');
+    styleEl.textContent = `
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        background: #162420;
+        font-family: 'DM Sans', system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        gap: 10px;
+        overflow: hidden;
+        user-select: none;
+        cursor: default;
+      }
+      .pip-time {
+        font-size: 48px;
+        font-weight: 300;
+        color: #ffffff;
+        letter-spacing: -1px;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .pip-phase {
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.4);
+      }
+      .pip-subj {
+        font-size: 12px;
+        color: #7BAE9A;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+      .pip-controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 4px;
+      }
+      .pip-btn {
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: rgba(255,255,255,0.75);
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.15s;
+      }
+      .pip-btn:hover { background: rgba(255,255,255,0.22); color: white; }
+      .pip-play { background: #3A7A6C !important; color: white !important; }
+      .pip-play:hover { background: #4A9A8A !important; }
+      .pip-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #555; display: inline-block; margin-right: 6px;
+        transition: background 0.3s;
+      }
+      .pip-dot.running { background: #7BAE9A; box-shadow: 0 0 6px #7BAE9A; animation: blink 1.5s infinite; }
+      @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+      .pip-bar {
+        width: 200px; height: 3px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .pip-bar-fill {
+        height: 100%; background: #3A7A6C;
+        border-radius: 99px;
+        transition: width 1s linear;
+      }
+      .pip-header {
+        display: flex; align-items: center;
+        gap: 4px;
+      }
+    `;
+    pipWin.document.head.appendChild(styleEl);
+
+    // Load DM Sans font
+    const linkEl = pipWin.document.createElement('link');
+    linkEl.rel = 'stylesheet';
+    linkEl.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap';
+    pipWin.document.head.appendChild(linkEl);
+
+    // Build the PiP timer UI
+    pipWin.document.body.innerHTML = `
+      <div class="pip-header">
+        <div class="pip-dot" id="pipDot"></div>
+        <div class="pip-subj" id="pipSubj">Biology</div>
+      </div>
+      <div class="pip-time" id="pipTime">25:00</div>
+      <div class="pip-phase" id="pipPhase">FOCUS</div>
+      <div class="pip-bar"><div class="pip-bar-fill" id="pipBarFill" style="width:100%"></div></div>
+      <div class="pip-controls">
+        <button class="pip-btn" id="pipResetBtn" title="Reset">↺</button>
+        <button class="pip-btn pip-play" id="pipPlayBtn">▶</button>
+        <button class="pip-btn" id="pipSkipBtn" title="Skip">⏭</button>
+      </div>
+    `;
+
+    // Wire up PiP buttons to call main window functions
+    pipWin.document.getElementById('pipPlayBtn').onclick = () => ftToggle(null);
+    pipWin.document.getElementById('pipResetBtn').onclick = () => ftReset(null);
+    pipWin.document.getElementById('pipSkipBtn').onclick = () => ftSkip(null);
+
+    // Sync timer state into PiP window every 500ms
+    function syncPip() {
+      if (!pipWin || pipWin.closed) { clearInterval(pipSyncInterval); return; }
+      try {
+        const timeEl = pipWin.document.getElementById('pipTime');
+        const phaseEl = pipWin.document.getElementById('pipPhase');
+        const dotEl = pipWin.document.getElementById('pipDot');
+        const subjEl = pipWin.document.getElementById('pipSubj');
+        const fillEl = pipWin.document.getElementById('pipBarFill');
+        const playEl = pipWin.document.getElementById('pipPlayBtn');
+
+        // Time string
+        let timeStr;
+        if (ftInfinityMode) {
+          const m = Math.floor(ftInfSeconds / 60), s = ftInfSeconds % 60;
+          timeStr = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        } else {
+          const m = Math.floor(ftSeconds / 60), s = ftSeconds % 60;
+          timeStr = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+        if (timeEl) timeEl.textContent = timeStr;
+        if (phaseEl) phaseEl.textContent = ftInfinityMode ? '∞ FREE' : ftPhase.toUpperCase();
+        if (dotEl) dotEl.className = 'pip-dot' + (ftRunning ? ' running' : '');
+        if (subjEl) subjEl.textContent = (typeof ftSubjFull !== 'undefined' ? ftSubjFull[ftSubject] : ftSubject) || ftSubject;
+        if (playEl) playEl.textContent = ftRunning ? '⏸' : '▶';
+        if (fillEl) {
+          const pct = ftTotal > 0 ? (ftInfinityMode ? 100 : (ftSeconds / ftTotal * 100)) : 100;
+          fillEl.style.width = pct + '%';
+        }
+      } catch(err) { /* PiP window may have been closed */ }
+    }
+
+    pipSyncInterval = setInterval(syncPip, 500);
+    syncPip(); // immediate first sync
+
+    // When PiP window is closed by user, clean up
+    pipWin.addEventListener('pagehide', () => {
+      clearInterval(pipSyncInterval);
+      pipWindowRef = null;
+      document.querySelectorAll('.ft-pip-btn').forEach(b => b.classList.remove('active'));
+    });
+
+    showToast('⧉ Floating timer active — switch apps freely!', 3000);
+
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
+      showToast('⚠️ Allow Picture-in-Picture in browser settings', 3500);
+    } else {
+      showToast('⚠️ Could not open floating window: ' + err.message, 3500);
+    }
+    document.querySelectorAll('.ft-pip-btn').forEach(b => b.classList.remove('active'));
+  }
+}
+
+// Also override ftUpdateDisplay to keep title synced when PiP active
+const _origFtUpdateDisplay = ftUpdateDisplay;
+ftUpdateDisplay = function() {
+  _origFtUpdateDisplay();
+  // Update browser tab title with timer for taskbar visibility
+  if (ftRunning) {
+    const m = ftInfinityMode ? Math.floor(ftInfSeconds/60) : Math.floor(ftSeconds/60);
+    const s = ftInfinityMode ? ftInfSeconds%60 : ftSeconds%60;
+    const timeStr = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    document.title = `${timeStr} · ${ftPhase} — StudyFlow`;
+  }
+};
 
 </script>
 </body>

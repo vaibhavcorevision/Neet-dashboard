@@ -560,6 +560,11 @@ body.dark .notif-item.unread{background:#1C3028;}
 
 /* SESSION MODAL */
 .sch-modal-overlay{position:fixed;inset:0;background:rgba(10,25,20,0.45);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:all .3s;backdrop-filter:blur(4px);}
+.sm-day-chip{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:12.5px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .18s;user-select:none;}
+.sm-day-chip:hover{border-color:var(--primary);color:var(--primary);}
+.sm-day-chip.selected{background:var(--primary);border-color:var(--primary);color:white;}
+body.dark .sm-day-chip{background:var(--bg);border-color:var(--border);color:var(--text2);}
+body.dark .sm-day-chip.selected{background:var(--primary);color:white;}
 .sch-modal-overlay.open{opacity:1;pointer-events:all;}
 .sch-modal{background:white;border-radius:20px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(10,25,20,0.2);transform:translateY(20px) scale(0.97);transition:all .3s;}
 .sch-modal-overlay.open .sch-modal{transform:translateY(0) scale(1);}
@@ -1186,6 +1191,237 @@ body.dark .ai-input-wrap{background:var(--bg);}
 .firebase-setup-note a{color:var(--primary);font-weight:500;}
 
 </style>
+
+<!-- ===== 3D DESIGN UPGRADE CSS ===== -->
+<style>
+/* ============================================================
+   STUDYFLOW 3D DESIGN UPGRADE — STEP 1
+   Added by: Design Enhancement Layer
+   ============================================================ */
+
+/* ── GOOGLE FONTS EXTRA ── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
+
+/* ── NOISE TEXTURE FILTER ── */
+.noise-layer{pointer-events:none;position:fixed;inset:0;z-index:9999;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");background-size:150px 150px;}
+
+/* ── AURORA BACKGROUND ── */
+.aurora-bg{position:absolute;inset:0;overflow:hidden;border-radius:inherit;z-index:0;pointer-events:none;}
+.aurora-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:aurora-drift 8s ease-in-out infinite;}
+.aurora-orb-1{width:380px;height:280px;background:radial-gradient(ellipse,rgba(58,122,108,0.28) 0%,transparent 70%);top:-80px;left:-60px;animation-delay:0s;}
+.aurora-orb-2{width:320px;height:220px;background:radial-gradient(ellipse,rgba(232,193,122,0.2) 0%,transparent 70%);top:-40px;right:-40px;animation-delay:-3s;}
+.aurora-orb-3{width:260px;height:200px;background:radial-gradient(ellipse,rgba(123,174,154,0.22) 0%,transparent 70%);bottom:-60px;left:30%;animation-delay:-5s;}
+@keyframes aurora-drift{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(20px,-15px) scale(1.05);}66%{transform:translate(-15px,10px) scale(0.97);};}
+
+/* ── GREETING SECTION UPGRADE ── */
+.greeting-row{position:relative;background:linear-gradient(135deg,rgba(58,122,108,0.06) 0%,rgba(232,193,122,0.04) 100%);border-radius:20px;padding:24px 26px;margin-bottom:28px;border:1px solid rgba(58,122,108,0.12);overflow:hidden;}
+
+/* ── STAT CARDS — 3D TILT READY ── */
+.stat-card{transform-style:preserve-3d;transform-origin:center;will-change:transform;transition:box-shadow .3s,border-color .3s;}
+.stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.12) 0%,transparent 60%);border-radius:inherit;opacity:0;transition:opacity .3s;pointer-events:none;z-index:1;}
+.stat-card:hover::before{opacity:1;}
+.stat-card .stat-val,.stat-card .stat-label,.stat-card .stat-icon,.stat-card .stat-change{position:relative;z-index:2;}
+
+/* ──⚠️ ANTIGRAVITY ZONE 1: STAT CARDS ──
+   Tujhe yeh class manually stat-card elements pe add karni hai:
+   class="stat-card antigravity-card"
+   Tabhi yeh levitate karengi! ── */
+@keyframes levitate{0%,100%{transform:translateY(0px);}50%{transform:translateY(-6px);};}
+.antigravity-card{animation:levitate 3.5s ease-in-out infinite;}
+.antigravity-card:nth-child(2){animation-delay:.8s;}
+.antigravity-card:nth-child(3){animation-delay:1.6s;}
+.antigravity-card:nth-child(4){animation-delay:2.4s;}
+.antigravity-card:hover{animation-play-state:paused;}
+
+/* ── CARD GLASS SHIMMER ── */
+.card,.prog-card,.target-card,.tstat,.tl-stat,.timer-card,.sessions-log,.timer-settings-card{position:relative;overflow:hidden;}
+.card::before,.prog-card::before,.target-card::before,.tstat::before,.timer-card::before{content:'';position:absolute;top:-40%;left:-40%;width:60%;height:60%;background:linear-gradient(135deg,rgba(255,255,255,0.08) 0%,transparent 50%);transform:rotate(30deg);pointer-events:none;z-index:0;transition:opacity .3s;}
+
+/* ── SIDEBAR NAV MAGNETIC GLOW ── */
+.nav-item{position:relative;overflow:hidden;}
+.nav-item::after{content:'';position:absolute;inset:0;border-radius:10px;opacity:0;background:radial-gradient(ellipse at var(--mx,50%) var(--my,50%),rgba(123,174,154,0.2),transparent 70%);transition:opacity .3s;pointer-events:none;}
+.nav-item:hover::after{opacity:1;}
+
+/* ── MAGNETIC BUTTON GLOW ── */
+.btn-primary,.topbar-btn,.cal-arrow,.ft-ctrl-btn.ft-play,.timer-btn-main.play{position:relative;overflow:hidden;}
+.btn-primary::after,.timer-btn-main.play::after{content:'';position:absolute;inset:-2px;border-radius:inherit;background:conic-gradient(from 0deg,var(--primary),var(--sage),var(--accent),var(--primary));opacity:0;z-index:-1;transition:opacity .4s;filter:blur(8px);}
+.btn-primary:hover::after,.timer-btn-main.play:hover::after{opacity:0.6;}
+
+/* ── FLOATING TIMER GLASSMORPHISM UPGRADE ── */
+.ft-pill{background:rgba(22,36,32,0.85)!important;backdrop-filter:blur(20px) saturate(1.8)!important;-webkit-backdrop-filter:blur(20px) saturate(1.8)!important;border:1px solid rgba(123,174,154,0.25)!important;box-shadow:0 8px 40px rgba(10,25,20,0.4),0 0 0 1px rgba(123,174,154,0.1),inset 0 1px 0 rgba(255,255,255,0.08)!important;}
+.ft-expanded{background:rgba(255,255,255,0.92)!important;backdrop-filter:blur(24px) saturate(1.6)!important;-webkit-backdrop-filter:blur(24px) saturate(1.6)!important;border:1px solid rgba(58,122,108,0.2)!important;box-shadow:0 20px 60px rgba(10,25,20,0.2),inset 0 1px 0 rgba(255,255,255,0.8)!important;}
+body.dark .ft-expanded{background:rgba(20,35,30,0.92)!important;border-color:rgba(123,174,154,0.15)!important;}
+
+/* ──⚠️ ANTIGRAVITY ZONE 2: FLOATING TIMER PILL ──
+   Timer pill already float karta hai bottom-right mein —
+   uski glow aur hover effect enhanced kar di hai.
+   Extra: neeche script mein ftPill.classList.add('antigravity-pill') kar de ── */
+@keyframes pill-float{0%,100%{transform:translateY(0px) scale(1);}50%{transform:translateY(-4px) scale(1.005);};}
+.antigravity-pill{animation:pill-float 4s ease-in-out infinite;}
+.antigravity-pill:hover{animation-play-state:paused!important;}
+
+/* ── DYNAMIC ISLAND NOTIFICATION ── */
+#dynamicIsland{position:fixed;top:12px;left:50%;transform:translateX(-50%) translateY(-80px) scale(0.85);background:rgba(22,36,32,0.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);color:white;border-radius:50px;padding:10px 20px;font-size:13.5px;font-weight:500;font-family:'DM Sans',sans-serif;z-index:10000;pointer-events:none;white-space:nowrap;transition:transform .5s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;border:1px solid rgba(123,174,154,0.3);box-shadow:0 8px 40px rgba(10,25,20,0.4);display:flex;align-items:center;gap:8px;}
+#dynamicIsland.show{transform:translateX(-50%) translateY(0) scale(1);opacity:1;}
+#dynamicIsland .di-icon{font-size:16px;}
+#dynamicIsland .di-bar{width:4px;height:4px;border-radius:50%;background:#4CAF50;box-shadow:0 0 0 3px rgba(76,175,80,0.25);animation:di-pulse 1.2s ease-in-out infinite;}
+@keyframes di-pulse{0%,100%{box-shadow:0 0 0 3px rgba(76,175,80,0.25);}50%{box-shadow:0 0 0 6px rgba(76,175,80,0.1);};}
+
+/* ── PARTICLES CANVAS ── */
+#particleCanvas{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0.25;}
+
+/* ── SUBJECT ORBS — DASHBOARD ──
+   ──⚠️ ANTIGRAVITY ZONE 3: SUBJECT ORBS ──
+   Yeh 3 naye orbs hain jo dashboard pe float karengi.
+   Neeche .orb-container element greeting-row ke andar
+   JS se auto-inject ho jaayegi ── */
+.orb-container{position:absolute;top:0;right:0;width:200px;height:100%;pointer-events:none;overflow:hidden;}
+.subject-orb{position:absolute;border-radius:50%;filter:blur(1px);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;text-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.orb-physics{width:56px;height:56px;background:radial-gradient(135deg,#5AADCC,#2D7FA0);box-shadow:0 8px 30px rgba(90,173,204,0.5);animation:orb-float-1 4.2s ease-in-out infinite;right:20px;top:10px;}
+.orb-chem{width:46px;height:46px;background:radial-gradient(135deg,#E8A060,#C47040);box-shadow:0 6px 24px rgba(232,160,96,0.5);animation:orb-float-2 3.8s ease-in-out infinite;right:80px;top:30px;animation-delay:-1.5s;}
+.orb-bio{width:52px;height:52px;background:radial-gradient(135deg,#5ABC8A,#2D8A5A);box-shadow:0 7px 28px rgba(90,188,138,0.5);animation:orb-float-3 4.6s ease-in-out infinite;right:40px;top:60px;animation-delay:-3s;}
+@keyframes orb-float-1{0%,100%{transform:translate(0,0) rotate(0deg);}33%{transform:translate(-8px,-12px) rotate(3deg);}66%{transform:translate(6px,-6px) rotate(-2deg);};}
+@keyframes orb-float-2{0%,100%{transform:translate(0,0);}33%{transform:translate(10px,-8px);}66%{transform:translate(-6px,-14px);};}
+@keyframes orb-float-3{0%,100%{transform:translate(0,0) rotate(0deg);}33%{transform:translate(-4px,-16px) rotate(-4deg);}66%{transform:translate(8px,-4px) rotate(3deg);};}
+
+/* ── STAGGERED PAGE CARD ENTRANCE ── */
+@keyframes cardEnter{from{opacity:0;transform:translateY(22px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);};}
+.card-enter{animation:cardEnter .5s cubic-bezier(.34,1.2,.64,1) both;}
+.card-enter-d1{animation-delay:.05s;}
+.card-enter-d2{animation-delay:.12s;}
+.card-enter-d3{animation-delay:.19s;}
+.card-enter-d4{animation-delay:.26s;}
+
+/* ── TOPBAR FROSTED GLASS ── */
+.topbar{background:rgba(255,255,255,0.85)!important;backdrop-filter:blur(16px) saturate(1.8)!important;-webkit-backdrop-filter:blur(16px) saturate(1.8)!important;}
+body.dark .topbar{background:rgba(18,30,25,0.88)!important;}
+
+/* ── SIDEBAR DEPTH GRADIENT ── */
+.sidebar{background:linear-gradient(180deg,#0F1E1A 0%,#162420 40%,#1A2E26 100%)!important;}
+.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:120px;background:radial-gradient(ellipse at 50% 0%,rgba(58,122,108,0.25),transparent 70%);pointer-events:none;}
+
+/* ── PROGRESS BAR GLOW ── */
+.sp-fill,.ssl-fill,.tc-fill,.tstat-fill{position:relative;overflow:visible;}
+.sp-fill::after,.tc-fill::after{content:'';position:absolute;right:0;top:-2px;width:8px;height:10px;border-radius:50%;background:currentColor;filter:blur(4px);opacity:0.8;}
+
+/* ── ENHANCED SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(58,122,108,0.3);border-radius:10px;}
+::-webkit-scrollbar-thumb:hover{background:var(--primary);}
+
+/* ── PAGE TRANSITION ── */
+.page.active{animation:pageSlideIn .45s cubic-bezier(.4,0,.2,1);}
+@keyframes pageSlideIn{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:translateX(0);};}
+
+/* ── DARK MODE ENHANCEMENTS ── */
+body.dark .greeting-row{background:linear-gradient(135deg,rgba(58,122,108,0.1),rgba(232,193,122,0.05));border-color:rgba(123,174,154,0.12);}
+body.dark .stat-card::before{background:linear-gradient(135deg,rgba(255,255,255,0.04) 0%,transparent 60%);}
+
+/* ── STREAK CARD UPGRADE ── */
+.streak-card{background:linear-gradient(135deg,#0F1E1A 0%,#2D4F47 100%)!important;border:1px solid rgba(123,174,154,0.2)!important;box-shadow:0 8px 32px rgba(10,25,20,0.25)!important;position:relative;overflow:hidden;}
+.streak-card::after{content:'🔥';position:absolute;right:-10px;top:-10px;font-size:60px;opacity:0.06;transform:rotate(-15deg);}
+
+
+
+/* ============================================================
+   ANTIGRAVITY COMPLETE PACK — ALL ANIMATIONS
+   ============================================================ */
+
+/* ── ANIMATION 1: ORB INNER GLOW PULSE ── */
+@keyframes orb-glow-pulse {
+  0%,100%{ box-shadow:0 8px 30px rgba(90,173,204,0.5); }
+  50%    { box-shadow:0 8px 60px rgba(90,173,204,0.9),0 0 28px rgba(90,173,204,0.5); }
+}
+@keyframes orb-glow-pulse-c {
+  0%,100%{ box-shadow:0 6px 24px rgba(232,160,96,0.5); }
+  50%    { box-shadow:0 6px 50px rgba(232,160,96,0.9),0 0 22px rgba(232,160,96,0.5); }
+}
+@keyframes orb-glow-pulse-b {
+  0%,100%{ box-shadow:0 7px 28px rgba(90,188,138,0.5); }
+  50%    { box-shadow:0 7px 55px rgba(90,188,138,0.9),0 0 25px rgba(90,188,138,0.5); }
+}
+.orb-physics{ animation:orb-float-1 4.2s ease-in-out infinite, orb-glow-pulse 2.5s ease-in-out infinite !important; }
+.orb-chem   { animation:orb-float-2 3.8s ease-in-out infinite, orb-glow-pulse-c 2s ease-in-out infinite !important; }
+.orb-bio    { animation:orb-float-3 4.6s ease-in-out infinite, orb-glow-pulse-b 3s ease-in-out infinite !important; }
+
+/* ── ANIMATION 2: STAT CARD SHIMMER (light sweep on hover) ── */
+@keyframes shimmer-sweep {
+  0%  { transform:translateX(-120%) rotate(25deg); opacity:0; }
+  20% { opacity:1; }
+  100%{ transform:translateX(220%) rotate(25deg); opacity:0; }
+}
+.stat-card:hover::before {
+  animation:shimmer-sweep 0.75s ease forwards !important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent) !important;
+  width:80% !important; height:200% !important;
+  top:-50% !important; left:-40% !important;
+  opacity:1 !important;
+}
+
+/* ── ANIMATION 3: DYNAMIC ISLAND SPRING ── */
+#dynamicIsland {
+  transition:transform 0.55s cubic-bezier(.34,1.7,.64,1),
+             opacity 0.35s ease !important;
+}
+
+/* ── ANIMATION 4: STAT CARD LEVITATE GLOW SHADOW ── */
+@keyframes levitate-glow {
+  0%,100%{ box-shadow:0 4px 20px rgba(26,60,50,0.1),0 0 0 rgba(58,122,108,0); }
+  50%    { box-shadow:0 18px 40px rgba(26,60,50,0.18),0 6px 20px rgba(58,122,108,0.12); }
+}
+.antigravity-card{
+  animation:levitate 3.5s ease-in-out infinite, levitate-glow 3.5s ease-in-out infinite !important;
+}
+.antigravity-card:nth-child(2){ animation-delay:.8s !important; }
+.antigravity-card:nth-child(3){ animation-delay:1.6s !important; }
+.antigravity-card:nth-child(4){ animation-delay:2.4s !important; }
+
+/* ── ANIMATION 5: TIMER PILL GLOW PULSE ── */
+@keyframes pill-glow {
+  0%,100%{ box-shadow:0 8px 40px rgba(10,25,20,0.4),0 0 0 rgba(123,174,154,0); }
+  50%    { box-shadow:0 12px 50px rgba(10,25,20,0.5),0 0 24px rgba(58,122,108,0.35); }
+}
+.antigravity-pill{
+  animation:pill-float 4s ease-in-out infinite, pill-glow 4s ease-in-out infinite !important;
+}
+
+/* ── ANIMATION 6: PARTICLE CANVAS — BRIGHTER ON ACTIVE ── */
+#particleCanvas{ transition:opacity 1s ease; }
+#particleCanvas.active-burst{ opacity:0.5 !important; }
+
+/* ── ANIMATION 7: ORB SPIN ON HOVER ── */
+.subject-orb{
+  transition:transform 0.3s cubic-bezier(.34,1.56,.64,1), filter 0.3s;
+  cursor:default;
+}
+.subject-orb:hover{
+  transform:scale(1.25) rotate(15deg) !important;
+  filter:blur(0px) brightness(1.2) !important;
+}
+
+/* ── ANIMATION 8: SIDEBAR LOGO GLOW ── */
+@keyframes logo-breathe {
+  0%,100%{ box-shadow:0 0 0 rgba(58,122,108,0); }
+  50%    { box-shadow:0 0 20px rgba(58,122,108,0.6),0 0 40px rgba(123,174,154,0.2); }
+}
+.logo-icon{ animation:logo-breathe 3s ease-in-out infinite; }
+
+/* ── ANIMATION 9: ACTIVE NAV ITEM INDICATOR PULSE ── */
+@keyframes nav-indicator-pulse {
+  0%,100%{ height:60%; opacity:1; }
+  50%    { height:80%; opacity:0.7; box-shadow:0 0 8px rgba(123,174,154,0.8); }
+}
+.nav-item.active::before{ animation:nav-indicator-pulse 2s ease-in-out infinite; }
+
+/* ── ANIMATION 10: PROGRESS BAR GLOW SWEEP ── */
+@keyframes progress-glow {
+  0%  { box-shadow:0 0 0 rgba(58,122,108,0); }
+  50% { box-shadow:0 0 12px rgba(58,122,108,0.5); }
+  100%{ box-shadow:0 0 0 rgba(58,122,108,0); }
+}
+.sp-fill,.ssl-fill,.tc-fill{ animation:progress-glow 2.5s ease-in-out infinite; }
+</style>
 </head>
 
 <!-- ===== LOGIN SCREEN ===== -->
@@ -1377,7 +1613,22 @@ body.dark .ai-input-wrap{background:var(--bg);}
     <div class="nav-item" onclick="navigate('aidoubt',this)">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="12" y1="7" x2="12" y2="13"/></svg>
       AI Doubt Solver
-      <span class="nav-badge" style="background:#5AADCC;color:#0D2535;">AI</span>
+      <span class="nav-badge" style="background:#E8C17A;color:#2D1500;">⚡</span>
+    </div>
+    <div class="nav-item" onclick="navigate('aiplan',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+      AI Study Planner
+      <span class="nav-badge" style="background:#E8C17A;color:#2D1500;">⚡</span>
+    </div>
+    <div class="nav-item" onclick="navigate('aierror',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="11"/><circle cx="11" cy="14" r=".5" fill="currentColor"/></svg>
+      Error Analyzer
+      <span class="nav-badge" style="background:#E8C17A;color:#2D1500;">⚡</span>
+    </div>
+    <div class="nav-item" onclick="navigate('aiflash',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      AI Flashcards
+      <span class="nav-badge" style="background:#E8C17A;color:#2D1500;">⚡</span>
     </div>
     <div class="nav-item" onclick="navigate('neetpg',this)" id="navNeetPG">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
@@ -1498,27 +1749,8 @@ body.dark .ai-input-wrap{background:var(--bg);}
             <div class="card-action" onclick="navigate('schedule',document.querySelector('[onclick*=schedule]'))">View All →</div>
           </div>
           <div class="card-body">
-            <div class="session-list">
-
-              <div class="session-item done">
-                <div class="session-dot" style="background:#7BAE9A;"></div>
-                <div class="session-info">
-                  <div class="session-subject">Physics — Electrostatics</div>
-                  <div class="session-meta">Gauss's Law & Applications · 60 min</div>
-                </div>
-                <div class="session-time">10:00 AM</div>
-                <div class="session-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              </div>
-              <div class="session-item" id="currentSession">
-                <div class="session-dot" style="background:#E8C17A;"></div>
-                <div class="session-info">
-                  <div class="session-subject">Chemistry — Organic</div>
-                  <div class="session-meta">Reaction Mechanisms · 50 min</div>
-                </div>
-                <div class="session-time">2:00 PM</div>
-                <div class="session-check"></div>
-              </div>
-
+            <div class="session-list" id="dashTodaySessions">
+              <!-- Populated by renderDashTodaySessions() -->
             </div>
           </div>
         </div>
@@ -1531,18 +1763,7 @@ body.dark .ai-input-wrap{background:var(--bg);}
           </div>
           <div class="card-body">
             <div class="subject-progress" id="subjectProgressList">
-
-              <div class="sp-item">
-                <div class="sp-header"><span class="sp-name">Physics</span><span class="sp-pct">65%</span></div>
-                <div class="sp-track"><div class="sp-fill" style="width:0%;background:#7BAE9A;" data-width="65"></div></div>
-              </div>
-              <div class="sp-item">
-                <div class="sp-header"><span class="sp-name">Chemistry</span><span class="sp-pct">82%</span></div>
-                <div class="sp-track"><div class="sp-fill" style="width:0%;background:#E8C17A;" data-width="82"></div></div>
-              </div>
-              <div class="sp-item">
-                <div class="sp-header"><span class="sp-name">Biology</span><span class="sp-pct">91%</span></div>
-                <div class="sp-track"><div class="sp-fill" style="width:0%;background:#D4886A;" data-width="91"></div></div>
+              <!-- Populated by renderDashSubjectProgress() -->
               </div>
 
             </div>
@@ -1898,14 +2119,19 @@ body.dark .ai-input-wrap{background:var(--bg);}
           <label class="form-label">Topic / Chapter</label>
           <input class="form-input" id="sm-topic" type="text" placeholder="e.g. Integration by parts, Gauss's Law…"/>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-          <div class="form-group" style="margin:0;">
-            <label class="form-label">Day</label>
-            <select class="form-input" id="sm-day">
-              <option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option>
-              <option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option>
-            </select>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Day(s) — select one or more</label>
+          <div id="smDayChips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;">
+            <div class="sm-day-chip" data-day="0" onclick="smToggleDay(this)">Mon</div>
+            <div class="sm-day-chip" data-day="1" onclick="smToggleDay(this)">Tue</div>
+            <div class="sm-day-chip" data-day="2" onclick="smToggleDay(this)">Wed</div>
+            <div class="sm-day-chip" data-day="3" onclick="smToggleDay(this)">Thu</div>
+            <div class="sm-day-chip" data-day="4" onclick="smToggleDay(this)">Fri</div>
+            <div class="sm-day-chip" data-day="5" onclick="smToggleDay(this)">Sat</div>
+            <div class="sm-day-chip" data-day="6" onclick="smToggleDay(this)">Sun</div>
           </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="form-group" style="margin:0;">
             <label class="form-label">Start Time</label>
             <select class="form-input" id="sm-start"></select>
@@ -1993,12 +2219,8 @@ body.dark .ai-input-wrap{background:var(--bg);}
         <div class="prog-card">
           <div class="prog-card-header"><div class="prog-card-title">Recent Tests</div></div>
           <div class="prog-card-body">
-            <div class="recent-tests">
-
-              <div class="rt-item"><div class="rt-dot" style="background:#5AADCC;"></div><div class="rt-info"><div class="rt-name">Physics — Electrostatics</div><div class="rt-date">28 Mar 2026</div></div><div class="rt-score avg">71/100</div></div>
-              <div class="rt-item"><div class="rt-dot" style="background:#E8C17A;"></div><div class="rt-info"><div class="rt-name">Chemistry — Organic</div><div class="rt-date">25 Mar 2026</div></div><div class="rt-score good">85/100</div></div>
-              <div class="rt-item"><div class="rt-dot" style="background:#7BAE9A;"></div><div class="rt-info"><div class="rt-name">Biology — Full Syllabus</div><div class="rt-date">22 Mar 2026</div></div><div class="rt-score good">88/100</div></div>
-
+            <div class="recent-tests" id="recentTestsList">
+              <!-- Populated dynamically by renderRecentTests() -->
             </div>
           </div>
         </div>
@@ -2149,12 +2371,8 @@ body.dark .ai-input-wrap{background:var(--bg);}
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:16px;">
           <div class="is-title">Quick Stats</div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--bg);"><span style="color:var(--text3);">Tests Taken</span><span style="font-weight:600;">24</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--bg);"><span style="color:var(--text3);">Targets Active</span><span style="font-weight:600;">3</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--bg);"><span style="color:var(--text3);">Notes Written</span><span style="font-weight:600;">28</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--bg);"><span style="color:var(--text3);">Focus Sessions</span><span style="font-weight:600;">38</span></div>
-            <div style="display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;"><span style="color:var(--text3);">Best Subject</span><span style="font-weight:600;color:#3A7A6C;">Biology (91%)</span></div>
+          <div style="display:flex;flex-direction:column;gap:10px;" id="profileQuickStats">
+            <!-- Populated by renderProfilePage() -->
           </div>
         </div>
       </div>
@@ -2162,14 +2380,7 @@ body.dark .ai-input-wrap{background:var(--bg);}
         <div class="info-section">
           <div class="is-title">Personal Information</div>
           <div class="info-grid">
-            <div class="info-field"><div class="if-label">Full Name</div><div class="if-val">Arjun Kumar</div></div>
-            <div class="info-field"><div class="if-label">Class</div><div class="if-val">XII — Science</div></div>
-            <div class="info-field"><div class="if-label">Board</div><div class="if-val">CBSE</div></div>
-            <div class="info-field"><div class="if-label">School</div><div class="if-val">Delhi Public School</div></div>
-            <div class="info-field"><div class="if-label">Target Exam</div><div class="if-val">JEE Mains + Advanced</div></div>
-            <div class="info-field"><div class="if-label">Member Since</div><div class="if-val">January 2026</div></div>
-            <div class="info-field"><div class="if-label">City</div><div class="if-val">New Delhi</div></div>
-            <div class="info-field"><div class="if-label">Preferred Time</div><div class="if-val">Morning (6–10 AM)</div></div>
+            <!-- Populated by renderProfilePage() -->
           </div>
           <button class="btn-primary" style="margin-top:16px;width:100%;justify-content:center;" onclick="openProfileEdit()">✏️ Edit Profile</button>
         </div>
@@ -2189,6 +2400,7 @@ body.dark .ai-input-wrap{background:var(--bg);}
     <div class="settings-layout">
       <div class="settings-nav">
         <div class="sn-item active" onclick="showSettingsPanel('appearance',this)">🎨 Appearance</div>
+        <div class="sn-item" onclick="showSettingsPanel('customise',this)">✏️ Customise</div>
         <div class="sn-item" onclick="showSettingsPanel('notifications',this)">🔔 Notifications</div>
         <div class="sn-item" onclick="showSettingsPanel('study',this)">📚 Study Preferences</div>
         <div class="sn-item" onclick="showSettingsPanel('account',this)">👤 Account</div>
@@ -2308,6 +2520,66 @@ body.dark .ai-input-wrap{background:var(--bg);}
             <div class="sg-title">Backup</div>
             <div class="setting-row"><div><div class="sr-label">Auto cloud backup</div><div class="sr-desc">Back up daily to your account</div></div><div class="toggle-switch on" onclick="this.classList.toggle('on')"></div></div>
             <div class="setting-row"><div><div class="sr-label">Last backup</div><div class="sr-desc">Today, 6:00 AM</div></div><button class="nt-btn" onclick="showToast('Backing up now…')">Backup Now</button></div>
+          </div>
+        </div>
+        <!-- CUSTOMISE PANEL -->
+        <div class="settings-panel" id="sp-customise" style="display:none;">
+          <div class="sp-title">Customise</div>
+          <div class="sp-sub">Personalise every section — subjects, timer presets, colours, labels and more.</div>
+
+          <!-- Subjects -->
+          <div class="setting-group">
+            <div class="sg-title">Subjects</div>
+            <div class="sr-desc" style="margin-bottom:10px;font-size:12.5px;color:var(--text3);">Edit the names shown in the Timer, Schedule and Progress sections.</div>
+            <div id="customSubjList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input id="customSubjInput" class="form-input" type="text" placeholder="Add new subject…" style="flex:1;padding:9px 12px;font-size:13.5px;"/>
+              <button onclick="customAddSubj()" class="btn-save" style="padding:9px 18px;white-space:nowrap;font-size:13px;">+ Add</button>
+            </div>
+          </div>
+
+          <!-- Subject Colours -->
+          <div class="setting-group">
+            <div class="sg-title">Subject Colours</div>
+            <div class="sr-desc" style="margin-bottom:12px;font-size:12.5px;color:var(--text3);">Click a colour chip next to each subject to change it.</div>
+            <div id="customSubjColorList" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+
+          <!-- Timer Presets -->
+          <div class="setting-group">
+            <div class="sg-title">Timer Presets</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+              <div>
+                <div class="form-label" style="margin-bottom:6px;">Focus (min)</div>
+                <input id="cust-focus" class="form-input" type="number" min="1" max="120" value="25" style="padding:9px 12px;font-size:14px;" oninput="customSaveTimerPresets()"/>
+              </div>
+              <div>
+                <div class="form-label" style="margin-bottom:6px;">Short Break (min)</div>
+                <input id="cust-short" class="form-input" type="number" min="1" max="30" value="5" style="padding:9px 12px;font-size:14px;" oninput="customSaveTimerPresets()"/>
+              </div>
+              <div>
+                <div class="form-label" style="margin-bottom:6px;">Long Break (min)</div>
+                <input id="cust-long" class="form-input" type="number" min="1" max="60" value="15" style="padding:9px 12px;font-size:14px;" oninput="customSaveTimerPresets()"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Greeting -->
+          <div class="setting-group">
+            <div class="sg-title">Dashboard Greeting</div>
+            <div class="sr-desc" style="margin-bottom:8px;font-size:12.5px;color:var(--text3);">Custom motivational line shown on the dashboard.</div>
+            <input id="cust-greeting" class="form-input" type="text" placeholder="e.g. NEET 2026 — Every hour counts! 🎯" style="margin-bottom:8px;"/>
+            <button onclick="customSaveGreeting()" class="btn-save" style="padding:9px 18px;font-size:13px;">Save Greeting</button>
+          </div>
+
+          <!-- Sidebar Label -->
+          <div class="setting-group">
+            <div class="sg-title">App Label</div>
+            <div class="sr-desc" style="margin-bottom:8px;font-size:12.5px;color:var(--text3);">Change the app name shown in the sidebar.</div>
+            <div style="display:flex;gap:8px;">
+              <input id="cust-appname" class="form-input" type="text" placeholder="e.g. StudyFlow" style="flex:1;"/>
+              <button onclick="customSaveAppName()" class="btn-save" style="padding:9px 18px;font-size:13px;">Save</button>
+            </div>
           </div>
         </div>
       </div>
@@ -2928,6 +3200,176 @@ body.dark .ai-input-wrap{background:var(--bg);}
   </div>
 </div>
 
+<!-- ===== GROK EXTRA TOOLS — 3 new AI features ===== -->
+
+<!-- STEP 3: AI STUDY PLAN GENERATOR -->
+<div class="page" id="page-aiplan">
+  <div style="margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;">📅 AI Study Planner</h2>
+      <p style="font-size:13.5px;color:var(--text3);margin-top:3px;">Apne weak topics batao — Grok ek personalized 7-day plan banayega.</p>
+    </div>
+    <div style="font-size:12px;color:#E8C17A;background:#1A2E26;border:1px solid rgba(232,193,122,0.3);padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:6px;">⚡ Grok AI</div>
+  </div>
+  <div style="display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start;">
+    <!-- LEFT INPUT -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">📋 Teri Details</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label class="form-label">Daily Available Hours</label>
+            <input class="form-input" id="plan-hours" type="number" min="1" max="18" value="8" placeholder="e.g. 8"/>
+          </div>
+          <div>
+            <label class="form-label">Days Until Exam</label>
+            <input class="form-input" id="plan-days" type="number" min="1" value="30" placeholder="e.g. 30"/>
+          </div>
+          <div>
+            <label class="form-label">Weak Chapters (comma separated)</label>
+            <textarea class="form-input" id="plan-weak" rows="3" placeholder="e.g. Electrostatics, Organic Chemistry, Genetics, Thermodynamics" style="resize:none;"></textarea>
+          </div>
+          <div>
+            <label class="form-label">Strong Chapters (skip/light revision)</label>
+            <textarea class="form-input" id="plan-strong" rows="2" placeholder="e.g. Mechanics, Periodic Table" style="resize:none;"></textarea>
+          </div>
+          <div>
+            <label class="form-label">Last Mock Score (optional)</label>
+            <input class="form-input" id="plan-score" type="text" placeholder="e.g. 480/720"/>
+          </div>
+          <button onclick="generateStudyPlan()" id="planGenBtn"
+            style="width:100%;padding:12px;background:linear-gradient(135deg,#1A2E26,#2D4F47);color:white;border:1px solid rgba(123,174,154,0.3);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;"
+            onmouseover="this.style.background='linear-gradient(135deg,#2D4F47,#3A6A5A)'"
+            onmouseout="this.style.background='linear-gradient(135deg,#1A2E26,#2D4F47)'"
+          >⚡ Generate My 7-Day Plan</button>
+        </div>
+      </div>
+    </div>
+    <!-- RIGHT OUTPUT -->
+    <div>
+      <div id="planOutput" style="display:none;"></div>
+      <div id="planLoading" style="display:none;text-align:center;padding:60px 20px;">
+        <div style="font-size:36px;margin-bottom:12px;animation:spin 2s linear infinite;display:inline-block;">⚡</div>
+        <div style="font-size:15px;color:var(--text2);font-weight:500;">Grok tera plan bana raha hai...</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px;">Weak topics analyze ho rahe hain</div>
+      </div>
+      <div id="planEmpty" class="card" style="padding:60px 20px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:12px;">📅</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);">Fill the form & generate plan</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px;">Grok tumhara personalized 7-day NEET study schedule banayega</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4: AI ERROR ANALYZER -->
+<div class="page" id="page-aierror">
+  <div style="margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;">🔍 Error Analyzer</h2>
+      <p style="font-size:13.5px;color:var(--text3);margin-top:3px;">Galat questions paste karo — Grok batayega ki mistake kahan se hui.</p>
+    </div>
+    <div style="font-size:12px;color:#E8C17A;background:#1A2E26;border:1px solid rgba(232,193,122,0.3);padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:6px;">⚡ Grok AI</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📝 Questions Paste Karo</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label class="form-label">Wrong Questions (ek ek line mein likhao)</label>
+          <textarea class="form-input" id="error-qs" rows="8" placeholder="Q1. A body of mass 2kg... (galat answer diya)
+Q2. The hybridization of carbon in benzene...
+Q3. Which hormone is secreted by..." style="resize:none;font-size:13px;"></textarea>
+        </div>
+        <div>
+          <label class="form-label">Subject</label>
+          <div style="display:flex;gap:8px;">
+            <div class="type-opt sel-study" id="err-subj-all" onclick="selectErrSubj(this,'All')">All</div>
+            <div class="type-opt" id="err-subj-phy" onclick="selectErrSubj(this,'Physics')">⚛️ Physics</div>
+            <div class="type-opt" id="err-subj-che" onclick="selectErrSubj(this,'Chemistry')">🧪 Chemistry</div>
+            <div class="type-opt" id="err-subj-bio" onclick="selectErrSubj(this,'Biology')">🧬 Biology</div>
+          </div>
+        </div>
+        <button onclick="analyzeErrors()" id="errorAnalyzeBtn"
+          style="width:100%;padding:12px;background:linear-gradient(135deg,#1A2E26,#2D4F47);color:white;border:1px solid rgba(123,174,154,0.3);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;"
+          onmouseover="this.style.background='linear-gradient(135deg,#2D4F47,#3A6A5A)'"
+          onmouseout="this.style.background='linear-gradient(135deg,#1A2E26,#2D4F47)'"
+        >🔍 Analyze Errors</button>
+      </div>
+    </div>
+    <div>
+      <div id="errorOutput" style="display:none;"></div>
+      <div id="errorLoading" style="display:none;text-align:center;padding:60px 20px;">
+        <div style="font-size:36px;animation:spin 2s linear infinite;display:inline-block;margin-bottom:12px;">🔍</div>
+        <div style="font-size:15px;color:var(--text2);">Errors analyze ho rahe hain...</div>
+      </div>
+      <div id="errorEmpty" class="card" style="padding:60px 20px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:12px;">🎯</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;">Paste your wrong questions</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px;">Grok classify karega: Concept Gap / Calculation Error / Reading Mistake / Silly Mistake</div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+          <span style="padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:600;background:#FDECEA;color:#C0392B;">Concept Gap</span>
+          <span style="padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:600;background:#FBF3E2;color:#C4922A;">Calculation Error</span>
+          <span style="padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:600;background:#EEF0FA;color:#5A5AC4;">Reading Mistake</span>
+          <span style="padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:600;background:#E6F2EF;color:#2D7A5E;">Silly Mistake</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 5: AI FLASHCARD GENERATOR -->
+<div class="page" id="page-aiflash">
+  <div style="margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;">🃏 AI Flashcards</h2>
+      <p style="font-size:13.5px;color:var(--text3);margin-top:3px;">Chapter name dalo — Grok 10 NEET-style MCQ flashcards banayega.</p>
+    </div>
+    <div style="font-size:12px;color:#E8C17A;background:#1A2E26;border:1px solid rgba(232,193,122,0.3);padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:6px;">⚡ Grok AI</div>
+  </div>
+  <!-- Input row -->
+  <div style="display:flex;gap:12px;margin-bottom:24px;align-items:flex-end;flex-wrap:wrap;">
+    <div style="flex:1;min-width:200px;">
+      <label class="form-label">Chapter / Topic</label>
+      <input class="form-input" id="flash-topic" type="text" placeholder="e.g. Electromagnetic Induction, Aldehydes, Cell Division"/>
+    </div>
+    <div style="min-width:120px;">
+      <label class="form-label">Subject</label>
+      <select class="form-input" id="flash-subj">
+        <option value="Physics">⚛️ Physics</option>
+        <option value="Chemistry">🧪 Chemistry</option>
+        <option value="Biology" selected>🧬 Biology</option>
+      </select>
+    </div>
+    <div style="min-width:100px;">
+      <label class="form-label">Count</label>
+      <select class="form-input" id="flash-count">
+        <option value="5">5 cards</option>
+        <option value="10" selected>10 cards</option>
+        <option value="15">15 cards</option>
+      </select>
+    </div>
+    <button onclick="generateFlashcards()" id="flashGenBtn"
+      style="padding:11px 22px;background:linear-gradient(135deg,#1A2E26,#2D4F47);color:white;border:1px solid rgba(123,174,154,0.3);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;"
+      onmouseover="this.style.background='linear-gradient(135deg,#2D4F47,#3A6A5A)'"
+      onmouseout="this.style.background='linear-gradient(135deg,#1A2E26,#2D4F47)'"
+    >⚡ Generate Cards</button>
+  </div>
+  <!-- Loading -->
+  <div id="flashLoading" style="display:none;text-align:center;padding:60px 20px;">
+    <div style="font-size:36px;animation:spin 2s linear infinite;display:inline-block;margin-bottom:12px;">🃏</div>
+    <div style="font-size:15px;color:var(--text2);">Flashcards generate ho rahi hain...</div>
+  </div>
+  <!-- Cards Grid -->
+  <div id="flashCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;"></div>
+  <!-- Empty -->
+  <div id="flashEmpty" style="text-align:center;padding:60px 20px;">
+    <div style="font-size:48px;margin-bottom:12px;">🃏</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;">Chapter name dalo — flashcards ready!</div>
+    <div style="font-size:13px;color:var(--text3);margin-top:6px;">Flip karo answer dekhne ke liye</div>
+  </div>
+</div>
+
 <!-- NEET PG HUB PAGE -->
 <div class="page" id="page-neetpg">
   <!-- Header -->
@@ -3271,6 +3713,8 @@ let ftInfSeconds=0;
 let ftWallStart=0;       // Date.now() when timer was last started/resumed
 let ftSecondsAtStart=0;  // ftSeconds value at the moment of last start
 let ftInfSecsAtStart=0;  // ftInfSeconds value at the moment of last start (infinity mode)
+let ftAutoGen=0; // generation counter — incremented on skip/reset/manual to cancel stale auto-starts
+// Auto-start generation: incremented on reset/skip/manual toggle to cancel stale auto-start timeouts
 const ftSubjects=['Physics','Chem','Bio'];
 const ftSubjFull={'Physics':'Physics','Chem':'Chemistry','Bio':'Biology'};
 
@@ -3330,7 +3774,7 @@ function ftSaveSessionEntry(durMins, subjectKey){
 }
 
 function ftTick(){
-  // ── WALL-CLOCK CORRECTION (eliminates all drift even after 10–12 hr sessions) ──
+  // ── WALL-CLOCK CORRECTION (eliminates all drift) ──
   const elapsed = Math.floor((Date.now() - ftWallStart) / 1000);
 
   if(ftInfinityMode){
@@ -3347,36 +3791,48 @@ function ftTick(){
   if(ftSeconds<=0){
     ftSeconds=0;
     clearInterval(ftInterval);ftInterval=null;ftRunning=false;
+    ftWallStart=0; // BUG FIX: reset so stale re-entrant calls cannot misfire
     document.getElementById('ftStatusDot').className='ft-status-dot paused';
     ftPomDone=Math.min(ftPomDone+1,4);
     renderFtPomDots();renderPomDots();
     const autoBreak=document.getElementById('tog-autobreak')?.classList.contains('on');
     const autoFocus=document.getElementById('tog-autofocus')?.classList.contains('on');
+    const myGen = ++ftAutoGen; // BUG FIX: snapshot generation; stale setTimeout calls will bail
     if(!ftBreakMode){
-      // ✅ FIX: Save completed focus session to log
       const completedMins = Math.round(ftTotal/60);
       ftSaveSessionEntry(completedMins, ftSubject);
       showToast(`✅ ${completedMins} min ${ftSubjFull[ftSubject]||ftSubject} session saved!`, 3000);
-
       ftBreakMode=true;ftPhase='Break';
       const breakDur=ftPomDone%4===0?timerSettings.long:timerSettings.short;
       ftSeconds=breakDur*60;ftTotal=breakDur*60;
+      ftSecondsAtStart=breakDur*60; // BUG FIX: sync immediately so display is correct
       document.getElementById('ftPill')?.classList.add('break-mode');
       document.getElementById('ftRing')?.classList.add('break-ring');
       document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(breakDur)));
       document.querySelectorAll('.tm-tab').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(breakDur)));
       ftUpdateDisplay();
-      if(autoBreak){setTimeout(()=>{if(!ftRunning){ftRunning=true;ftWallStart=Date.now();ftSecondsAtStart=ftSeconds;ftInfSecsAtStart=0;document.getElementById('ftStatusDot').className='ft-status-dot running';ftInterval=setInterval(ftTick,500);ftUpdatePlayBtn();}},400);}
+      if(autoBreak){setTimeout(()=>{
+        if(ftAutoGen!==myGen||ftRunning)return; // BUG FIX: cancel if user interacted
+        ftRunning=true;ftWallStart=Date.now();ftSecondsAtStart=ftSeconds;ftInfSecsAtStart=0;
+        document.getElementById('ftStatusDot').className='ft-status-dot running';
+        ftInterval=setInterval(ftTick,500);ftUpdatePlayBtn();
+      },400);}
     } else {
       ftBreakMode=false;ftPhase='Focus';
       ftSeconds=timerSettings.focus*60;ftTotal=timerSettings.focus*60;
+      ftSecondsAtStart=timerSettings.focus*60; // BUG FIX: sync immediately
       document.getElementById('ftPill')?.classList.remove('break-mode');
       document.getElementById('ftRing')?.classList.remove('break-ring');
       document.querySelectorAll('.ft-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(timerSettings.focus)));
       document.querySelectorAll('.tm-tab').forEach(b=>b.classList.toggle('active',b.dataset.dur===String(timerSettings.focus)));
       ftUpdateDisplay();
       showToast('🎯 Break done! Focus session ready.');
-      if(autoFocus){setTimeout(()=>{if(!ftRunning){ftRunning=true;ftWallStart=Date.now();ftSecondsAtStart=ftSeconds;ftInfSecsAtStart=0;document.getElementById('ftStatusDot').className='ft-status-dot running';ftInterval=setInterval(ftTick,500);ftUpdatePlayBtn();}},400);}
+      if(autoFocus){setTimeout(()=>{
+        if(ftAutoGen!==myGen||ftRunning)return; // BUG FIX: cancel if user interacted
+        ftRunning=true;ftWallStart=Date.now();ftSecondsAtStart=ftSeconds;ftInfSecsAtStart=0;
+        document.getElementById('ftStatusDot').className='ft-status-dot running';
+        ftInterval=setInterval(ftTick,500);ftUpdatePlayBtn();
+      },400);}
     }
     return;
   }
@@ -3389,6 +3845,7 @@ function ftToggle(e){
   if(e)e.stopPropagation();
   if(ftRunning){
     clearInterval(ftInterval);ftInterval=null;ftRunning=false;
+    ftAutoGen++; // BUG FIX: cancel any pending auto-start when user manually pauses
     // Sync ftSeconds/ftInfSeconds from wall clock before pausing
     if(ftInfinityMode){
       ftInfSeconds = ftInfSecsAtStart + Math.floor((Date.now()-ftWallStart)/1000);
@@ -3484,6 +3941,7 @@ function ftUpdateDisplay(){
 function ftReset(e){
   if(e)e.stopPropagation();
   clearInterval(ftInterval);ftInterval=null;ftRunning=false;
+  ftAutoGen++; // BUG FIX: cancel any pending auto-start
   if(ftInfinityMode){ftInfSeconds=0;ftInfSecsAtStart=0;}
   else{ftSeconds=ftTotal;ftSecondsAtStart=ftTotal;}
   ftWallStart=0;
@@ -3493,7 +3951,9 @@ function ftReset(e){
 }
 function ftSkip(e){
   if(e)e.stopPropagation();
-  clearInterval(ftInterval);ftRunning=false;ftSeconds=ftTotal;ftSecondsAtStart=ftTotal;ftWallStart=0;
+  clearInterval(ftInterval);ftInterval=null;ftRunning=false; // BUG FIX: ftInterval=null prevents stale ref
+  ftAutoGen++; // BUG FIX: cancel any pending auto-start
+  ftSeconds=ftTotal;ftSecondsAtStart=ftTotal;ftWallStart=0;
   document.getElementById('ftStatusDot').className='ft-status-dot';
   ftUpdateDisplay();ftUpdatePlayBtn();showToast('Session skipped');
 }
@@ -3536,7 +3996,7 @@ document.addEventListener('visibilitychange', function(){
 
 // NAVIGATION — lazy page init
 function getGreeting(name){const h=new Date().getHours();let g=h<12?'Good Morning':h<17?'Good Afternoon':h<21?'Good Evening':'Good Night';return `${g}, <span>${name.split(' ')[0]}</span> ✦`;}
-const pageTitles={dashboard:getGreeting('Arjun'),targets:'My <span>Targets</span>',schedule:'My <span>Schedule</span>',progress:'<span>Progress</span> Analytics',notes:'Smart <span>Notes</span>',timer:'Focus <span>Timer</span>',settings:'<span>Settings</span>',profile:'My <span>Profile</span>',testlog:'Test <span>Log</span>',rankpredictor:'NEET <span>Rank Predictor</span>',studygroup:'Study <span>Group</span>',pdfextractor:'PDF <span>Extractor</span>',aidoubt:'🧠 AI <span>Doubt Solver</span>',neetpg:'🎓 NEET PG <span>Hub</span>'};
+const pageTitles={dashboard:getGreeting('Arjun'),targets:'My <span>Targets</span>',schedule:'My <span>Schedule</span>',progress:'<span>Progress</span> Analytics',notes:'Smart <span>Notes</span>',timer:'Focus <span>Timer</span>',settings:'<span>Settings</span>',profile:'My <span>Profile</span>',testlog:'Test <span>Log</span>',rankpredictor:'NEET <span>Rank Predictor</span>',studygroup:'Study <span>Group</span>',pdfextractor:'PDF <span>Extractor</span>',aidoubt:'🧠 AI <span>Doubt Solver</span>',aiplan:'📅 AI Study <span>Planner</span>',aierror:'🔍 Error <span>Analyzer</span>',aiflash:'🃏 AI <span>Flashcards</span>',neetpg:'🎓 NEET PG <span>Hub</span>'};
 const _pageInited={dashboard:true}; // dashboard inits on load
 function navigate(page,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -3800,7 +4260,16 @@ function openSchModal(day,slot){
   document.getElementById('sm-topic').value='';
   document.getElementById('sm-notes').value='';
   document.getElementById('sm-repeat').checked=false;
-  if(day!==undefined)document.getElementById('sm-day').value=day;
+  // Reset day chips
+  document.querySelectorAll('.sm-day-chip').forEach(c=>c.classList.remove('selected'));
+  if(day!==undefined){
+    const chip=document.querySelector(`.sm-day-chip[data-day="${day}"]`);
+    if(chip)chip.classList.add('selected');
+  } else {
+    // default select today
+    const todayChip=document.querySelector(`.sm-day-chip[data-day="${new Date().getDay()===0?6:new Date().getDay()-1}"]`);
+    if(todayChip)todayChip.classList.add('selected');
+  }
   buildSubjPills();
   if(slot!==undefined)document.getElementById('sm-start').value=slot;
   smSelType='study';document.querySelectorAll('.type-opt').forEach(t=>{t.className='type-opt';});
@@ -3814,7 +4283,10 @@ function editSchSession(id){
   document.getElementById('smTitle').textContent='Edit Session';
   document.getElementById('sm-topic').value=s.topic;
   document.getElementById('sm-notes').value=s.notes||'';
-  document.getElementById('sm-day').value=s.day;
+  // Select the day chip for editing
+  document.querySelectorAll('.sm-day-chip').forEach(c=>c.classList.remove('selected'));
+  const editDayChip=document.querySelector(`.sm-day-chip[data-day="${s.day}"]`);
+  if(editDayChip)editDayChip.classList.add('selected');
   document.getElementById('sm-repeat').checked=s.repeat||false;
   buildSubjPills();
   document.getElementById('sm-start').value=s.startSlot;
@@ -3827,17 +4299,41 @@ function editSchSession(id){
 }
 function closeSchModal(){document.getElementById('schModal').classList.remove('open');}
 function closeSchModalOut(e){if(e.target.id==='schModal')closeSchModal();}
+function smToggleDay(el){
+  // If editing, only allow one day at a time
+  if(smEditId){
+    document.querySelectorAll('.sm-day-chip').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+  } else {
+    el.classList.toggle('selected');
+  }
+}
 function saveSchSession(){
-  const day=parseInt(document.getElementById('sm-day').value);
+  const selectedDayChips=[...document.querySelectorAll('.sm-day-chip.selected')];
+  const days=selectedDayChips.map(c=>parseInt(c.dataset.day));
   const startSlot=parseInt(document.getElementById('sm-start').value);
   const dur=parseInt(document.getElementById('sm-dur').value);
   const topic=document.getElementById('sm-topic').value.trim();
   const notes=document.getElementById('sm-notes').value.trim();
   const repeat=document.getElementById('sm-repeat').checked;
   if(!smSelSubj){showToast('⚠ Please select a subject');return;}
-  const obj={id:smEditId||schNextId++,day,startSlot,dur,subject:smSelSubj,topic:topic||smSelSubj,type:smSelType,notes,repeat};
-  if(smEditId){const idx=schSessions.findIndex(s=>s.id===smEditId);if(idx>-1)schSessions[idx]=obj;sfSave('schSessions',schSessions);renderDashTodaySessions();showToast('Session updated ✓');}
-  else{schSessions.push(obj);sfSave('schSessions',schSessions);renderDashTodaySessions();updateDashboardStats();showToast(`Session added: ${smSelSubj} on ${DAYS_FULL[day]}`);}
+  if(!days.length){showToast('⚠ Please select at least one day');return;}
+  if(smEditId){
+    // Editing: update single session, use first selected day
+    const day=days[0];
+    const obj={id:smEditId,day,startSlot,dur,subject:smSelSubj,topic:topic||smSelSubj,type:smSelType,notes,repeat};
+    const idx=schSessions.findIndex(s=>s.id===smEditId);
+    if(idx>-1)schSessions[idx]=obj;
+    sfSave('schSessions',schSessions);renderDashTodaySessions();showToast('Session updated ✓');
+  } else {
+    // Adding: create one session per selected day
+    days.forEach(day=>{
+      schSessions.push({id:schNextId++,day,startSlot,dur,subject:smSelSubj,topic:topic||smSelSubj,type:smSelType,notes,repeat});
+    });
+    sfSave('schSessions',schSessions);renderDashTodaySessions();updateDashboardStats();
+    const dayNames=days.map(d=>DAYS_FULL[d].slice(0,3)).join(', ');
+    showToast(`Session added: ${smSelSubj} on ${dayNames}`);
+  }
   closeSchModal();
   if(schView==='week')renderWeekGrid();else renderDayView();
 }
@@ -4049,6 +4545,29 @@ function renderProgressKPIs(){
   set('prog-kpi-streak-delta', streak>=7?'🔥 On fire! Keep going':streak>0?`Keep going — ${7-streak} days to 7-day streak`:'Study daily to build a streak!');
 }
 
+function renderRecentTests(){
+  const el=document.getElementById('recentTestsList');if(!el)return;
+  if(!testEntries.length){
+    el.innerHTML='<div style="text-align:center;padding:24px 0;color:var(--text3);font-size:13px;"><div style="font-size:28px;opacity:0.25;margin-bottom:8px;">📋</div>Log subject-wise tests to see scores here</div>';
+    return;
+  }
+  const subjColors={'Physics':'#5AADCC','Chemistry':'#E8C17A','Biology':'#7BAE9A'};
+  const sorted=[...testEntries].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
+  el.innerHTML=sorted.map(e=>{
+    const color=subjColors[e.subject]||'#8AADA5';
+    const scoreClass=e.pct>=80?'good':e.pct>=60?'avg':'bad';
+    const dateStr=new Date(e.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    return `<div class="rt-item" style="cursor:pointer;" onclick="navigate('testlog')">
+      <div class="rt-dot" style="background:${color};"></div>
+      <div class="rt-info">
+        <div class="rt-name">${e.name}</div>
+        <div class="rt-date">${dateStr}</div>
+      </div>
+      <div class="rt-score ${scoreClass}">${e.score}/${e.maxScore}</div>
+    </div>`;
+  }).join('');
+}
+
 function renderSubjectScores(){
   const el = document.getElementById('subjectScoreList');
   if(!el) return;
@@ -4101,6 +4620,7 @@ function initProgress(){
   renderStreakRow();
   renderTimeDistrib();
   renderSubjectScores();
+  renderRecentTests();
 }
 
 // ===== PART 4: TIMER (synced with floating timer) =====
@@ -4420,7 +4940,196 @@ function showSettingsPanel(p,el){
   document.querySelectorAll('.sn-item').forEach(s=>s.classList.remove('active'));
   const panel=document.getElementById('sp-'+p);if(panel)panel.style.display='block';
   if(el)el.classList.add('active');
+  if(p==='customise') initCustomisePanel();
 }
+
+// =========================================================
+// ===== CUSTOMISE PANEL =====
+// =========================================================
+const CUSTOM_COLORS_PALETTE = ['#3A7A6C','#5AADCC','#E8C17A','#D4886A','#8A9AD4','#C0392B','#27AE60','#8E44AD','#E67E22','#2C3E50'];
+
+function initCustomisePanel(){
+  if(!currentUser) return;
+  // Subjects list
+  renderCustomSubjList();
+  // Timer presets
+  document.getElementById('cust-focus').value = timerSettings.focus;
+  document.getElementById('cust-short').value = timerSettings.short;
+  document.getElementById('cust-long').value = timerSettings.long;
+  // Greeting
+  const savedGreeting = sfLoad('customGreeting','');
+  if(savedGreeting) document.getElementById('cust-greeting').value = savedGreeting;
+  // App name
+  const savedAppName = sfLoad('customAppName','StudyFlow');
+  document.getElementById('cust-appname').value = savedAppName;
+}
+
+function renderCustomSubjList(){
+  const list = document.getElementById('customSubjList');
+  const colorList = document.getElementById('customSubjColorList');
+  if(!list || !colorList) return;
+  const subjects = sfLoad('customSubjects', ['Physics','Chemistry','Biology']);
+  const colors = sfLoad('customSubjectColors', {'Physics':'#5AADCC','Chemistry':'#E8C17A','Biology':'#7BAE9A'});
+
+  list.innerHTML = subjects.map((s,i) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border-radius:9px;border:1px solid var(--border);">
+      <span style="flex:1;font-size:13.5px;font-weight:500;color:var(--text);">${s}</span>
+      <input value="${s}" onblur="customRenameSubj(${i},this.value)"
+        style="flex:2;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:white;outline:none;"
+        onfocus="this.style.borderColor='var(--primary)'" onblur2="this.style.borderColor='var(--border)'"
+        placeholder="Rename…"/>
+      ${subjects.length > 1 ? `<button onclick="customRemoveSubj(${i})" style="width:26px;height:26px;border-radius:7px;border:none;background:#FDECEA;color:#C0392B;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</button>` : ''}
+    </div>`).join('');
+
+  colorList.innerHTML = subjects.map((s,i) => {
+    const c = colors[s] || '#8AADA5';
+    return `<div style="display:flex;align-items:center;gap:10px;">
+      <span style="width:80px;font-size:13.5px;font-weight:500;color:var(--text);flex-shrink:0;">${s}</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${CUSTOM_COLORS_PALETTE.map(col => `
+          <div onclick="customSetSubjColor('${s}','${col}')"
+            style="width:24px;height:24px;border-radius:50%;background:${col};cursor:pointer;border:2px solid ${col===c?'var(--text)':'transparent'};transition:all .15s;"
+            title="${col}"></div>`).join('')}
+        <input type="color" value="${c}" oninput="customSetSubjColor('${s}',this.value)"
+          style="width:24px;height:24px;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;overflow:hidden;" title="Custom colour"/>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function customAddSubj(){
+  const inp = document.getElementById('customSubjInput');
+  const name = (inp.value||'').trim();
+  if(!name){ showToast('⚠ Enter a subject name'); return; }
+  const subjects = sfLoad('customSubjects', ['Physics','Chemistry','Biology']);
+  if(subjects.includes(name)){ showToast('⚠ Already exists'); return; }
+  subjects.push(name);
+  sfSave('customSubjects', subjects);
+  inp.value = '';
+  applyCustomSubjects();
+  renderCustomSubjList();
+  showToast(`✓ "${name}" added`);
+}
+
+function customRemoveSubj(idx){
+  const subjects = sfLoad('customSubjects', ['Physics','Chemistry','Biology']);
+  if(subjects.length <= 1){ showToast('⚠ Need at least one subject'); return; }
+  const removed = subjects.splice(idx,1)[0];
+  sfSave('customSubjects', subjects);
+  applyCustomSubjects();
+  renderCustomSubjList();
+  showToast(`"${removed}" removed`);
+}
+
+function customRenameSubj(idx, newName){
+  newName = (newName||'').trim();
+  if(!newName) return;
+  const subjects = sfLoad('customSubjects', ['Physics','Chemistry','Biology']);
+  const old = subjects[idx];
+  if(old === newName) return;
+  subjects[idx] = newName;
+  sfSave('customSubjects', subjects);
+  // update color mapping
+  const colors = sfLoad('customSubjectColors', {});
+  if(colors[old]){ colors[newName]=colors[old]; delete colors[old]; sfSave('customSubjectColors', colors); }
+  applyCustomSubjects();
+  renderCustomSubjList();
+  showToast(`✓ Renamed to "${newName}"`);
+}
+
+function customSetSubjColor(subj, color){
+  const colors = sfLoad('customSubjectColors', {'Physics':'#5AADCC','Chemistry':'#E8C17A','Biology':'#7BAE9A'});
+  colors[subj] = color;
+  sfSave('customSubjectColors', colors);
+  // Apply to SUBJ_COLORS live
+  if(typeof SUBJ_COLORS !== 'undefined') SUBJ_COLORS[subj] = color;
+  renderCustomSubjList();
+  showToast(`✓ Color updated for ${subj}`);
+}
+
+function customSaveTimerPresets(){
+  const f = parseInt(document.getElementById('cust-focus').value)||25;
+  const s = parseInt(document.getElementById('cust-short').value)||5;
+  const l = parseInt(document.getElementById('cust-long').value)||15;
+  timerSettings.focus = Math.max(1, Math.min(120, f));
+  timerSettings.short = Math.max(1, Math.min(30, s));
+  timerSettings.long = Math.max(1, Math.min(60, l));
+  sfSave('timerSettings', timerSettings);
+  // Update timer settings display
+  ['sv-focus','sv-short','sv-long'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=[timerSettings.focus,timerSettings.short,timerSettings.long][i];
+  });
+  showToast('✓ Timer presets saved');
+}
+
+function customSaveGreeting(){
+  const val = document.getElementById('cust-greeting').value.trim();
+  sfSave('customGreeting', val);
+  // Update dashboard subtitle
+  const sub = document.querySelector('.greeting-text .subtitle');
+  if(sub && val) sub.textContent = val;
+  showToast('✓ Greeting saved!');
+}
+
+function customSaveAppName(){
+  const val = (document.getElementById('cust-appname').value||'').trim() || 'StudyFlow';
+  sfSave('customAppName', val);
+  const logoEl = document.querySelector('.logo-text');
+  if(logoEl) logoEl.textContent = val;
+  document.title = val + ' — Premium Learning Platform';
+  showToast(`✓ App name set to "${val}"`);
+}
+
+// Apply custom subjects to all dropdowns and pill groups in the app
+function applyCustomSubjects(){
+  const subjects = sfLoad('customSubjects', ['Physics','Chemistry','Biology']);
+  const colors = sfLoad('customSubjectColors', {'Physics':'#5AADCC','Chemistry':'#E8C17A','Biology':'#7BAE9A'});
+  // Merge into SUBJ_COLORS
+  if(typeof SUBJ_COLORS !== 'undefined'){
+    subjects.forEach(s=>{ if(!SUBJ_COLORS[s]) SUBJ_COLORS[s]=colors[s]||'#3A7A6C'; });
+    Object.keys(colors).forEach(k=>{ SUBJ_COLORS[k]=colors[k]; });
+  }
+  // Update timer subject chips
+  const ftSubjRow = document.getElementById('ftSubjRow');
+  if(ftSubjRow){
+    ftSubjRow.innerHTML = subjects.map((s,i) => `<div class="ft-subj-chip${i===0?' active':''}" style="${i===0?`background:${colors[s]||'#3A7A6C'};color:white;`:''}" onclick="ftSelectSubj(this,'${s}')">${s}</div>`).join('');
+    ftSubject = subjects[0];
+  }
+  // Update main timer pills
+  const timerPills = document.getElementById('timerSubjPills');
+  if(timerPills){
+    timerPills.innerHTML = subjects.map((s,i)=>`<div class="timer-pill${i===0?' active':''}" style="${i===0?`background:${colors[s]||'#3A7A6C'};color:white;`:''}" onclick="selectTimerSubj(this,'${s}')">${s}</div>`).join('');
+  }
+  // Update schedule subj pills
+  buildSubjPills();
+}
+
+// Load custom subjects and colors on app start
+function loadCustomisations(){
+  if(!currentUser) return;
+  const subjects = sfLoad('customSubjects', null);
+  if(subjects && subjects.length){
+    // Sync into timerSubjects array
+    timerSubjects.length = 0;
+    subjects.forEach(s => timerSubjects.push(s));
+    applyCustomSubjects();
+  }
+  // Greeting
+  const greeting = sfLoad('customGreeting','');
+  if(greeting){
+    const sub = document.querySelector('.greeting-text .subtitle');
+    if(sub) sub.textContent = greeting;
+  }
+  // App name
+  const appName = sfLoad('customAppName','StudyFlow');
+  const logoEl = document.querySelector('.logo-text');
+  if(logoEl && appName !== 'StudyFlow') logoEl.textContent = appName;
+  // Timer settings
+  const ts = sfLoad('timerSettings', null);
+  if(ts){ timerSettings.focus=ts.focus||25; timerSettings.short=ts.short||5; timerSettings.long=ts.long||15; }
+}
+
 function selectTheme(el,color){
   document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('selected'));
   el.classList.add('selected');
@@ -5711,6 +6420,8 @@ function initAppForUser(){
   // Apply profile to UI
   applyProfileData();
   applyPGAwareness();
+  // Load any user customisations (subjects, app name, colours etc.)
+  loadCustomisations();
 
   // Show Google photo if available
   if(currentUser && currentUser.googlePhoto){
@@ -6054,6 +6765,52 @@ function renderProfilePage(){
         <div class="ach-desc">${a.done?'✓ Unlocked':a.desc}</div>
       </div>`).join('');
   }
+
+  // --- Quick Stats (dynamic) ---
+  const qsEl = document.getElementById('profileQuickStats');
+  if(qsEl){
+    const bestSubj = (()=>{
+      if(!testEntries.length) return '—';
+      const bySubj={};
+      testEntries.forEach(e=>{if(!bySubj[e.subject])bySubj[e.subject]=[];bySubj[e.subject].push(e.pct||0);});
+      let best='—',bestAvg=0;
+      Object.entries(bySubj).forEach(([s,arr])=>{const avg=arr.reduce((a,b)=>a+b,0)/arr.length;if(avg>bestAvg){bestAvg=avg;best=`${s} (${Math.round(avg)}%)`;}}); 
+      return best;
+    })();
+    const rows=[
+      {label:'Tests Taken', val:testEntries.length},
+      {label:'Targets Active', val:targets.filter(t=>t.status==='active').length},
+      {label:'Notes Written', val:notes.length},
+      {label:'Focus Sessions', val:timerLog.length},
+      {label:'Best Subject', val:bestSubj, color:'#3A7A6C'}
+    ];
+    qsEl.innerHTML = rows.map((r,i)=>`
+      <div style="display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;${i<rows.length-1?'border-bottom:1px solid var(--bg);':''}">
+        <span style="color:var(--text3);">${r.label}</span>
+        <span style="font-weight:600;${r.color?`color:${r.color};`:''}">${r.val}</span>
+      </div>`).join('');
+  }
+
+  // --- Personal Info (dynamic) ---
+  const infoGrid = document.querySelector('.info-grid');
+  if(infoGrid && profileData){
+    const since = currentUser && currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString('en-IN',{month:'long',year:'numeric'}) : '—';
+    const fields=[
+      {label:'Full Name', val:profileData.name},
+      {label:'Class', val:profileData.class||'—'},
+      {label:'Board', val:profileData.board||'CBSE'},
+      {label:'School', val:profileData.school||'—'},
+      {label:'Target Exam', val:profileData.exam||'—'},
+      {label:'Member Since', val:since},
+      {label:'City', val:profileData.city||'—'},
+      {label:'Preferred Time', val:profileData.preferredTime||'—'},
+    ];
+    infoGrid.innerHTML = fields.map(f=>`
+      <div class="info-field">
+        <div class="if-label">${f.label}</div>
+        <div class="if-val">${f.val}</div>
+      </div>`).join('');
+  }
 }
 
 function renderMemberList(){
@@ -6214,20 +6971,31 @@ async function aiSend(){
       content: m.content
     }));
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const grokKey = grokGetKey();
+    if(!grokKey){ throw new Error('Grok API key missing! Left panel mein key dalo.'); }
+
+    const grokMessages = [
+      { role: 'system', content: dynamicSystem },
+      ...messages
+    ];
+
+    const res = await fetch('https://api.x.ai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${grokKey}`
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: dynamicSystem,
-        messages: messages
+        model: 'grok-3',
+        max_tokens: 1500,
+        messages: grokMessages
       })
     });
 
     const data = await res.json();
     if(data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-    const answer = data.content.find(b => b.type === 'text')?.text || 'No response received.';
+    if(!data.choices || !data.choices[0]) throw new Error('Grok se response nahi aaya. Key check karo.');
+    const answer = data.choices[0].message.content || 'No response received.';
 
     // Remove typing indicator
     document.getElementById(typingId)?.remove();
@@ -7695,6 +8463,603 @@ initAppForUser = function(){
 if(typeof currentUser !== 'undefined' && currentUser){
   setTimeout(vcInit, 1500);
 }
+</script>
+
+<!-- ===== 3D DESIGN UPGRADE JS ===== -->
+<script>
+/* ============================================================
+   STUDYFLOW 3D DESIGN UPGRADE — JS ENGINE
+   ============================================================ */
+
+(function(){
+
+/* ── 1. INJECT NOISE LAYER ── */
+const noiseLayer = document.createElement('div');
+noiseLayer.className = 'noise-layer';
+document.body.appendChild(noiseLayer);
+
+/* ── 2. INJECT PARTICLE CANVAS ── */
+const canvas = document.createElement('canvas');
+canvas.id = 'particleCanvas';
+document.body.appendChild(canvas);
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// NEET-themed micro particles: atoms, dots, formulas
+const PARTICLE_SYMBOLS = ['•','◦','∘','○','·','∙','⊕','⊗','◉','∈','∑','λ','π','∆','∇','α','β','γ'];
+const particles = window._sfParticles = Array.from({length:35}, ()=>({
+  x: Math.random()*window.innerWidth,
+  y: Math.random()*window.innerHeight,
+  sym: PARTICLE_SYMBOLS[Math.floor(Math.random()*PARTICLE_SYMBOLS.length)],
+  size: 9 + Math.random()*8,
+  vx: (Math.random()-.5)*0.3,
+  vy: -0.15 - Math.random()*0.25,
+  opacity: 0.1 + Math.random()*0.25,
+  color: ['#3A7A6C','#7BAE9A','#E8C17A','#D4886A','#5AADCC'][Math.floor(Math.random()*5)]
+}));
+
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.save();
+    ctx.globalAlpha = p.opacity;
+    ctx.fillStyle = p.color;
+    ctx.font = `${p.size}px 'DM Mono', monospace`;
+    ctx.fillText(p.sym, p.x, p.y);
+    ctx.restore();
+    p.x += p.vx;
+    p.y += p.vy;
+    if(p.y < -20) p.y = canvas.height + 10;
+    if(p.x < -20) p.x = canvas.width + 10;
+    if(p.x > canvas.width + 20) p.x = -10;
+    // Slow drift direction change
+    p.vx += (Math.random()-.5)*0.01;
+    p.vx = Math.max(-.4, Math.min(.4, p.vx));
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ── 3. DYNAMIC ISLAND NOTIFICATION ── */
+const island = document.createElement('div');
+island.id = 'dynamicIsland';
+island.innerHTML = '<span class="di-bar"></span><span class="di-icon">✦</span><span class="di-text">StudyFlow</span>';
+document.body.appendChild(island);
+
+window.showDynamicIsland = function(icon, text, duration=3000){
+  const di = document.getElementById('dynamicIsland');
+  di.innerHTML = `<span class="di-bar"></span><span class="di-icon">${icon}</span><span class="di-text">${text}</span>`;
+  di.classList.add('show');
+  clearTimeout(di._timer);
+  di._timer = setTimeout(()=>di.classList.remove('show'), duration);
+};
+
+// Override showToast to also trigger Dynamic Island
+const _origShowToast = window.showToast;
+if(typeof _origShowToast === 'function'){
+  window.showToast = function(msg, dur){
+    _origShowToast(msg, dur);
+    // Extract icon (emoji at start)
+    const match = msg.match(/^([\u{1F300}-\u{1F9FF}]|[\u2600-\u26FF]|[\u2700-\u27BF]|✦|🔥|⚡|✓|💾|🎉|📚|⏱️)/u);
+    const icon = match ? match[0] : '✦';
+    const text = msg.replace(icon,'').trim();
+    showDynamicIsland(icon, text.slice(0,45), dur||3000);
+  };
+}
+
+/* ── 4. 3D TILT CARDS ── */
+function attachTilt(el){
+  el.addEventListener('mousemove', e=>{
+    const r = el.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    const cx = r.width/2, cy = r.height/2;
+    const rotX = ((y-cy)/cy)*-8;
+    const rotY = ((x-cx)/cx)*8;
+    const shadowX = (x-cx)/cx * 12;
+    const shadowY = (y-cy)/cy * 12;
+    el.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(4px)`;
+    el.style.boxShadow = `${shadowX}px ${shadowY+8}px 40px rgba(26,60,50,0.18),0 2px 20px rgba(26,60,50,0.08)`;
+    el.style.borderColor = 'rgba(58,122,108,0.3)';
+  });
+  el.addEventListener('mouseleave', ()=>{
+    el.style.transform = '';
+    el.style.boxShadow = '';
+    el.style.borderColor = '';
+    el.style.transition = 'transform .5s ease, box-shadow .5s ease, border-color .5s ease';
+    setTimeout(()=>el.style.transition = '', 500);
+  });
+  el.addEventListener('mouseenter', ()=>{
+    el.style.transition = 'none';
+  });
+}
+
+// Apply tilt to stat cards and target cards
+function applyTiltToCards(){
+  document.querySelectorAll('.stat-card,.target-card,.prog-kpi,.tstat,.tl-stat').forEach(attachTilt);
+}
+applyTiltToCards();
+
+// Observe DOM for new cards (target cards added dynamically)
+const tiltObserver = new MutationObserver(()=>applyTiltToCards());
+tiltObserver.observe(document.body, {childList:true, subtree:true});
+
+/* ── 5. MAGNETIC NAV ITEMS ── */
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('mousemove', e=>{
+    const r = item.getBoundingClientRect();
+    const x = ((e.clientX - r.left)/r.width)*100;
+    const y = ((e.clientY - r.top)/r.height)*100;
+    item.style.setProperty('--mx', x+'%');
+    item.style.setProperty('--my', y+'%');
+  });
+});
+
+/* ── 6. INJECT AURORA + SUBJECT ORBS INTO GREETING ── */
+function upgradeGreeting(){
+  const row = document.querySelector('.greeting-row');
+  if(!row || row.querySelector('.aurora-bg')) return;
+  
+  // Aurora background
+  const aurora = document.createElement('div');
+  aurora.className = 'aurora-bg';
+  aurora.innerHTML = `
+    <div class="aurora-orb aurora-orb-1"></div>
+    <div class="aurora-orb aurora-orb-2"></div>
+    <div class="aurora-orb aurora-orb-3"></div>
+  `;
+  row.insertBefore(aurora, row.firstChild);
+
+  /* ⚠️ ANTIGRAVITY ZONE 3: SUBJECT ORBS
+     Yeh 3 floating orbs greeting section mein inject ho rahe hain.
+     Physics=Blue, Chemistry=Orange, Bio=Green
+     Class: orb-physics, orb-chem, orb-bio
+     Animation: orb-float-1/2/3 (CSS mein defined)
+     Tu inki size, position, ya additional glow adjust kar sakta hai ── */
+  const orbContainer = document.createElement('div');
+  orbContainer.className = 'orb-container';
+  orbContainer.innerHTML = `
+    <div class="subject-orb orb-physics" title="Physics">⚛</div>
+    <div class="subject-orb orb-chem" title="Chemistry">⚗</div>
+    <div class="subject-orb orb-bio" title="Biology">🧬</div>
+  `;
+  row.appendChild(orbContainer);
+}
+
+/* ── 7. STAGGERED CARD ENTRANCE ON PAGE SWITCH ── */
+function staggerCards(pageEl){
+  const cards = pageEl.querySelectorAll('.stat-card,.card,.prog-kpi,.target-card,.tstat,.tl-stat,.prog-card');
+  cards.forEach((c,i)=>{
+    c.style.opacity='0';
+    c.style.animation='none';
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        c.style.opacity='';
+        c.style.animation=`cardEnter .5s cubic-bezier(.34,1.2,.64,1) ${i*0.07}s both`;
+      });
+    });
+  });
+}
+
+/* ── 8. HOOK INTO PAGE NAVIGATION ── */
+const _origNavTo = window.navTo;
+if(typeof _origNavTo === 'function'){
+  window.navTo = function(id){
+    _origNavTo(id);
+    setTimeout(()=>{
+      const page = document.querySelector('.page.active');
+      if(page) staggerCards(page);
+      if(id === 'dashboard') upgradeGreeting();
+    }, 50);
+  };
+}
+
+/* ── 9. ANTIGRAVITY PILL ON FLOAT TIMER ──
+   ⚠️ ANTIGRAVITY ZONE 2:
+   ftPill pe 'antigravity-pill' class add ho rahi hai.
+   Yeh pill ab air mein float karegi with 4s ease animation.
+   CSS mein @keyframes pill-float defined hai.
+   Tu additional glow ya pulse bhi add kar sakta hai ── */
+const ftPill = document.getElementById('ftPill');
+if(ftPill) ftPill.classList.add('antigravity-pill');
+
+/* ── 10. STAT CARD LEVITATE ──
+   ⚠️ ANTIGRAVITY ZONE 1:
+   Dashboard stat cards pe 'antigravity-card' class add karne se
+   yeh air mein float karengi with staggered delays.
+   Tu manually HTML mein class add kar sakta hai, ya yeh
+   auto-apply ho rahi hai neeche:  ── */
+function applyAntigravityToStats(){
+  const dashStats = document.querySelectorAll('#page-dashboard .stat-card');
+  dashStats.forEach(c=>c.classList.add('antigravity-card'));
+}
+
+/* ── 11. INIT SEQUENCE ── */
+function designInit(){
+  upgradeGreeting();
+  applyAntigravityToStats();
+  
+  // Stagger active page cards on load
+  const activePage = document.querySelector('.page.active');
+  if(activePage) setTimeout(()=>staggerCards(activePage), 300);
+  
+  // Welcome Dynamic Island
+  setTimeout(()=>showDynamicIsland('✦','StudyFlow — Enhanced Mode Active',3500), 1500);
+}
+
+// Wait for app to init (Firebase login etc)
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', ()=>setTimeout(designInit, 800));
+} else {
+  setTimeout(designInit, 800);
+}
+
+// Also hook into initAppForUser if available
+const _origInitApp = window.initAppForUser;
+if(typeof _origInitApp === 'function'){
+  window.initAppForUser = function(){
+    _origInitApp();
+    setTimeout(designInit, 600);
+  };
+}
+
+})();
+
+
+/* ============================================================
+   ANTIGRAVITY ANIMATIONS — JS EXTRAS
+   ============================================================ */
+(function(){
+
+  /* PARTICLE BURST — jab timer play ho */
+  document.addEventListener('click', function(e){
+    const ids = ['timerPlayBtn','ftPlayBtn','ftMiniPlayBtn'];
+    const tgt = e.target;
+    if(ids.includes(tgt.id) || tgt.closest && ids.some(id=>tgt.closest('#'+id))){
+      const canvas = document.getElementById('particleCanvas');
+      if(canvas){
+        canvas.classList.add('active-burst');
+        setTimeout(()=>canvas.classList.remove('active-burst'), 2500);
+      }
+      /* Particles tez ho jaati hain */
+      if(window._sfParticles){
+        window._sfParticles.forEach(p=>{
+          p.vy -= 0.5 + Math.random()*0.3;
+          p.opacity = Math.min(0.6, p.opacity*2);
+          setTimeout(()=>{
+            p.vy = -0.15 - Math.random()*0.25;
+            p.opacity = 0.1 + Math.random()*0.25;
+          }, 2000);
+        });
+      }
+      showDynamicIsland('⏱️','Focus session shuru!', 2500);
+    }
+  });
+
+  /* ORB CLICK RIPPLE */
+  document.addEventListener('click', function(e){
+    const orb = e.target.closest('.subject-orb');
+    if(!orb) return;
+    const subjects = { 'orb-physics':'⚛ Physics', 'orb-chem':'⚗ Chemistry', 'orb-bio':'🧬 Biology' };
+    for(const [cls, name] of Object.entries(subjects)){
+      if(orb.classList.contains(cls)){
+        showDynamicIsland(name.split(' ')[0], name.split(' ')[1]+' selected!', 2000);
+        break;
+      }
+    }
+  });
+
+  /* STREAK CARD HOVER — micro bounce */
+  const streakCard = document.querySelector('.streak-card');
+  if(streakCard){
+    streakCard.addEventListener('mouseenter', ()=>{
+      streakCard.style.transform = 'scale(1.02) translateY(-2px)';
+      streakCard.style.transition = 'transform .3s cubic-bezier(.34,1.56,.64,1)';
+    });
+    streakCard.addEventListener('mouseleave', ()=>{
+      streakCard.style.transform = '';
+    });
+  }
+
+  /* EXPOSE particles array globally for burst effect */
+  const _checkParticles = setInterval(()=>{
+    /* particles variable JS mein defined hai upar — expose karo */
+    if(typeof particles !== 'undefined'){
+      window._sfParticles = particles;
+      clearInterval(_checkParticles);
+    }
+  }, 500);
+
+})();
+
+/* ============================================================
+   GROK AI INTEGRATION — Complete JS
+   Steps 2,3,4,5
+   ============================================================ */
+
+/* ── GROK KEY HELPERS ── */
+function grokGetKey(){
+  // Try from input field first, then localStorage
+  const inp = document.getElementById('grokApiKeyInput');
+  if(inp && inp.value.trim().startsWith('xai-')) return inp.value.trim();
+  return localStorage.getItem('sf_grok_key') || '';
+}
+
+function grokCheckKey(val){
+  const dot  = document.getElementById('grokStatusDot');
+  const text = document.getElementById('grokStatusText');
+  if(!dot||!text) return;
+  if(val && val.startsWith('xai-') && val.length > 20){
+    dot.style.background  = '#3A9E6C';
+    dot.style.boxShadow   = '0 0 0 3px rgba(58,158,108,0.25)';
+    text.style.color      = '#7BAE9A';
+    text.textContent      = 'Key valid — ready!';
+    localStorage.setItem('sf_grok_key', val.trim());
+    showDynamicIsland('⚡','Grok AI connected!', 2500);
+  } else if(val.length > 5){
+    dot.style.background  = '#E8C17A';
+    dot.style.boxShadow   = '0 0 0 3px rgba(232,193,122,0.25)';
+    text.style.color      = '#C4922A';
+    text.textContent      = 'Key check karo (xai- se start honi chahiye)';
+  } else {
+    dot.style.background  = '#E8A060';
+    dot.style.boxShadow   = '0 0 0 3px rgba(232,160,96,0.2)';
+    text.style.color      = 'rgba(255,255,255,0.4)';
+    text.textContent      = 'API key dalo neeche';
+    if(!val) localStorage.removeItem('sf_grok_key');
+  }
+}
+
+function aiLoadKey(){
+  // Restore saved key into input
+  const saved = localStorage.getItem('sf_grok_key');
+  const inp   = document.getElementById('grokApiKeyInput');
+  if(saved && inp){ inp.value = saved; grokCheckKey(saved); }
+}
+
+/* ── CORE GROK API CALL ── */
+async function callGrok(systemPrompt, userPrompt, maxTokens=1500){
+  const key = grokGetKey();
+  if(!key) throw new Error('Grok API key missing! AI Doubt Solver page ke left panel mein key dalo.');
+  const res = await fetch('https://api.x.ai/v1/chat/completions', {
+    method: 'POST',
+    headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'grok-3',
+      max_tokens: maxTokens,
+      messages:[
+        { role:'system', content: systemPrompt },
+        { role:'user',   content: userPrompt   }
+      ]
+    })
+  });
+  const data = await res.json();
+  if(data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  if(!data.choices?.[0]) throw new Error('Grok se response nahi aaya.');
+  return data.choices[0].message.content;
+}
+
+/* ── STEP 3: STUDY PLAN GENERATOR ── */
+async function generateStudyPlan(){
+  const key = grokGetKey();
+  if(!key){ showToast('⚠ Pehle AI Doubt Solver pe Grok key dalo!'); navTo('aidoubt'); return; }
+  const hours  = document.getElementById('plan-hours')?.value || 8;
+  const days   = document.getElementById('plan-days')?.value  || 30;
+  const weak   = document.getElementById('plan-weak')?.value  || '';
+  const strong = document.getElementById('plan-strong')?.value|| '';
+  const score  = document.getElementById('plan-score')?.value || 'not given';
+  if(!weak){ showToast('⚠ Weak chapters batao!'); return; }
+
+  document.getElementById('planEmpty').style.display   = 'none';
+  document.getElementById('planOutput').style.display  = 'none';
+  document.getElementById('planLoading').style.display = 'block';
+  document.getElementById('planGenBtn').disabled = true;
+  showDynamicIsland('📅','Plan generate ho raha hai...', 8000);
+
+  const sys = `You are a NEET expert coach. Create a highly structured, realistic 7-day study plan in clean HTML format (no markdown, only inline styles). Use these colors: Physics=#5AADCC, Chemistry=#E8A060, Biology=#5ABC8A. Format: a styled table or card layout with day headers, time blocks, subjects, and specific chapter names. Make it NEET 2026 focused.`;
+  const usr = `Create a 7-day NEET study plan:
+- Daily hours available: ${hours}
+- Days until exam: ${days}
+- Weak chapters (HIGH priority): ${weak}
+- Strong chapters (light revision): ${strong}
+- Last mock score: ${score}
+Format: day-wise HTML cards with morning/afternoon/evening slots. Include specific goals per session. Add motivational tip at the end. Keep it practical and doable.`;
+
+  try {
+    const html = await callGrok(sys, usr, 2000);
+    document.getElementById('planLoading').style.display = 'none';
+    document.getElementById('planOutput').style.display  = 'block';
+    document.getElementById('planOutput').innerHTML = `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;">Your 7-Day Plan ⚡</div>
+          <button onclick="copyPlan()" style="padding:7px 14px;border-radius:9px;border:1px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;color:var(--text2);">📋 Copy</button>
+        </div>
+        <div id="planHtmlContent">${html}</div>
+      </div>`;
+    showDynamicIsland('✅','7-day plan ready!', 3000);
+  } catch(e){
+    document.getElementById('planLoading').style.display = 'none';
+    document.getElementById('planEmpty').style.display   = 'block';
+    showToast('❌ '+e.message);
+  }
+  document.getElementById('planGenBtn').disabled = false;
+}
+function copyPlan(){
+  const el = document.getElementById('planHtmlContent');
+  if(el){ navigator.clipboard.writeText(el.innerText); showToast('📋 Plan copied!'); }
+}
+
+/* ── STEP 4: ERROR ANALYZER ── */
+let errSubj = 'All';
+function selectErrSubj(el, subj){
+  errSubj = subj;
+  document.querySelectorAll('#err-subj-all,#err-subj-phy,#err-subj-che,#err-subj-bio').forEach(e=>{
+    e.className = 'type-opt';
+  });
+  el.className = 'type-opt sel-study';
+}
+
+async function analyzeErrors(){
+  const key = grokGetKey();
+  if(!key){ showToast('⚠ Pehle AI Doubt Solver pe Grok key dalo!'); navTo('aidoubt'); return; }
+  const qs = document.getElementById('error-qs')?.value.trim();
+  if(!qs){ showToast('⚠ Questions paste karo pehle!'); return; }
+
+  document.getElementById('errorEmpty').style.display   = 'none';
+  document.getElementById('errorOutput').style.display  = 'none';
+  document.getElementById('errorLoading').style.display = 'block';
+  document.getElementById('errorAnalyzeBtn').disabled   = true;
+  showDynamicIsland('🔍','Errors analyze ho rahe hain...', 8000);
+
+  const sys = `You are a NEET exam expert. Analyze wrong questions and classify each error. For each question identify:
+1. Error Type: Concept Gap / Calculation Error / Reading Mistake / Silly Mistake / Time Pressure
+2. Root Cause: 1 line
+3. Fix: 1 specific action
+Respond in clean HTML with color-coded cards (Concept Gap=red, Calculation=orange, Reading=purple, Silly=green, Time=blue). Use inline styles only.`;
+  const usr = `Subject: ${errSubj}
+Analyze these wrong questions and classify errors:
+${qs}
+For each question: show the question snippet, error type badge (colored), root cause, and fix. End with a summary of most common error type.`;
+
+  try {
+    const html = await callGrok(sys, usr, 2000);
+    document.getElementById('errorLoading').style.display = 'none';
+    document.getElementById('errorOutput').style.display  = 'block';
+    document.getElementById('errorOutput').innerHTML = `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:18px;">Error Analysis Results 🔍</div>
+        ${html}
+      </div>`;
+    showDynamicIsland('✅','Analysis complete!', 3000);
+  } catch(e){
+    document.getElementById('errorLoading').style.display = 'none';
+    document.getElementById('errorEmpty').style.display   = 'block';
+    showToast('❌ '+e.message);
+  }
+  document.getElementById('errorAnalyzeBtn').disabled = false;
+}
+
+/* ── STEP 5: FLASHCARD GENERATOR ── */
+async function generateFlashcards(){
+  const key = grokGetKey();
+  if(!key){ showToast('⚠ Pehle AI Doubt Solver pe Grok key dalo!'); navTo('aidoubt'); return; }
+  const topic = document.getElementById('flash-topic')?.value.trim();
+  const subj  = document.getElementById('flash-subj')?.value  || 'Biology';
+  const count = document.getElementById('flash-count')?.value || '10';
+  if(!topic){ showToast('⚠ Chapter/topic name likho!'); return; }
+
+  document.getElementById('flashEmpty').style.display   = 'none';
+  document.getElementById('flashCards').innerHTML        = '';
+  document.getElementById('flashLoading').style.display = 'block';
+  document.getElementById('flashGenBtn').disabled        = true;
+  showDynamicIsland('🃏','Flashcards ban rahi hain...', 10000);
+
+  const sys = `You are a NEET expert. Generate MCQ flashcards in strict JSON format only. No markdown, no explanation outside JSON. Format:
+{"cards":[{"q":"question text","options":["A) text","B) text","C) text","D) text"],"answer":"A","explanation":"1-2 line NEET-focused explanation"}]}`;
+  const usr = `Generate ${count} NEET-level MCQ flashcards for:
+Subject: ${subj}
+Topic: ${topic}
+Make questions exam-ready, tricky but fair, NEET pattern. Return ONLY valid JSON.`;
+
+  try {
+    let raw = await callGrok(sys, usr, 3000);
+    // Clean JSON
+    raw = raw.replace(/```json|```/g,'').trim();
+    const start = raw.indexOf('{'), end = raw.lastIndexOf('}');
+    if(start !== -1 && end !== -1) raw = raw.slice(start, end+1);
+    const parsed = JSON.parse(raw);
+    const cards  = parsed.cards || [];
+
+    document.getElementById('flashLoading').style.display = 'none';
+    if(!cards.length){ showToast('⚠ Cards generate nahi hue, retry karo.'); return; }
+
+    const subjColor = {Physics:'#5AADCC',Chemistry:'#E8A060',Biology:'#5ABC8A'}[subj]||'#3A7A6C';
+    const container = document.getElementById('flashCards');
+
+    cards.forEach((card, i)=>{
+      const cardEl = document.createElement('div');
+      cardEl.className = 'card flash-card-wrap';
+      cardEl.style.cssText = 'cursor:pointer;transition:all .3s;position:relative;';
+      cardEl.innerHTML = `
+        <div class="flash-front" style="padding:20px;min-height:200px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${subjColor};background:${subjColor}22;padding:3px 10px;border-radius:20px;">${subj}</span>
+            <span style="font-size:10px;color:var(--text3);">Q${i+1}/${cards.length}</span>
+          </div>
+          <div style="font-size:14px;font-weight:500;color:var(--text);line-height:1.6;margin-bottom:14px;">${card.q}</div>
+          <div style="display:flex;flex-direction:column;gap:7px;" class="flash-options">
+            ${(card.options||[]).map((opt,oi)=>`
+              <div class="flash-opt" data-idx="${oi}" data-correct="${card.answer}"
+                onclick="flashSelect(this,${i})"
+                style="padding:8px 12px;border-radius:9px;border:1.5px solid var(--border);font-size:13px;color:var(--text2);cursor:pointer;transition:all .18s;background:var(--bg);"
+                onmouseover="if(!this.dataset.locked)this.style.borderColor='${subjColor}'"
+                onmouseout="if(!this.dataset.locked)this.style.borderColor='var(--border)'"
+              >${opt}</div>`).join('')}
+          </div>
+          <div class="flash-explanation" style="display:none;margin-top:14px;padding:12px;border-radius:9px;background:${subjColor}15;border:1px solid ${subjColor}44;font-size:13px;color:var(--text2);line-height:1.6;">
+            <span style="font-weight:600;color:${subjColor};">💡 Explanation: </span>${card.explanation}
+          </div>
+        </div>`;
+      container.appendChild(cardEl);
+    });
+
+    showDynamicIsland('🃏',`${cards.length} flashcards ready!`, 3000);
+  } catch(e){
+    document.getElementById('flashLoading').style.display = 'none';
+    document.getElementById('flashEmpty').style.display   = 'block';
+    showToast('❌ '+e.message);
+  }
+  document.getElementById('flashGenBtn').disabled = false;
+}
+
+function flashSelect(el, cardIdx){
+  if(el.dataset.locked) return;
+  const correct = el.dataset.correct; // e.g. "A"
+  const allOpts = el.parentElement.querySelectorAll('.flash-opt');
+  allOpts.forEach(o=>{
+    o.dataset.locked = '1';
+    o.style.cursor = 'default';
+    const letter = o.dataset.idx;
+    const optLetter = ['A','B','C','D'][parseInt(letter)];
+    if(optLetter === correct){
+      o.style.background    = '#E6F4EF';
+      o.style.borderColor   = '#3A9E6C';
+      o.style.color         = '#2D7A5E';
+      o.style.fontWeight    = '600';
+    }
+  });
+  const myLetter = ['A','B','C','D'][parseInt(el.dataset.idx)];
+  if(myLetter !== correct){
+    el.style.background  = '#FDECEA';
+    el.style.borderColor = '#C0392B';
+    el.style.color       = '#C0392B';
+  }
+  // Show explanation
+  const expEl = el.closest('.flash-front')?.querySelector('.flash-explanation');
+  if(expEl) expEl.style.display = 'block';
+}
+
+/* ── HOOK aiLoadKey into page navigation ── */
+const _origNavigate = window.navigate;
+if(typeof _origNavigate === 'function'){
+  window.navigate = function(page, el){
+    _origNavigate(page, el);
+    if(page === 'aidoubt') setTimeout(aiLoadKey, 100);
+  };
+}
+
+/* ── SPIN KEYFRAME (for loading icons) ── */
+const spinStyle = document.createElement('style');
+spinStyle.textContent = '@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}';
+document.head.appendChild(spinStyle);
+
 </script>
 </body>
 </html>

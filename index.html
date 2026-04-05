@@ -1190,6 +1190,184 @@ body.dark .ai-input-wrap{background:var(--bg);}
 .firebase-setup-note{background:#FBF3E2;border:1px solid #E8D0A0;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#7A5020;margin-top:10px;line-height:1.5;}
 .firebase-setup-note a{color:var(--primary);font-weight:500;}
 
+
+/* ===== FULLSCREEN TIMER OVERLAY ===== */
+#fsTimerOverlay{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:#0D1F1A;
+  flex-direction:column;align-items:center;justify-content:center;
+  animation:fsFadeIn .4s ease;
+}
+#fsTimerOverlay.open{display:flex;}
+@keyframes fsFadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* Mode toggle bar */
+.fs-mode-bar{
+  display:flex;gap:6px;margin-bottom:40px;
+  background:rgba(255,255,255,0.07);border-radius:30px;padding:5px;
+}
+.fs-mode-btn{
+  padding:8px 22px;border-radius:25px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  background:transparent;color:rgba(255,255,255,0.45);transition:all .25s;
+}
+.fs-mode-btn.active{
+  background:linear-gradient(135deg,#3A7A6C,#5BA090);
+  color:white;box-shadow:0 3px 14px rgba(58,122,108,0.4);
+}
+
+/* ── FLIP CLOCK ── */
+.flip-clock{
+  display:flex;align-items:center;gap:6px;
+  perspective:600px;
+}
+.flip-sep{
+  font-size:80px;font-weight:700;color:#3A7A6C;
+  line-height:1;margin-bottom:8px;user-select:none;
+}
+.flip-digit{
+  width:100px;height:130px;position:relative;
+}
+.flip-card{
+  width:100px;height:130px;position:relative;
+  border-radius:12px;overflow:hidden;
+}
+/* Static top half */
+.flip-top,.flip-bottom{
+  width:100%;height:50%;overflow:hidden;
+  background:#1A2E26;border-radius:0;
+}
+.flip-top{
+  border-radius:12px 12px 0 0;
+  border-bottom:1px solid rgba(0,0,0,0.5);
+}
+.flip-bottom{border-radius:0 0 12px 12px;}
+.flip-num{
+  width:100px;height:130px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:96px;font-weight:300;
+  color:#E8EEE8;line-height:1;
+  position:absolute;top:0;left:0;
+}
+/* Flap animation */
+.flip-flap{
+  width:100%;height:50%;
+  position:absolute;left:0;
+  transform-origin:bottom center;
+  transform-style:preserve-3d;
+  background:#1A2E26;
+  border-radius:12px 12px 0 0;
+  overflow:hidden;
+  animation:none;
+  backface-visibility:hidden;
+}
+.flip-flap-inner{
+  width:100px;height:130px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:96px;font-weight:300;
+  color:#E8EEE8;line-height:1;
+  position:absolute;top:0;left:0;
+}
+.flip-flap-back{
+  transform:rotateX(180deg);
+  position:absolute;inset:0;
+  display:flex;align-items:flex-end;overflow:hidden;
+  background:#1A2E26;
+}
+.flip-flap-back-inner{
+  width:100px;height:130px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:96px;font-weight:300;
+  color:#E8EEE8;line-height:1;
+  position:absolute;bottom:0;left:0;transform:translateY(50%);
+}
+@keyframes flipTop{
+  0%{transform:rotateX(0deg);}
+  100%{transform:rotateX(-90deg);}
+}
+@keyframes flipBottom{
+  0%{transform:rotateX(90deg);}
+  100%{transform:rotateX(0deg);}
+}
+.flip-digit.flipping .flip-flap{
+  animation:flipTop 0.22s ease-in forwards;
+}
+.flip-digit.flipping .flip-bottom-flap{
+  animation:flipBottom 0.22s ease-out 0.22s forwards;
+  transform-origin:top center;
+}
+
+/* Flip clock glow accent */
+.flip-clock-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:20px;
+}
+.flip-phase-label{
+  font-size:13px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);font-family:'DM Sans',sans-serif;
+  margin-top:4px;
+}
+
+/* ── NORMAL FULLSCREEN MODE ── */
+.fs-normal-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+}
+.fs-normal-time{
+  font-family:'Cormorant Garamond',serif;
+  font-size:160px;font-weight:300;
+  color:#E8EEE8;letter-spacing:-4px;line-height:1;
+}
+.fs-normal-phase{
+  font-size:14px;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);font-family:'DM Sans',sans-serif;
+}
+/* Progress bar for normal mode */
+.fs-progress-bar{
+  width:320px;height:3px;background:rgba(255,255,255,0.1);
+  border-radius:3px;overflow:hidden;margin-top:8px;
+}
+.fs-progress-fill{
+  height:100%;background:linear-gradient(90deg,#3A7A6C,#7BAE9A);
+  border-radius:3px;transition:width .8s linear;
+}
+
+/* Controls */
+.fs-controls{
+  display:flex;gap:16px;align-items:center;margin-top:36px;
+}
+.fs-btn{
+  width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;
+  font-size:22px;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.fs-btn.play{
+  background:linear-gradient(135deg,#3A7A6C,#5BA090);color:white;
+  box-shadow:0 6px 24px rgba(58,122,108,0.5);width:70px;height:70px;font-size:26px;
+}
+.fs-btn.play:hover{transform:scale(1.08);}
+.fs-btn.sec{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.12);}
+.fs-btn.sec:hover{background:rgba(255,255,255,0.14);color:white;}
+
+/* Close btn */
+.fs-close-btn{
+  position:fixed;top:24px;right:28px;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.5);font-size:18px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;z-index:10;
+}
+.fs-close-btn:hover{background:rgba(255,255,255,0.16);color:white;}
+.fs-subject-badge{
+  font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:#7BAE9A;background:rgba(58,122,108,0.18);
+  border:1px solid rgba(58,122,108,0.3);
+  padding:5px 16px;border-radius:20px;
+  font-family:'DM Sans',sans-serif;margin-bottom:8px;
+}
+
 </style>
 
 <!-- ===== 3D DESIGN UPGRADE CSS ===== -->
@@ -2240,7 +2418,13 @@ body.dark .stat-card::before{background:linear-gradient(135deg,rgba(255,255,255,
 
   <!-- ===== PART 4: FOCUS TIMER PAGE ===== -->
   <div class="page" id="page-timer">
-    <div style="margin-bottom:22px;"><h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;">Focus Timer</h2><p style="font-size:13.5px;color:var(--text3);margin-top:3px;">Pomodoro-based deep work sessions. Stay focused, take smart breaks.</p></div>
+    <div style="margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div><h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;">Focus Timer</h2><p style="font-size:13.5px;color:var(--text3);margin-top:3px;">Pomodoro-based deep work sessions. Stay focused, take smart breaks.</p></div>
+      <button onclick="openFsTimer()" style="display:flex;align-items:center;gap:8px;padding:9px 18px;background:linear-gradient(135deg,#162420,#2D4F47);color:rgba(255,255,255,0.8);border:1px solid rgba(123,174,154,0.3);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(123,174,154,0.7)';this.style.color='white'" onmouseout="this.style.borderColor='rgba(123,174,154,0.3)';this.style.color='rgba(255,255,255,0.8)'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        Fullscreen
+      </button>
+    </div>
     <div class="timer-page">
       <div class="timer-left">
         <div class="timer-card">
@@ -3122,43 +3306,28 @@ body.dark .stat-card::before{background:linear-gradient(135deg,rgba(255,255,255,
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;">🧠 AI Doubt Solver</h2>
       <p style="font-size:13.5px;color:var(--text3);margin-top:3px;">NEET-focused AI tutor — Physics, Chemistry, Biology explained step by step.</p>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <div style="font-size:12px;color:var(--primary);background:var(--primary-light);border:1px solid var(--primary);padding:5px 12px;border-radius:20px;">✦ Powered by Claude AI</div>
-    </div>
   </div>
   <div class="ai-layout">
     <!-- LEFT: API + History -->
     <div class="ai-sidebar-panel">
-      <div class="ai-api-box" style="background:linear-gradient(135deg,#E6F2EF,#EDF6F2);border:1px solid #A8D4C8;">
-        <div class="ai-api-title" style="color:var(--primary);">✦ Powered by Claude AI</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
-          <div style="width:8px;height:8px;border-radius:50%;background:#3A9E6C;box-shadow:0 0 0 3px rgba(58,158,108,0.2);flex-shrink:0;"></div>
-          <p style="font-size:12.5px;color:var(--primary);font-weight:500;margin:0;">No API key needed — ready to use!</p>
-        </div>
-        <p style="font-size:11.5px;color:var(--text3);margin-top:7px;">Uses Claude Sonnet — Anthropic's latest model. Fast, accurate NEET explanations.</p>
-      </div>
-
-      <!-- GROK KEY BOX for Study Planner, Error Analyzer, Flashcards -->
-      <div style="background:linear-gradient(135deg,#1A2E26,#1E3530);border:1px solid rgba(232,193,122,0.25);border-radius:var(--radius-sm);padding:14px 16px;margin-top:10px;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#E8C17A;margin-bottom:8px;">⚡ Grok AI — Study Planner &amp; Flashcards</div>
+      <!-- GROK KEY BOX -->
+      <div style="background:linear-gradient(135deg,#1A2E26,#1E3530);border:1px solid rgba(232,193,122,0.25);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#E8C17A;margin-bottom:8px;">&#x26A1; Grok AI &#x2014; All AI Features</div>
         <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;">
           <div id="grokStatusDot" style="width:8px;height:8px;border-radius:50%;background:#E8A060;box-shadow:0 0 0 3px rgba(232,160,96,0.2);flex-shrink:0;transition:all .3s;"></div>
           <span id="grokStatusText" style="font-size:11.5px;color:rgba(255,255,255,0.4);transition:all .3s;">API key dalo neeche</span>
         </div>
-        <input
-          id="grokApiKeyInput"
-          type="password"
-          placeholder="xai-xxxxxxxxxxxxxxxx"
+        <input id="grokApiKeyInput" type="password" placeholder="xai-xxxxxxxxxxxxxxxx"
           oninput="grokCheckKey(this.value)"
           style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(232,193,122,0.2);border-radius:8px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,0.8);outline:none;transition:border-color .2s;"
           onfocus="this.style.borderColor='rgba(232,193,122,0.5)'"
-          onblur="this.style.borderColor='rgba(232,193,122,0.2)'"
-        />
+          onblur="this.style.borderColor='rgba(232,193,122,0.2)'" />
         <div style="font-size:10.5px;color:rgba(255,255,255,0.25);margin-top:6px;line-height:1.5;">
-          Grok key chahiye for: AI Study Planner, Error Analyzer, Flashcards.<br>
+          Sab AI features isi key se chalte hain.<br>
           <a href="https://console.x.ai" target="_blank" style="color:#E8C17A;text-decoration:none;">console.x.ai</a> pe free mein milega.
         </div>
       </div>
+
       <div class="ai-history-box">
         <div class="ai-history-title">
           Recent Doubts
@@ -6944,6 +7113,13 @@ function aiNewChat(){
   showToast('New chat started');
 }
 
+/* Strip characters that break JSON serialization */
+function cleanStr(s){
+  if(typeof s !== 'string') return String(s || '');
+  return s.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '')
+          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+}
+
 async function aiSend(){
   if(aiIsLoading) return;
   const input = document.getElementById('aiInput');
@@ -6997,8 +7173,8 @@ async function aiSend(){
     if(!grokKey){ throw new Error('Grok API key missing! Left panel mein key dalo.'); }
 
     const grokMessages = [
-      { role: 'system', content: dynamicSystem },
-      ...messages
+      { role: 'system', content: cleanStr(dynamicSystem) },
+      ...messages.map(m => ({ role: m.role, content: cleanStr(m.content) }))
     ];
 
     const res = await fetch('https://api.x.ai/v1/chat/completions', {
@@ -7008,7 +7184,7 @@ async function aiSend(){
         'Authorization': `Bearer ${grokKey}`
       },
       body: JSON.stringify({
-        model: 'grok-3',
+        model: 'grok-beta',
         max_tokens: 1500,
         messages: grokMessages
       })
@@ -7016,10 +7192,9 @@ async function aiSend(){
 
     const rawText = await res.text();
     let data;
-    try { data = JSON.parse(rawText); }
-    catch(e) { throw new Error('API Error (HTTP ' + res.status + '): ' + rawText.slice(0,150)); }
-    if(!res.ok || data.error) throw new Error(data?.error?.message || 'HTTP ' + res.status + ': ' + JSON.stringify(data).slice(0,120));
-    if(!data.choices || !data.choices[0]) throw new Error('Grok se response nahi aaya. Key check karo.');
+    try { data = JSON.parse(rawText); } catch(e) { throw new Error('Parse error (HTTP '+res.status+'): '+rawText.slice(0,100)); }
+    if(!res.ok || data.error) throw new Error(data&&data.error&&data.error.message?data.error.message:'HTTP '+res.status);
+    if(!data.choices||!data.choices[0]) throw new Error('Grok se koi response nahi aaya.');
     const answer = data.choices[0].message.content || 'No response received.';
 
     // Remove typing indicator
@@ -8856,20 +9031,19 @@ async function callGrok(systemPrompt, userPrompt, maxTokens=1500){
     method: 'POST',
     headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${key}` },
     body: JSON.stringify({
-      model: 'grok-3',
+      model: 'grok-beta',
       max_tokens: maxTokens,
       messages:[
-        { role:'system', content: systemPrompt },
-        { role:'user',   content: userPrompt   }
+        { role:'system', content: cleanStr(systemPrompt) },
+        { role:'user',   content: cleanStr(userPrompt)   }
       ]
     })
   });
-  const rawGrokText = await res.text();
+  const rawGrok = await res.text();
   let data;
-  try { data = JSON.parse(rawGrokText); }
-  catch(e) { throw new Error('Grok API Error (HTTP ' + res.status + '): ' + rawGrokText.slice(0,150)); }
-  if(!res.ok || data.error) throw new Error(data?.error?.message || 'HTTP ' + res.status + ': ' + JSON.stringify(data).slice(0,120));
-  if(!data.choices?.[0]) throw new Error('Grok se response nahi aaya.');
+  try { data = JSON.parse(rawGrok); } catch(e) { throw new Error('Parse error (HTTP '+res.status+'): '+rawGrok.slice(0,100)); }
+  if(!res.ok || data.error) throw new Error(data&&data.error&&data.error.message?data.error.message:'HTTP '+res.status);
+  if(!data.choices||!data.choices[0]) throw new Error('Grok se koi response nahi aaya.');
   return data.choices[0].message.content;
 }
 
@@ -9088,6 +9262,194 @@ const spinStyle = document.createElement('style');
 spinStyle.textContent = '@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}';
 document.head.appendChild(spinStyle);
 
+
+/* ============================================================
+   FULLSCREEN TIMER — 3D Flip + Normal mode
+   ============================================================ */
+let fsMode = 'flip';
+let fsLastDigits = {m1:'',m2:'',s1:'',s2:''};
+let fsSyncInterval = null;
+
+function openFsTimer(){
+  document.getElementById('fsTimerOverlay').classList.add('open');
+  fsSyncNow();
+  fsSyncInterval = setInterval(fsSyncNow, 300);
+  document.addEventListener('keydown', fsEscHandler);
+}
+function closeFsTimer(){
+  document.getElementById('fsTimerOverlay').classList.remove('open');
+  clearInterval(fsSyncInterval);
+  document.removeEventListener('keydown', fsEscHandler);
+}
+function fsEscHandler(e){ if(e.key==='Escape') closeFsTimer(); }
+
+function setFsMode(m){
+  fsMode = m;
+  document.getElementById('fsModeFlip').classList.toggle('active', m==='flip');
+  document.getElementById('fsModeNormal').classList.toggle('active', m==='normal');
+  document.getElementById('fsFlipView').style.display  = m==='flip'   ? 'flex' : 'none';
+  document.getElementById('fsNormalView').style.display = m==='normal' ? 'flex' : 'none';
+  fsSyncNow();
+}
+
+function fsSyncNow(){
+  const timeEl  = document.getElementById('timerDisplay');
+  const phaseEl = document.getElementById('timerPhase');
+  const playBtn = document.getElementById('timerPlayBtn');
+  if(!timeEl) return;
+
+  const timeStr  = timeEl.textContent || '00:00';
+  const phase    = phaseEl ? phaseEl.textContent : 'Focus';
+  const isPlaying = playBtn && (playBtn.textContent.includes('⏸') || playBtn.textContent.includes('pause') || playBtn.innerHTML.includes('pause'));
+
+  const activePill = document.querySelector('.timer-pill.active');
+  const subj = activePill ? activePill.textContent.trim() : 'Focus';
+  ['fsSubjectBadge','fsSubjectBadge2'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = subj;
+  });
+
+  const fsPlay = document.getElementById('fsPlayBtn');
+  if(fsPlay) fsPlay.textContent = isPlaying ? '⏸' : '▶';
+
+  const parts = timeStr.split(':');
+  const mm = (parts[0]||'00').padStart(2,'0');
+  const ss = (parts[1]||'00').padStart(2,'0');
+  const digits = {m1:mm[0], m2:mm[1], s1:ss[0], s2:ss[1]};
+
+  if(fsMode === 'flip'){
+    const ph = document.getElementById('fsFlipPhase');
+    if(ph) ph.textContent = phase;
+    ['m1','m2','s1','s2'].forEach(k=>{
+      if(digits[k] !== fsLastDigits[k]){
+        flipDigitAnim(k, fsLastDigits[k]||digits[k], digits[k]);
+      }
+      fsLastDigits[k] = digits[k];
+    });
+  } else {
+    const nt = document.getElementById('fsNormalTime');
+    const np = document.getElementById('fsNormalPhase');
+    if(nt) nt.textContent = timeStr;
+    if(np) np.textContent = phase;
+    const ring = document.getElementById('timerRing');
+    if(ring){
+      const fill = document.getElementById('fsProgressFill');
+      if(fill){
+        const dashArr = parseFloat(ring.getAttribute('stroke-dasharray')||'615.75');
+        const dashOff = parseFloat(ring.style.strokeDashoffset || ring.getAttribute('stroke-dashoffset') || '0');
+        const pct = 100 - ((dashOff / dashArr) * 100);
+        fill.style.width = Math.max(0, Math.min(100, pct)).toFixed(1) + '%';
+      }
+    }
+  }
+}
+
+function flipDigitAnim(key, oldV, newV){
+  const fd    = document.getElementById('fd-'+key);
+  const fntEl = document.getElementById('fnt-'+key);
+  const fnbEl = document.getElementById('fnb-'+key);
+  const ffiEl = document.getElementById('ffi-'+key);
+  const ffbEl = document.getElementById('ffb-'+key);
+  const ffbiEl= document.getElementById('ffbi-'+key);
+  if(!fd) return;
+  if(ffiEl)  ffiEl.textContent  = oldV;
+  if(ffbiEl) ffbiEl.textContent = newV;
+  if(fntEl)  fntEl.textContent  = newV;
+  if(fnbEl)  fnbEl.textContent  = newV;
+  fd.classList.remove('flipping');
+  void fd.offsetWidth;
+  fd.classList.add('flipping');
+  setTimeout(()=> fd.classList.remove('flipping'), 520);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  const timeEl = document.getElementById('timerDisplay');
+  const t = timeEl ? timeEl.textContent : '25:00';
+  const p = t.split(':');
+  const mm = (p[0]||'25').padStart(2,'0');
+  const ss = (p[1]||'00').padStart(2,'0');
+  fsLastDigits = {m1:mm[0],m2:mm[1],s1:ss[0],s2:ss[1]};
+  ['m1','m2','s1','s2'].forEach(k=>{
+    const v = fsLastDigits[k];
+    ['fnt-','fnb-','ffi-','ffbi-'].forEach(pre=>{
+      const el = document.getElementById(pre+k);
+      if(el) el.textContent = v;
+    });
+  });
+});
+
 </script>
+
+<!-- ===== FULLSCREEN TIMER OVERLAY ===== -->
+<div id="fsTimerOverlay">
+  <button class="fs-close-btn" onclick="closeFsTimer()" title="Close (Esc)">✕</button>
+
+  <!-- Mode Toggle -->
+  <div class="fs-mode-bar">
+    <button class="fs-mode-btn active" id="fsModeFlip" onclick="setFsMode('flip')">⏱ 3D Flip</button>
+    <button class="fs-mode-btn" id="fsModeNormal" onclick="setFsMode('normal')">◷ Normal</button>
+  </div>
+
+  <!-- FLIP CLOCK VIEW -->
+  <div id="fsFlipView" class="flip-clock-wrap">
+    <div id="fsSubjectBadge" class="fs-subject-badge">Focus</div>
+    <div class="flip-clock" id="flipClock">
+      <!-- M1 -->
+      <div class="flip-digit" id="fd-m1">
+        <div class="flip-card">
+          <div class="flip-top"><div class="flip-num" id="fnt-m1">2</div></div>
+          <div class="flip-bottom"><div class="flip-num" style="transform:translateY(-50%);" id="fnb-m1">2</div></div>
+        </div>
+        <div class="flip-flap" id="ff-m1"><div class="flip-flap-inner" id="ffi-m1">2</div></div>
+        <div class="flip-flap flip-bottom-flap" id="ffb-m1" style="top:50%;transform-origin:top center;transform:rotateX(90deg);"><div class="flip-flap-inner" style="top:auto;bottom:0;transform:translateY(50%);" id="ffbi-m1">2</div></div>
+      </div>
+      <!-- M2 -->
+      <div class="flip-digit" id="fd-m2">
+        <div class="flip-card">
+          <div class="flip-top"><div class="flip-num" id="fnt-m2">5</div></div>
+          <div class="flip-bottom"><div class="flip-num" style="transform:translateY(-50%);" id="fnb-m2">5</div></div>
+        </div>
+        <div class="flip-flap" id="ff-m2"><div class="flip-flap-inner" id="ffi-m2">5</div></div>
+        <div class="flip-flap flip-bottom-flap" id="ffb-m2" style="top:50%;transform-origin:top center;transform:rotateX(90deg);"><div class="flip-flap-inner" style="top:auto;bottom:0;transform:translateY(50%);" id="ffbi-m2">5</div></div>
+      </div>
+      <div class="flip-sep">:</div>
+      <!-- S1 -->
+      <div class="flip-digit" id="fd-s1">
+        <div class="flip-card">
+          <div class="flip-top"><div class="flip-num" id="fnt-s1">0</div></div>
+          <div class="flip-bottom"><div class="flip-num" style="transform:translateY(-50%);" id="fnb-s1">0</div></div>
+        </div>
+        <div class="flip-flap" id="ff-s1"><div class="flip-flap-inner" id="ffi-s1">0</div></div>
+        <div class="flip-flap flip-bottom-flap" id="ffb-s1" style="top:50%;transform-origin:top center;transform:rotateX(90deg);"><div class="flip-flap-inner" style="top:auto;bottom:0;transform:translateY(50%);" id="ffbi-s1">0</div></div>
+      </div>
+      <!-- S2 -->
+      <div class="flip-digit" id="fd-s2">
+        <div class="flip-card">
+          <div class="flip-top"><div class="flip-num" id="fnt-s2">0</div></div>
+          <div class="flip-bottom"><div class="flip-num" style="transform:translateY(-50%);" id="fnb-s2">0</div></div>
+        </div>
+        <div class="flip-flap" id="ff-s2"><div class="flip-flap-inner" id="ffi-s2">0</div></div>
+        <div class="flip-flap flip-bottom-flap" id="ffb-s2" style="top:50%;transform-origin:top center;transform:rotateX(90deg);"><div class="flip-flap-inner" style="top:auto;bottom:0;transform:translateY(50%);" id="ffbi-s2">0</div></div>
+      </div>
+    </div>
+    <div class="flip-phase-label" id="fsFlipPhase">Focus Session</div>
+  </div>
+
+  <!-- NORMAL FULLSCREEN VIEW -->
+  <div id="fsNormalView" class="fs-normal-wrap" style="display:none;">
+    <div id="fsSubjectBadge2" class="fs-subject-badge">Focus</div>
+    <div class="fs-normal-time" id="fsNormalTime">25:00</div>
+    <div class="fs-normal-phase" id="fsNormalPhase">Focus Session</div>
+    <div class="fs-progress-bar"><div class="fs-progress-fill" id="fsProgressFill" style="width:100%;"></div></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="fs-controls">
+    <button class="fs-btn sec" onclick="resetTimer();fsSyncNow()" title="Reset">↺</button>
+    <button class="fs-btn play" id="fsPlayBtn" onclick="toggleTimer();fsSyncNow()">▶</button>
+    <button class="fs-btn sec" onclick="skipTimer();fsSyncNow()" title="Skip">⏭</button>
+  </div>
+</div>
+
 </body>
 </html>

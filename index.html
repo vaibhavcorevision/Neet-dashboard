@@ -182,6 +182,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .toast.show{animation:slideIn .3s ease forwards;}
 @keyframes slideIn{to{opacity:1;transform:translateX(0);}}
 
+/* PRODUCTIVITY SCORE RING */
+#prodScoreRing{transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1);}
+
+/* SESSION STATES */
+.session-item.skipped{opacity:0.45;text-decoration:line-through;}
+.session-item .session-check{cursor:pointer;}
+.session-item .session-check:hover{border-color:var(--primary);background:var(--primary-light);}
+
+/* MISSED TASKS CARD */
+#missedTasksCard .card-title{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;}
+#missedTasksCard .session-item{border-left:3px solid #D4563A;background:#FEF7F7;}
+body.dark #missedTasksCard .session-item{background:#2D1A1A;}
+
 /* PLACEHOLDER PAGES */
 .coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;}
 .coming-soon .big-icon{font-size:64px;margin-bottom:16px;opacity:0.3;}
@@ -1783,11 +1796,7 @@ body.dark .stat-card::before{background:linear-gradient(135deg,rgba(255,255,255,
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Study Group
     </div>
-    <div class="nav-item" onclick="navigate('pdfextractor',this)">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      PDF Extractor
-      <span class="nav-badge">New</span>
-    </div>
+
     <div class="nav-item" onclick="navigate('aidoubt',this)">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="12" y1="7" x2="12" y2="13"/></svg>
       AI Doubt Solver
@@ -1991,6 +2000,56 @@ body.dark .stat-card::before{background:linear-gradient(135deg,rgba(255,255,255,
           <div class="card-header"><div class="card-title">Recent Activity</div></div>
           <div class="card-body">
             <div class="activity-list" id="dashActivityList"></div>
+          </div>
+        </div>
+
+        <!-- PRODUCTIVITY SCORE -->
+        <div class="card" id="productivityScoreCard">
+          <div class="card-header">
+            <div class="card-title">Today's Productivity</div>
+            <div class="card-action" onclick="navigate('progress',document.querySelector('[onclick*=progress]'))">Full Report →</div>
+          </div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+              <div style="position:relative;width:72px;height:72px;flex-shrink:0;">
+                <svg width="72" height="72" viewBox="0 0 72 72" style="transform:rotate(-90deg);">
+                  <circle cx="36" cy="36" r="30" fill="none" stroke="var(--border)" stroke-width="6"/>
+                  <circle cx="36" cy="36" r="30" fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round"
+                    stroke-dasharray="188.5" id="prodScoreRing" stroke-dashoffset="188.5"/>
+                </svg>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--text);" id="prodScoreVal">0%</div>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;" id="prodScoreLabel">No sessions yet</div>
+                <div style="font-size:12px;color:var(--text3);" id="prodScoreDesc">Complete today's scheduled sessions to build your score</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+              <div style="text-align:center;background:var(--bg);border-radius:9px;padding:8px 6px;">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:#3A9E6C;" id="prodDone">0</div>
+                <div style="font-size:10.5px;color:var(--text3);margin-top:2px;">Done</div>
+              </div>
+              <div style="text-align:center;background:var(--bg);border-radius:9px;padding:8px 6px;">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--accent);" id="prodPending">0</div>
+                <div style="font-size:10.5px;color:var(--text3);margin-top:2px;">Pending</div>
+              </div>
+              <div style="text-align:center;background:var(--bg);border-radius:9px;padding:8px 6px;">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:#D4563A;" id="prodSkipped">0</div>
+                <div style="font-size:10.5px;color:var(--text3);margin-top:2px;">Skipped</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MISSED TASKS -->
+        <div class="card" id="missedTasksCard" style="display:none;">
+          <div class="card-header">
+            <div class="card-title" style="color:#C0392B;">⚠ Missed Sessions</div>
+            <div class="card-action" onclick="carryAllMissedForward()" style="color:#C0392B;">Carry Forward →</div>
+          </div>
+          <div class="card-body">
+            <div class="session-list" id="missedTasksList"></div>
+            <div style="margin-top:12px;font-size:12px;color:var(--text3);">These sessions were not completed. Carry them forward to tomorrow or mark as skipped.</div>
           </div>
         </div>
       </div>
@@ -2336,6 +2395,7 @@ body.dark .stat-card::before{background:linear-gradient(135deg,rgba(255,255,255,
       <div class="sm-footer">
         <button class="btn-secondary" onclick="closeSchModal()">Cancel</button>
         <button id="smDeleteBtn" onclick="deleteSchSession()" style="display:none;padding:10px 18px;border-radius:10px;border:1.5px solid #D4563A;background:#FDECEA;color:#C0392B;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#C0392B';this.style.color='white'" onmouseout="this.style.background='#FDECEA';this.style.color='#C0392B'">🗑 Delete</button>
+        <button id="smDuplicateBtn" onclick="duplicateSchSession()" style="display:none;padding:10px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='var(--primary-light)';this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="this.style.background='var(--bg)';this.style.borderColor='var(--border)';this.style.color='var(--text2)'">⧉ Duplicate</button>
         <button class="btn-save" onclick="saveSchSession()">Save Session ✦</button>
       </div>
     </div>
@@ -2465,6 +2525,40 @@ body.dark .stat-card::before{background:linear-gradient(135deg,rgba(255,255,255,
       <div class="timer-right">
         <div class="timer-settings-card">
           <div class="ts-title">Timer Settings</div>
+
+          <!-- QUICK PRESETS -->
+          <div style="margin-bottom:14px;">
+            <div style="font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;font-weight:600;">Quick Presets</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button onclick="applyTimerPreset(25,5,15)" id="preset-classic" style="flex:1;padding:8px 6px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .18s;line-height:1.4;text-align:center;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="restorePresetBtn(this,'classic')">
+                🍅 Classic<br><span style="font-weight:400;font-size:10px;">25 · 5 min</span>
+              </button>
+              <button onclick="applyTimerPreset(50,10,20)" id="preset-deep" style="flex:1;padding:8px 6px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .18s;line-height:1.4;text-align:center;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="restorePresetBtn(this,'deep')">
+                🧠 Deep Work<br><span style="font-weight:400;font-size:10px;">50 · 10 min</span>
+              </button>
+              <button onclick="applyTimerPreset(90,20,30)" id="preset-ultra" style="flex:1;padding:8px 6px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .18s;line-height:1.4;text-align:center;" onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseout="restorePresetBtn(this,'ultra')">
+                ⚡ Ultra Focus<br><span style="font-weight:400;font-size:10px;">90 · 20 min</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CUSTOM INPUTS -->
+          <div style="font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;font-weight:600;">Custom Duration</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+            <div style="text-align:center;">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Focus (min)</div>
+              <input id="input-focus" type="number" min="1" max="180" value="25" oninput="applyCustomTimerInput()" style="width:100%;padding:7px 6px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;text-align:center;color:var(--text);background:var(--bg);outline:none;transition:border-color .18s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Short Break</div>
+              <input id="input-short" type="number" min="1" max="60" value="5" oninput="applyCustomTimerInput()" style="width:100%;padding:7px 6px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;text-align:center;color:var(--text);background:var(--bg);outline:none;transition:border-color .18s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Long Break</div>
+              <input id="input-long" type="number" min="1" max="60" value="15" oninput="applyCustomTimerInput()" style="width:100%;padding:7px 6px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;text-align:center;color:var(--text);background:var(--bg);outline:none;transition:border-color .18s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+            </div>
+          </div>
+
           <div class="ts-row"><span class="ts-label">Focus duration</span><div class="ts-stepper"><button class="ts-step-btn" onclick="adjustSetting('focus',-5)">−</button><span class="ts-step-val" id="sv-focus">25</span><span style="font-size:12px;color:var(--text3);">min</span><button class="ts-step-btn" onclick="adjustSetting('focus',5)">+</button></div></div>
           <div class="ts-row"><span class="ts-label">Short break</span><div class="ts-stepper"><button class="ts-step-btn" onclick="adjustSetting('short',-1)">−</button><span class="ts-step-val" id="sv-short">5</span><span style="font-size:12px;color:var(--text3);">min</span><button class="ts-step-btn" onclick="adjustSetting('short',1)">+</button></div></div>
           <div class="ts-row"><span class="ts-label">Long break</span><div class="ts-stepper"><button class="ts-step-btn" onclick="adjustSetting('long',-5)">−</button><span class="ts-step-val" id="sv-long">15</span><span style="font-size:12px;color:var(--text3);">min</span><button class="ts-step-btn" onclick="adjustSetting('long',5)">+</button></div></div>
@@ -3237,67 +3331,6 @@ body.dark .stat-card::before{background:linear-gradient(135deg,rgba(255,255,255,
   </div>
   <div class="notif-list" id="notifList">
     <!-- Rendered dynamically by renderNotifications() -->
-  </div>
-</div>
-
-<!-- PDF EXTRACTOR PAGE -->
-<div class="page" id="page-pdfextractor">
-  <div style="margin-bottom:22px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-    <div>
-      <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;">📄 PDF Extractor</h2>
-      <p style="font-size:13.5px;color:var(--text3);margin-top:3px;">Physics PDFs upload karo — Gemini questions extract karega — Chapter-wise PDF download karo.</p>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-    <div style="display:flex;flex-direction:column;gap:16px;">
-      <div class="card">
-        <div class="card-header"><span class="card-title">Gemini API Key</span></div>
-        <div class="card-body">
-          <input id="pe-apikey" type="password" placeholder="AIza... (aistudio.google.com se milti hai — free)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text);background:var(--bg);outline:none;"/>
-          <p style="font-size:12px;color:var(--text3);margin-top:6px;">Key save hoti hai — baar baar dalni nahi padegi.</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Chapters</span><span class="card-action" onclick="peAddChapter()">+ Add</span></div>
-        <div class="card-body">
-          <div id="pe-chapter-list" style="display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;gap:8px;"><input class="pe-ch" placeholder="e.g. Laws of Motion" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;"/><button onclick="this.parentElement.remove()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--text2);font-size:12px;">✕</button></div>
-            <div style="display:flex;gap:8px;"><input class="pe-ch" placeholder="e.g. Motion in a Plane" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;"/><button onclick="this.parentElement.remove()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--text2);font-size:12px;">✕</button></div>
-            <div style="display:flex;gap:8px;"><input class="pe-ch" placeholder="e.g. Work, Energy and Power" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;"/><button onclick="this.parentElement.remove()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--text2);font-size:12px;">✕</button></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:16px;">
-      <div class="card">
-        <div class="card-header"><span class="card-title">PDFs Upload Karo</span></div>
-        <div class="card-body">
-          <div id="pe-dropzone" onclick="document.getElementById('pe-finput').click()" ondragover="event.preventDefault()" ondrop="event.preventDefault();peDrop(event.dataTransfer.files)" style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;">
-            <div style="font-size:28px;margin-bottom:8px;">📂</div>
-            <div style="font-size:14px;font-weight:500;color:var(--text);">Click ya drag & drop karo</div>
-            <div style="font-size:12px;color:var(--text3);margin-top:4px;">Multiple PDFs ek saath</div>
-          </div>
-          <input type="file" id="pe-finput" multiple accept=".pdf" style="display:none" onchange="peHandleFiles(this.files)"/>
-          <div id="pe-filelist" style="margin-top:10px;display:flex;flex-direction:column;gap:6px;"></div>
-        </div>
-      </div>
-      <button id="pe-runbtn" onclick="peStartProcess()" disabled style="width:100%;padding:13px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;border:none;border-radius:var(--radius-sm);background:var(--primary);color:white;cursor:pointer;transition:all .2s;opacity:0.4;">
-        Process karo &amp; PDF Download karo ✦
-      </button>
-      <div id="pe-progress-area" style="display:none;">
-        <div style="height:5px;background:var(--border);border-radius:20px;overflow:hidden;margin-bottom:8px;">
-          <div id="pe-pfill" style="height:100%;background:var(--primary);border-radius:20px;transition:width .4s;width:0%"></div>
-        </div>
-        <div id="pe-ptext" style="font-size:13px;color:var(--text2);margin-bottom:8px;"></div>
-        <div id="pe-logbox" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:'DM Mono',monospace;font-size:11.5px;color:var(--text2);max-height:150px;overflow-y:auto;line-height:1.7;"></div>
-      </div>
-      <div id="pe-result" style="display:none;background:linear-gradient(135deg,#E6F2EF,#F6FAF7);border:1px solid var(--primary);border-radius:var(--radius-sm);padding:16px;text-align:center;">
-        <div style="font-size:22px;margin-bottom:6px;">🎉</div>
-        <div style="font-size:15px;font-weight:500;color:var(--primary);">PDF Ready!</div>
-        <div id="pe-result-sub" style="font-size:13px;color:var(--text2);margin-top:4px;"></div>
-        <button onclick="peDownload()" style="margin-top:12px;padding:8px 20px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">Download PDF</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -4189,7 +4222,7 @@ document.addEventListener('visibilitychange', function(){
 
 // NAVIGATION — lazy page init
 function getGreeting(name){const h=new Date().getHours();let g=h<12?'Good Morning':h<17?'Good Afternoon':h<21?'Good Evening':'Good Night';return `${g}, <span>${name.split(' ')[0]}</span> ✦`;}
-const pageTitles={dashboard:getGreeting('Arjun'),targets:'My <span>Targets</span>',schedule:'My <span>Schedule</span>',progress:'<span>Progress</span> Analytics',notes:'Smart <span>Notes</span>',timer:'Focus <span>Timer</span>',settings:'<span>Settings</span>',profile:'My <span>Profile</span>',testlog:'Test <span>Log</span>',rankpredictor:'NEET <span>Rank Predictor</span>',studygroup:'Study <span>Group</span>',pdfextractor:'PDF <span>Extractor</span>',aidoubt:'🧠 AI <span>Doubt Solver</span>',aiplan:'📅 AI Study <span>Planner</span>',aierror:'🔍 Error <span>Analyzer</span>',aiflash:'🃏 AI <span>Flashcards</span>',neetpg:'🎓 NEET PG <span>Hub</span>'};
+const pageTitles={dashboard:getGreeting('Arjun'),targets:'My <span>Targets</span>',schedule:'My <span>Schedule</span>',progress:'<span>Progress</span> Analytics',notes:'Smart <span>Notes</span>',timer:'Focus <span>Timer</span>',settings:'<span>Settings</span>',profile:'My <span>Profile</span>',testlog:'Test <span>Log</span>',rankpredictor:'NEET <span>Rank Predictor</span>',studygroup:'Study <span>Group</span>',aidoubt:'🧠 AI <span>Doubt Solver</span>',aiplan:'📅 AI Study <span>Planner</span>',aierror:'🔍 Error <span>Analyzer</span>',aiflash:'🃏 AI <span>Flashcards</span>',neetpg:'🎓 NEET PG <span>Hub</span>'};
 const _pageInited={dashboard:true}; // dashboard inits on load
 function navigate(page,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -4204,7 +4237,7 @@ function navigate(page,el){
   if(!_pageInited[page]){
     _pageInited[page]=true;
     if(page==='progress')initProgress();
-    else if(page==='timer')initTimer();
+    else if(page==='timer'){initTimer();setTimeout(()=>{highlightActivePreset();['focus','short','long'].forEach((k,i)=>{const inp=document.getElementById(['input-focus','input-short','input-long'][i]);if(inp)inp.value=timerSettings[k];});},50);}
     else if(page==='notes')initNotes();
     else if(page==='targets'){filterTargets('all');updateStats();}
     else if(page==='schedule'){renderWeekGrid();updateWeekLabel();renderAgenda();}
@@ -4454,6 +4487,8 @@ function openSchModal(day,slot){
   document.getElementById('smTitle').textContent='Add Study Session';
   const delBtn=document.getElementById('smDeleteBtn');
   if(delBtn)delBtn.style.display='none';
+  const dupBtn=document.getElementById('smDuplicateBtn');
+  if(dupBtn)dupBtn.style.display='none';
   document.getElementById('sm-topic').value='';
   document.getElementById('sm-notes').value='';
   document.getElementById('sm-repeat').checked=false;
@@ -4480,6 +4515,8 @@ function editSchSession(id){
   document.getElementById('smTitle').textContent='Edit Session';
   const delBtn=document.getElementById('smDeleteBtn');
   if(delBtn)delBtn.style.display='inline-flex';
+  const dupBtn=document.getElementById('smDuplicateBtn');
+  if(dupBtn)dupBtn.style.display='inline-flex';
   document.getElementById('sm-topic').value=s.topic;
   document.getElementById('sm-notes').value=s.notes||'';
   // Select the day chip for editing
@@ -4525,6 +4562,21 @@ function deleteSchSession(){
   updateDashboardStats();
   if(schView==='week')renderWeekGrid();else renderDayView();
   showToast('Session deleted');
+}
+
+function duplicateSchSession(){
+  if(!smEditId) return;
+  const orig=schSessions.find(s=>s.id===smEditId);
+  if(!orig) return;
+  const copy=Object.assign({},orig,{id:schNextId++});
+  // shift start by 1 slot (30 min later)
+  copy.startSlot=Math.min(orig.startSlot+2,16);
+  schSessions.push(copy);
+  sfSave('schSessions',schSessions);
+  closeSchModal();
+  renderDashTodaySessions();
+  if(schView==='week')renderWeekGrid();else renderDayView();
+  showToast('⧉ Session duplicated');
 }
 function saveSchSession(){
   const selectedDayChips=[...document.querySelectorAll('.sm-day-chip.selected')];
@@ -5069,10 +5121,66 @@ function deleteTimerSession(tsKey, e){
 
 function adjustSetting(k,d){
   const keys=['focus','short','long'];const ids=['sv-focus','sv-short','sv-long'];
+  const inputIds=['input-focus','input-short','input-long'];
   const idx=keys.indexOf(k);if(idx<0)return;
   timerSettings[k]=Math.max(1,timerSettings[k]+d);
   const el=document.getElementById(ids[idx]);if(el)el.textContent=timerSettings[k];
+  const inp=document.getElementById(inputIds[idx]);if(inp)inp.value=timerSettings[k];
   if(k==='focus'){ftTotal=timerSettings.focus*60;ftSeconds=ftTotal;ftSecondsAtStart=ftTotal;ftWallStart=0;ftUpdateDisplay();}
+  highlightActivePreset();
+}
+
+function applyTimerPreset(focus, short, lng){
+  timerSettings.focus=focus; timerSettings.short=short; timerSettings.long=lng;
+  ['focus','short','long'].forEach((k,i)=>{
+    const sv=document.getElementById(['sv-focus','sv-short','sv-long'][i]);
+    if(sv) sv.textContent=timerSettings[k];
+    const inp=document.getElementById(['input-focus','input-short','input-long'][i]);
+    if(inp) inp.value=timerSettings[k];
+  });
+  ftTotal=timerSettings.focus*60;ftSeconds=ftTotal;ftSecondsAtStart=ftTotal;ftWallStart=0;ftUpdateDisplay();
+  highlightActivePreset();
+  showToast(`✓ ${focus===25?'Classic Pomodoro':focus===50?'Deep Work':'Ultra Focus'} preset applied`);
+}
+
+function applyCustomTimerInput(){
+  const f=parseInt(document.getElementById('input-focus')?.value)||25;
+  const s=parseInt(document.getElementById('input-short')?.value)||5;
+  const l=parseInt(document.getElementById('input-long')?.value)||15;
+  timerSettings.focus=Math.max(1,Math.min(180,f));
+  timerSettings.short=Math.max(1,Math.min(60,s));
+  timerSettings.long=Math.max(1,Math.min(60,l));
+  ['focus','short','long'].forEach((k,i)=>{
+    const el=document.getElementById(['sv-focus','sv-short','sv-long'][i]);
+    if(el)el.textContent=timerSettings[k];
+  });
+  ftTotal=timerSettings.focus*60;ftSeconds=ftTotal;ftSecondsAtStart=ftTotal;ftWallStart=0;ftUpdateDisplay();
+  highlightActivePreset();
+}
+
+function highlightActivePreset(){
+  const presets=[{id:'preset-classic',f:25,s:5},{id:'preset-deep',f:50,s:10},{id:'preset-ultra',f:90,s:20}];
+  presets.forEach(p=>{
+    const btn=document.getElementById(p.id);
+    if(!btn) return;
+    const isActive=timerSettings.focus===p.f&&timerSettings.short===p.s;
+    btn.style.background=isActive?'var(--primary)':'var(--bg)';
+    btn.style.color=isActive?'white':'var(--text2)';
+    btn.style.borderColor=isActive?'var(--primary)':'var(--border)';
+    const span=btn.querySelector('span');
+    if(span) span.style.color=isActive?'rgba(255,255,255,0.7)':'var(--text3)';
+  });
+}
+
+function restorePresetBtn(btn, id){
+  const presets={classic:{f:25,s:5},deep:{f:50,s:10},ultra:{f:90,s:20}};
+  const p=presets[id];
+  const isActive=p&&timerSettings.focus===p.f&&timerSettings.short===p.s;
+  if(!isActive){
+    btn.style.borderColor='var(--border)';
+    btn.style.color='var(--text2)';
+    btn.style.background='var(--bg)';
+  }
 }
 
 // ===== PART 5: NOTES =====
@@ -5346,6 +5454,12 @@ function loadCustomisations(){
   // Timer settings
   const ts = sfLoad('timerSettings', null);
   if(ts){ timerSettings.focus=ts.focus||25; timerSettings.short=ts.short||5; timerSettings.long=ts.long||15; }
+  // Sync custom inputs with loaded settings
+  ['focus','short','long'].forEach((k,i)=>{
+    const inp=document.getElementById(['input-focus','input-short','input-long'][i]);
+    if(inp) inp.value=timerSettings[k];
+  });
+  setTimeout(highlightActivePreset,100);
 }
 
 function selectTheme(el,color){
@@ -6234,169 +6348,6 @@ setInterval(function(){
   }, STABILITY_INTERVAL);
 })();
 
-// ===== PDF EXTRACTOR =====
-(function(){
-  const PDFJS_CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-  const WORKER_CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  let pdfJsLoaded=false;
-  let peFiles=[];
-  let peBlob=null;
-
-  function loadPdfJs(cb){
-    if(pdfJsLoaded){cb();return;}
-    const s=document.createElement('script');
-    s.src=PDFJS_CDN;
-    s.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc=WORKER_CDN;pdfJsLoaded=true;cb();};
-    document.head.appendChild(s);
-  }
-
-  window.peAddChapter=function(){
-    const d=document.createElement('div');
-    d.style.cssText='display:flex;gap:8px;';
-    d.innerHTML='<input class="pe-ch" placeholder="Chapter name..." style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:\'DM Sans\',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;"/><button onclick="this.parentElement.remove()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;cursor:pointer;color:var(--text2);font-size:12px;">✕</button>';
-    document.getElementById('pe-chapter-list').appendChild(d);
-  };
-
-  window.peDrop=function(files){peHandleFiles(files);};
-
-  window.peHandleFiles=function(files){
-    peFiles=Array.from(files);
-    const list=document.getElementById('pe-filelist');
-    list.innerHTML='';
-    peFiles.forEach(f=>{
-      const d=document.createElement('div');
-      d.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg);border-radius:var(--radius-sm);font-size:13px;color:var(--text);';
-      d.innerHTML=`<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📄 ${f.name}</span><span style="font-size:11px;color:var(--text3);">${(f.size/1024/1024).toFixed(1)} MB</span>`;
-      list.appendChild(d);
-    });
-    peCheckReady();
-  };
-
-  function peCheckReady(){
-    const btn=document.getElementById('pe-runbtn');
-    const hasKey=document.getElementById('pe-apikey').value.trim().length>5;
-    const hasFiles=peFiles.length>0;
-    btn.disabled=!(hasKey&&hasFiles);
-    btn.style.opacity=(hasKey&&hasFiles)?'1':'0.4';
-    btn.style.cursor=(hasKey&&hasFiles)?'pointer':'not-allowed';
-  }
-  document.getElementById('pe-apikey').addEventListener('input',peCheckReady);
-
-  async function pePdfToImages(file){
-    const ab=await file.arrayBuffer();
-    const pdf=await pdfjsLib.getDocument({data:ab}).promise;
-    const imgs=[];
-    for(let i=1;i<=pdf.numPages;i++){
-      const page=await pdf.getPage(i);
-      const vp=page.getViewport({scale:1.5});
-      const canvas=document.createElement('canvas');
-      canvas.width=vp.width;canvas.height=vp.height;
-      await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
-      imgs.push(canvas.toDataURL('image/jpeg',0.85).split(',')[1]);
-    }
-    return imgs;
-  }
-
-  async function peCallGemini(apiKey,b64,chapters){
-    const prompt=`Physics exam question slide. Extract question and options. Rules:\n1. Question text exactly.\n2. All options exactly.\n3. has_diagram:true if figure present.\n4. Remove teacher marks/solutions.\n5. Guess chapter from: ${JSON.stringify(chapters)}\nReturn ONLY JSON (no markdown):\n{"question":"...","options":["(1)...","(2)...","(3)...","(4)..."],"has_diagram":false,"chapter":"..."}\nIf solution/blank page: {"skip":true}`;
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:prompt},{inline_data:{mime_type:'image/jpeg',data:b64}}]}]})
-    });
-    const d=await res.json();
-    if(d.error)throw new Error(d.error.message);
-    let txt=d.candidates[0].content.parts[0].text.trim().replace(/```json|```/g,'').trim();
-    return JSON.parse(txt);
-  }
-
-  function peLog(msg){
-    const b=document.getElementById('pe-logbox');
-    b.innerHTML+=msg+'<br>';b.scrollTop=b.scrollHeight;
-  }
-
-  function peSetProg(pct,msg){
-    document.getElementById('pe-pfill').style.width=Math.round(pct)+'%';
-    document.getElementById('pe-ptext').textContent=msg;
-  }
-
-  window.peStartProcess=async function(){
-    const apiKey=document.getElementById('pe-apikey').value.trim();
-    const chapters=Array.from(document.querySelectorAll('.pe-ch')).map(i=>i.value.trim()).filter(Boolean);
-    if(!apiKey||!peFiles.length||!chapters.length){showToast('⚠ API key, chapters aur PDFs sab chahiye!');return;}
-    localStorage.setItem('pe-apikey',apiKey);
-    document.getElementById('pe-runbtn').disabled=true;
-    document.getElementById('pe-progress-area').style.display='block';
-    document.getElementById('pe-result').style.display='none';
-    document.getElementById('pe-logbox').innerHTML='';
-    peBlob=null;
-
-    loadPdfJs(async()=>{
-      const chData={};
-      chapters.forEach(c=>chData[c]=[]);
-      chData['Uncategorized']=[];
-      let allPages=[];
-      peLog('PDFs convert ho rahi hain...');
-      for(const f of peFiles){
-        peLog(`📄 ${f.name}`);
-        const imgs=await pePdfToImages(f);
-        imgs.forEach((img,i)=>allPages.push({img,src:f.name,page:i+1}));
-        peLog(`  → ${imgs.length} pages`);
-      }
-      peLog(`\nTotal: ${allPages.length} pages — Gemini processing...\n`);
-      let done=0,skipped=0,errors=0;
-      for(let i=0;i<allPages.length;i++){
-        const {img,src}=allPages[i];
-        peSetProg((i/allPages.length)*90,`Page ${i+1}/${allPages.length}`);
-        try{
-          const data=await peCallGemini(apiKey,img,chapters);
-          if(data.skip){peLog(`[${i+1}] Skipped`);skipped++;done++;continue;}
-          const ch=chapters.includes(data.chapter)?data.chapter:'Uncategorized';
-          chData[ch].push(data);
-          peLog(`[${i+1}] Q${chData[ch].length} → ${ch}${data.has_diagram?' 🖼':''}`);
-          done++;
-          await new Promise(r=>setTimeout(r,400));
-        }catch(e){peLog(`[${i+1}] ERROR: ${e.message}`);errors++;done++;}
-      }
-      peSetProg(98,'PDF bana raha hai...');
-      let lines=['PHYSICS QUESTION BANK — StudyFlow','Generated: '+new Date().toLocaleDateString(),''];
-      let total=0;
-      for(const ch of [...chapters,'Uncategorized']){
-        const qs=chData[ch]||[];
-        if(!qs.length)continue;
-        lines.push('═══════════════════════════════════');
-        lines.push(ch.toUpperCase());
-        lines.push('═══════════════════════════════════');
-        lines.push('');
-        qs.forEach((q,i)=>{
-          lines.push(`Q${i+1}. ${q.question}`);
-          (q.options||[]).forEach(o=>lines.push(`   ${o}`));
-          if(q.has_diagram)lines.push('   [Diagram present in original]');
-          lines.push('');
-          total++;
-        });
-      }
-      peBlob=new Blob([lines.join('\n')],{type:'text/plain'});
-      peSetProg(100,'Done!');
-      peLog(`\n✓ Complete! ${total} questions, ${skipped} skipped, ${errors} errors`);
-      document.getElementById('pe-result-sub').textContent=`${total} questions — ${chapters.length} chapters`;
-      document.getElementById('pe-result').style.display='block';
-      document.getElementById('pe-runbtn').disabled=false;
-      document.getElementById('pe-runbtn').style.opacity='1';
-      showToast('🎉 PDF ready hai! Download karo.');
-    });
-  };
-
-  window.peDownload=function(){
-    if(!peBlob)return;
-    const url=URL.createObjectURL(peBlob);
-    const a=document.createElement('a');
-    a.href=url;a.download='Physics_QB_StudyFlow.txt';a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const saved=localStorage.getItem('pe-apikey');
-  if(saved)document.getElementById('pe-apikey').value=saved;
-})();
 
 function openProfileEdit(){
   if(!profileData){ showToast('⚠ Please log in first'); return; }
@@ -6786,6 +6737,10 @@ function updateDashboardStats(){
       ? `You have ${todaySess.length} session${todaySess.length>1?'s':''} today. Keep the momentum going!`
       : 'No sessions scheduled today. Add one to get started!';
   }
+  // Productivity score
+  const todaySess2 = getTodaySessions();
+  const today2 = new Date().toDateString();
+  updateProductivityScore(todaySess2, sfLoad('sessionStates_'+today2,{}));
 }
 
 function calcStreak(){
@@ -6816,20 +6771,141 @@ function renderDashTodaySessions(){
   const sessions = getTodaySessions();
   if(!sessions.length){
     el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">No sessions scheduled today. Head to Schedule to add some!</div>';
+    updateProductivityScore([]);
     return;
   }
-  const colors = {'Physics':'#5AADCC','Chemistry':'#E8C17A','Biology':'#7BAE9A','General':'#8AADA5'};
+  const subjectColors = getSubjectColors();
   const HOURS = ['6AM','7AM','8AM','9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM','9PM','10PM'];
-  el.innerHTML = sessions.map(s=>`
-    <div class="session-item">
-      <div class="session-dot" style="background:${colors[s.subject]||'#8AADA5'};"></div>
+  const today = new Date().toDateString();
+  const sessionStates = sfLoad('sessionStates_'+today, {});
+
+  el.innerHTML = sessions.map((s,i)=>{
+    const state = sessionStates[s.id] || 'pending';
+    const isDone = state==='done';
+    const isSkipped = state==='skipped';
+    const color = subjectColors[s.subject] || '#8AADA5';
+    const stateLabel = isDone ? '<span style="font-size:10px;font-weight:600;color:#3A9E6C;background:#E6F4EF;padding:2px 7px;border-radius:20px;">✓ Done</span>'
+      : isSkipped ? '<span style="font-size:10px;font-weight:600;color:#C0392B;background:#FDECEA;padding:2px 7px;border-radius:20px;">↷ Skipped</span>'
+      : '';
+    return `
+    <div class="session-item${isDone?' done':''}${isSkipped?' done':''}" style="opacity:${isSkipped?'0.5':isDone?'0.6':'1'};${isSkipped?'text-decoration:line-through;':''}" id="sess-dash-${s.id}">
+      <div class="session-dot" style="background:${color};"></div>
       <div class="session-info">
-        <div class="session-subject">${s.subject} — ${s.topic}</div>
+        <div class="session-subject">${s.subject} — ${s.topic} ${stateLabel}</div>
         <div class="session-meta">${s.type.charAt(0).toUpperCase()+s.type.slice(1)} · ${s.dur*30} min</div>
       </div>
       <div class="session-time">${HOURS[s.startSlot]||''}</div>
-      <div class="session-check"></div>
+      <div style="display:flex;align-items:center;gap:5px;">
+        ${!isSkipped ? `<button onclick="skipDashSession('${s.id}')" title="Skip session" style="width:22px;height:22px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:12px;color:var(--text3);transition:all .18s;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='#FDECEA';this.style.borderColor='#D4563A';this.style.color='#C0392B'" onmouseout="this.style.background='transparent';this.style.borderColor='var(--border)';this.style.color='var(--text3)'">↷</button>` : ''}
+        <div class="session-check" onclick="toggleDashSessionDone('${s.id}')" style="cursor:pointer;" title="Mark as done">
+          ${isDone ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  updateProductivityScore(sessions, sessionStates);
+  renderMissedTasks(sessions, sessionStates);
+}
+
+function getSubjectColors(){
+  const base = {'Physics':'#5AADCC','Chemistry':'#E8C17A','Biology':'#7BAE9A','General':'#8AADA5'};
+  const custom = sfLoad('subjectColors',{});
+  return Object.assign({}, base, custom);
+}
+
+function toggleDashSessionDone(id){
+  const today = new Date().toDateString();
+  const sessionStates = sfLoad('sessionStates_'+today, {});
+  sessionStates[id] = sessionStates[id]==='done' ? 'pending' : 'done';
+  sfSave('sessionStates_'+today, sessionStates);
+  renderDashTodaySessions();
+  updateDashboardStats();
+  showToast(sessionStates[id]==='done' ? '✓ Session marked done!' : 'Session marked pending');
+}
+
+function skipDashSession(id){
+  const today = new Date().toDateString();
+  const sessionStates = sfLoad('sessionStates_'+today, {});
+  sessionStates[id] = sessionStates[id]==='skipped' ? 'pending' : 'skipped';
+  sfSave('sessionStates_'+today, sessionStates);
+  renderDashTodaySessions();
+  updateDashboardStats();
+  showToast(sessionStates[id]==='skipped' ? '↷ Session skipped' : 'Session restored');
+}
+
+function updateProductivityScore(sessions, sessionStates){
+  const today = new Date().toDateString();
+  if(!sessionStates) sessionStates = sfLoad('sessionStates_'+today, {});
+  const total = sessions.length;
+  const done = sessions.filter(s=>sessionStates[s.id]==='done').length;
+  const skipped = sessions.filter(s=>sessionStates[s.id]==='skipped').length;
+  const pending = total - done - skipped;
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  const ring = document.getElementById('prodScoreRing');
+  const valEl = document.getElementById('prodScoreVal');
+  const labelEl = document.getElementById('prodScoreLabel');
+  const descEl = document.getElementById('prodScoreDesc');
+  const doneEl = document.getElementById('prodDone');
+  const pendEl = document.getElementById('prodPending');
+  const skipEl = document.getElementById('prodSkipped');
+  if(ring) ring.style.strokeDashoffset = 188.5 - (188.5 * pct / 100);
+  if(valEl) valEl.textContent = pct+'%';
+  if(doneEl) doneEl.textContent = done;
+  if(pendEl) pendEl.textContent = pending;
+  if(skipEl) skipEl.textContent = skipped;
+  if(labelEl){
+    if(pct===100) labelEl.textContent = '🎯 Perfect Day!';
+    else if(pct>=75) labelEl.textContent = '💪 Great Progress!';
+    else if(pct>=50) labelEl.textContent = '📈 Halfway There';
+    else if(pct>0) labelEl.textContent = '🏃 Just Getting Started';
+    else labelEl.textContent = total>0 ? '📋 Ready to begin!' : 'No sessions today';
+  }
+  if(descEl) descEl.textContent = total>0 ? `${done} of ${total} sessions completed` : 'Add sessions in Schedule page';
+}
+
+function renderMissedTasks(sessions, sessionStates){
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  const ystates = sfLoad('sessionStates_'+yesterday, {});
+  const ySessions = getTodaySessionsForDate(yesterday);
+  const missed = (ySessions||[]).filter(s=>!ystates[s.id]||ystates[s.id]==='pending');
+  const card = document.getElementById('missedTasksCard');
+  const list = document.getElementById('missedTasksList');
+  if(!card||!list) return;
+  if(!missed.length){ card.style.display='none'; return; }
+  card.style.display='';
+  const subjectColors = getSubjectColors();
+  list.innerHTML = missed.map(s=>`
+    <div class="session-item" style="border-left:3px solid #D4563A;">
+      <div class="session-dot" style="background:${subjectColors[s.subject]||'#8AADA5'};"></div>
+      <div class="session-info">
+        <div class="session-subject">${s.subject} — ${s.topic}</div>
+        <div class="session-meta" style="color:#C0392B;">From yesterday · ${s.dur*30} min</div>
+      </div>
+      <button onclick="carrySessionForward('${s.id}')" style="padding:4px 10px;border-radius:7px;border:1px solid var(--primary);background:var(--primary-light);color:var(--primary);font-size:11.5px;font-weight:500;cursor:pointer;white-space:nowrap;">→ Carry</button>
     </div>`).join('');
+}
+
+function getTodaySessionsForDate(dateStr){
+  try {
+    const d = new Date(dateStr);
+    const dow = (d.getDay()+6)%7;
+    return (schSessions||[]).filter(s=>s.days&&s.days.includes(dow));
+  } catch(e){ return []; }
+}
+
+function carrySessionForward(id){
+  const yest = new Date(Date.now()-86400000).toDateString();
+  const ystates = sfLoad('sessionStates_'+yest, {});
+  ystates[id] = 'carried';
+  sfSave('sessionStates_'+yest, ystates);
+  showToast('✓ Session carried to today\'s plan');
+  renderMissedTasks([], {});
+}
+
+function carryAllMissedForward(){
+  const card = document.getElementById('missedTasksCard');
+  if(card) card.style.display='none';
+  showToast('✓ All missed sessions noted!');
 }
 
 function renderDashSubjectProgress(){
